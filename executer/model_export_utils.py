@@ -232,7 +232,7 @@ class SimpleModelExporter:
             SAGEStage3_ReduceSum(),
             SAGEStage4_ReduceCount(),
             SAGEStage5_Normalize(),
-            SAGEStage6_Transform(in_dim, hid_dim, out_dim),
+            SAGEStage6_Transform(in_dim, out_dim),  # Fixed: only pass in_channels and out_channels
             SAGEStage7_Activate()
         ]
 
