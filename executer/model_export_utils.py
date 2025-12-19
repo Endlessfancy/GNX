@@ -273,8 +273,8 @@ class SimpleModelExporter:
         # Set dynamic axes if needed
         if dynamic:
             dynamic_axes = {
-                'input_0': {0: 'num_nodes'},
-                'input_1': {1: 'num_edges'},
+                'x': {0: 'num_nodes'},
+                'edge_index': {1: 'num_edges'},
                 'output': {0: 'num_nodes'}
             }
         else:
@@ -285,7 +285,7 @@ class SimpleModelExporter:
             combined_model,
             dummy_inputs,
             output_path,
-            input_names=['input_0', 'input_1'],
+            input_names=['x', 'edge_index'],  # Use meaningful names
             output_names=['output'],
             dynamic_axes=dynamic_axes,
             opset_version=18,
