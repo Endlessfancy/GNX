@@ -218,7 +218,7 @@ class GNNCompiler:
             sample_sg = sg_list[0]
             pep, _ = assignment[sample_sg.id]
 
-            # 构建model references
+            # 构建model references（使用相对路径以支持跨平台）
             model_refs = {}
             for block_idx, block in enumerate(pep.blocks):
                 for device in block.devices:
@@ -230,7 +230,14 @@ class GNNCompiler:
                         )
 
                     ref_key = f"block_{block_idx}_{device}"
-                    model_refs[ref_key] = str(model_index.get(model_key, ""))
+                    # Convert to relative path for cross-platform compatibility
+                    abs_path = model_index.get(model_key, "")
+                    if abs_path:
+                        # Store relative path: models/MODEL_NAME.onnx
+                        rel_path = f"models/{Path(abs_path).name}"
+                        model_refs[ref_key] = rel_path
+                    else:
+                        model_refs[ref_key] = ""
 
             cluster_plans.append({
                 'pep_key': cluster_key,

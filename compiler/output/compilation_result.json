@@ -175,7 +175,7 @@
           15
         ],
         "model_refs": {
-          "block_0_GPU": "/home/haoyang/private/GNX_final/compiler/output/models/GPU_stages_1_2_3_4_5_6_7.onnx"
+          "block_0_GPU": "models/GPU_stages_1_2_3_4_5_6_7.onnx"
         },
         "num_subgraphs": 16
       }
