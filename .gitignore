@@ -42,6 +42,7 @@ profiling/results/
 profiling/exported_models/
 compiler/output/
 !compiler/output/compilation_result.json
+executer/models/
 logs/
 
 # Generated files

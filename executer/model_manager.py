@@ -28,11 +28,14 @@ class ModelManager:
         """
         Args:
             execution_plan: Compiler输出的execution_plan部分
-            compilation_result_dir: compilation_result.json所在目录（用于解析相对路径）
+            compilation_result_dir: compilation_result.json所在目录（用于解析相对路径，已废弃）
         """
         self.execution_plan = execution_plan
         self.clusters = execution_plan['clusters']
-        self.compilation_result_dir = compilation_result_dir or Path.cwd()
+
+        # Use executor's own models directory (independent from compiler)
+        self.models_dir = Path(__file__).parent / 'models'
+        self.models_dir.mkdir(parents=True, exist_ok=True)
 
         # 收集所有需要的模型
         self.model_refs = self._collect_model_refs()
@@ -42,30 +45,28 @@ class ModelManager:
 
         print(f"  ✓ Model manager initialized")
         print(f"    Unique models needed: {len(self.model_refs)}")
+        print(f"    Models directory: {self.models_dir}")
 
     def _collect_model_refs(self) -> Dict[str, str]:
         """
-        收集所有cluster的model_refs，并转换相对路径为绝对路径
+        收集所有cluster的model_refs，映射到executor自己的models目录
 
         Returns:
-            {model_key: absolute_model_path}
+            {model_key: absolute_model_path_in_executor_models_dir}
         """
         all_refs = {}
 
         for cluster in self.clusters:
             model_refs = cluster['model_refs']
-            for key, rel_path in model_refs.items():
-                if rel_path:
-                    # Convert relative path to absolute path
-                    # rel_path like "models/GPU_stages_1_2_3_4_5_6_7.onnx"
-                    # Base is compilation_result_dir / compiler / output
-                    if Path(rel_path).is_absolute():
-                        # Already absolute (backward compatibility)
-                        abs_path = rel_path
-                    else:
-                        # Relative path: resolve from compiler/output/
-                        compiler_output_dir = self.compilation_result_dir
-                        abs_path = str((compiler_output_dir / rel_path).resolve())
+            for key, ref_path in model_refs.items():
+                if ref_path:
+                    # Extract model filename from compilation_result reference
+                    # ref_path could be:
+                    #   - "models/GPU_stages_1_2_3_4_5_6_7.onnx" (relative)
+                    #   - "/absolute/path/models/GPU_stages_1_2_3_4_5_6_7.onnx" (absolute)
+                    # We only care about the filename, store in executor/models/
+                    model_filename = Path(ref_path).name
+                    abs_path = str((self.models_dir / model_filename).resolve())
                     all_refs[key] = abs_path
 
         return all_refs
