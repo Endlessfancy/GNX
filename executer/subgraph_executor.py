@@ -132,11 +132,24 @@ class SubgraphExecutor:
         # Check if model is ONNX Runtime session or PyTorch model
         if hasattr(model, 'run'):
             # ONNX Runtime model
-            # 准备ONNX输入
-            input_dict = {
-                'x': x.cpu().numpy().astype(np.float32),
-                'edge_index': edge_index.cpu().numpy().astype(np.int64)
-            }
+            # Get actual input names from ONNX model
+            input_names = [inp.name for inp in model.get_inputs()]
+
+            # Prepare input dictionary with actual ONNX input names
+            x_np = x.cpu().numpy().astype(np.float32)
+            edge_index_np = edge_index.cpu().numpy().astype(np.int64)
+
+            if len(input_names) == 2:
+                input_dict = {
+                    input_names[0]: x_np,
+                    input_names[1]: edge_index_np
+                }
+            else:
+                # Fallback to common names
+                input_dict = {
+                    'x': x_np,
+                    'edge_index': edge_index_np
+                }
 
             # 推理
             outputs = model.run(None, input_dict)
@@ -197,10 +210,22 @@ class SubgraphExecutor:
 
             if hasattr(model, 'run'):
                 # ONNX Runtime model
-                input_dict = {
-                    'x': x.cpu().numpy().astype(np.float32),
-                    'edge_index': device_edges.cpu().numpy().astype(np.int64)
-                }
+                # Get actual input names from ONNX model
+                input_names = [inp.name for inp in model.get_inputs()]
+
+                x_np = x.cpu().numpy().astype(np.float32)
+                edge_np = device_edges.cpu().numpy().astype(np.int64)
+
+                if len(input_names) == 2:
+                    input_dict = {
+                        input_names[0]: x_np,
+                        input_names[1]: edge_np
+                    }
+                else:
+                    input_dict = {
+                        'x': x_np,
+                        'edge_index': edge_np
+                    }
 
                 model_outputs = model.run(None, input_dict)
                 device_output = torch.from_numpy(model_outputs[0])
