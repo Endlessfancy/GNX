@@ -24,13 +24,15 @@ class ModelManager:
     4. 缓存编译后的模型
     """
 
-    def __init__(self, execution_plan: Dict):
+    def __init__(self, execution_plan: Dict, compilation_result_dir: Optional[Path] = None):
         """
         Args:
             execution_plan: Compiler输出的execution_plan部分
+            compilation_result_dir: compilation_result.json所在目录（用于解析相对路径）
         """
         self.execution_plan = execution_plan
         self.clusters = execution_plan['clusters']
+        self.compilation_result_dir = compilation_result_dir or Path.cwd()
 
         # 收集所有需要的模型
         self.model_refs = self._collect_model_refs()
@@ -43,16 +45,28 @@ class ModelManager:
 
     def _collect_model_refs(self) -> Dict[str, str]:
         """
-        收集所有cluster的model_refs
+        收集所有cluster的model_refs，并转换相对路径为绝对路径
 
         Returns:
-            {model_key: model_path}
+            {model_key: absolute_model_path}
         """
         all_refs = {}
 
         for cluster in self.clusters:
             model_refs = cluster['model_refs']
-            all_refs.update(model_refs)
+            for key, rel_path in model_refs.items():
+                if rel_path:
+                    # Convert relative path to absolute path
+                    # rel_path like "models/GPU_stages_1_2_3_4_5_6_7.onnx"
+                    # Base is compilation_result_dir / compiler / output
+                    if Path(rel_path).is_absolute():
+                        # Already absolute (backward compatibility)
+                        abs_path = rel_path
+                    else:
+                        # Relative path: resolve from compiler/output/
+                        compiler_output_dir = self.compilation_result_dir
+                        abs_path = str((compiler_output_dir / rel_path).resolve())
+                    all_refs[key] = abs_path
 
         return all_refs
 
