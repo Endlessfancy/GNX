@@ -1,0 +1,91 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Output directories (generated at runtime)
+profiling/results/
+profiling/exported_models/
+compiler/output/
+logs/
+
+# Generated files
+pipeline_summary.txt
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# PyTorch
+*.pth
+*.pt
+
+# ONNX models (if large)
+# Uncomment if models are too large for GitHub
+# *.onnx
+# *.ir
+
+# Data cache (PyTorch Geometric)
+.pyg/
+data/*/processed/
+data/*/raw/
+**/data/*/processed/
+**/data/*/raw/
+*.npy
+*.npz
+
+# Profiling data (if too large)
+# profiling/results/*.json
+
+# Old/backup directories
+executor copy/
+result/
+
+# Large archive files
+*.tar
+*.tar.gz
+*.zip
+
+# Summary and temporary markdown
+summary.md
