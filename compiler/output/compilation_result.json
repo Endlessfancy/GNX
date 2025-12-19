@@ -1,0 +1,191 @@
+{
+  "partition_config": {
+    "k": 16,
+    "num_subgraphs": 16,
+    "subgraphs": [
+      {
+        "id": 0,
+        "n": 5323,
+        "m": 66814,
+        "n_pad": 6000,
+        "m_pad": 67000,
+        "cut_edges": 0
+      },
+      {
+        "id": 1,
+        "n": 5757,
+        "m": 44469,
+        "n_pad": 6000,
+        "m_pad": 45000,
+        "cut_edges": 0
+      },
+      {
+        "id": 2,
+        "n": 5593,
+        "m": 71745,
+        "n_pad": 6000,
+        "m_pad": 72000,
+        "cut_edges": 0
+      },
+      {
+        "id": 3,
+        "n": 5558,
+        "m": 60575,
+        "n_pad": 6000,
+        "m_pad": 61000,
+        "cut_edges": 0
+      },
+      {
+        "id": 4,
+        "n": 6101,
+        "m": 66315,
+        "n_pad": 7000,
+        "m_pad": 67000,
+        "cut_edges": 0
+      },
+      {
+        "id": 5,
+        "n": 6632,
+        "m": 51444,
+        "n_pad": 7000,
+        "m_pad": 52000,
+        "cut_edges": 0
+      },
+      {
+        "id": 6,
+        "n": 4929,
+        "m": 38642,
+        "n_pad": 5000,
+        "m_pad": 39000,
+        "cut_edges": 0
+      },
+      {
+        "id": 7,
+        "n": 5701,
+        "m": 59417,
+        "n_pad": 6000,
+        "m_pad": 60000,
+        "cut_edges": 0
+      },
+      {
+        "id": 8,
+        "n": 4793,
+        "m": 46873,
+        "n_pad": 5000,
+        "m_pad": 47000,
+        "cut_edges": 0
+      },
+      {
+        "id": 9,
+        "n": 5945,
+        "m": 47326,
+        "n_pad": 6000,
+        "m_pad": 48000,
+        "cut_edges": 0
+      },
+      {
+        "id": 10,
+        "n": 6598,
+        "m": 84012,
+        "n_pad": 7000,
+        "m_pad": 85000,
+        "cut_edges": 0
+      },
+      {
+        "id": 11,
+        "n": 4593,
+        "m": 40963,
+        "n_pad": 5000,
+        "m_pad": 41000,
+        "cut_edges": 0
+      },
+      {
+        "id": 12,
+        "n": 6148,
+        "m": 50337,
+        "n_pad": 7000,
+        "m_pad": 51000,
+        "cut_edges": 0
+      },
+      {
+        "id": 13,
+        "n": 5232,
+        "m": 57049,
+        "n_pad": 6000,
+        "m_pad": 58000,
+        "cut_edges": 0
+      },
+      {
+        "id": 14,
+        "n": 5978,
+        "m": 57924,
+        "n_pad": 6000,
+        "m_pad": 58000,
+        "cut_edges": 0
+      },
+      {
+        "id": 15,
+        "n": 4369,
+        "m": 55851,
+        "n_pad": 5000,
+        "m_pad": 56000,
+        "cut_edges": 0
+      }
+    ]
+  },
+  "execution_plan": {
+    "clusters": [
+      {
+        "pep_key": "GPU_s1234567_r1.00",
+        "pep": [
+          [
+            [
+              "GPU"
+            ],
+            [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            [
+              1.0
+            ]
+          ]
+        ],
+        "subgraph_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "model_refs": {
+          "block_0_GPU": "/home/haoyang/private/GNX_final/compiler/output/models/GPU_stages_1_2_3_4_5_6_7.onnx"
+        },
+        "num_subgraphs": 16
+      }
+    ],
+    "num_clusters": 1
+  },
+  "statistics": {
+    "makespan": 101656.96119201723,
+    "num_unique_models": 1,
+    "num_subgraphs": 16,
+    "num_clusters": 1
+  }
+}
