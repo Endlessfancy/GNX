@@ -79,10 +79,20 @@ class GNNCompiler:
 
         # Phase 1: Graph Partition
         print("\n[Phase 1] Graph Partition...")
-        partition_results = self.partitioner.partition_multiple_k(
-            self.graph_data.edge_index,  # 传递真实图结构
-            self.config.k_set
-        )
+        try:
+            partition_results = self.partitioner.partition_multiple_k(
+                self.graph_data.edge_index,  # 传递真实图结构
+                self.config.k_set
+            )
+        except Exception as e:
+            print(f"✗ Graph partitioning failed: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
+
+        if not partition_results:
+            print("✗ No valid partitions generated!")
+            return None
 
         # 对每个k进行编译，选择最优的
         best_k = None
@@ -94,14 +104,24 @@ class GNNCompiler:
             print(f"Compiling for k={k} ({len(subgraphs)} subgraphs)")
             print(f"{'='*60}")
 
-            # Phase 2: PEP Generation
-            result = self._compile_for_k(k, subgraphs)
+            try:
+                # Phase 2: PEP Generation
+                result = self._compile_for_k(k, subgraphs)
 
-            # 选择最优k
-            if result['statistics']['makespan'] < best_makespan:
-                best_makespan = result['statistics']['makespan']
-                best_k = k
-                best_result = result
+                # 选择最优k
+                if result and result['statistics']['makespan'] < best_makespan:
+                    best_makespan = result['statistics']['makespan']
+                    best_k = k
+                    best_result = result
+            except Exception as e:
+                print(f"✗ Compilation failed for k={k}: {e}")
+                import traceback
+                traceback.print_exc()
+                continue
+
+        if best_result is None:
+            print("\n✗ All compilation attempts failed!")
+            return None
 
         # 输出最优结果
         print(f"\n{'='*60}")
