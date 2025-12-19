@@ -9,10 +9,18 @@ import torch
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from .data_loader import GraphDataLoader
-from .ghost_node_handler import GhostNodeHandler
-from .model_manager import ModelManager
-from .subgraph_executor import SubgraphExecutor
+# Support both relative and absolute imports
+try:
+    from .data_loader import GraphDataLoader
+    from .ghost_node_handler import GhostNodeHandler
+    from .model_manager import ModelManager
+    from .subgraph_executor import SubgraphExecutor
+except ImportError:
+    # Fallback to absolute imports when run as script
+    from data_loader import GraphDataLoader
+    from ghost_node_handler import GhostNodeHandler
+    from model_manager import ModelManager
+    from subgraph_executor import SubgraphExecutor
 
 
 class PipelineExecutor:
