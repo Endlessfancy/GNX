@@ -149,41 +149,75 @@ class ModelManager:
 
         try:
             import onnxruntime as ort
+            use_onnx = True
         except ImportError:
-            print("    WARNING: onnxruntime not available, models won't be loaded")
-            return
+            print("    WARNING: onnxruntime not available, using PyTorch models as fallback")
+            use_onnx = False
 
         for model_key, model_path in self.model_refs.items():
             if model_key not in self.compiled_models:
                 print(f"    Loading {model_key}...")
 
-                # 使用ONNX Runtime加载模型
-                session_options = ort.SessionOptions()
-                session_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
-
                 # 根据设备选择provider
                 device = model_key.split('_')[2]
-                if device == 'CPU':
-                    providers = ['CPUExecutionProvider']
-                elif device == 'GPU':
-                    providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
-                else:  # NPU
-                    # NPU需要OpenVINO，这里先用CPU fallback
-                    providers = ['CPUExecutionProvider']
 
-                try:
-                    session = ort.InferenceSession(
-                        model_path,
-                        sess_options=session_options,
-                        providers=providers
-                    )
+                if use_onnx:
+                    # 使用ONNX Runtime加载模型
+                    session_options = ort.SessionOptions()
+                    session_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
 
-                    self.compiled_models[model_key] = session
-                    print(f"      ✓ Compiled for {providers[0]}")
+                    if device == 'CPU':
+                        providers = ['CPUExecutionProvider']
+                    elif device == 'GPU':
+                        providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
+                    else:  # NPU
+                        # NPU需要OpenVINO，这里先用CPU fallback
+                        providers = ['CPUExecutionProvider']
 
-                except Exception as e:
-                    print(f"      ERROR: Failed to load model: {e}")
-                    raise
+                    try:
+                        session = ort.InferenceSession(
+                            model_path,
+                            sess_options=session_options,
+                            providers=providers
+                        )
+
+                        self.compiled_models[model_key] = session
+                        print(f"      ✓ Compiled for {providers[0]}")
+
+                    except Exception as e:
+                        print(f"      ERROR: Failed to load ONNX model: {e}")
+                        raise
+                else:
+                    # Fallback: Create PyTorch model
+                    try:
+                        from model_export_utils import create_combined_sage_model
+
+                        # Extract stages from model_key (e.g., "block_0_GPU" -> stages from PEP)
+                        block_id = int(model_key.split('_')[1])
+                        cluster = self.clusters[0]
+                        pep = cluster['pep']
+                        stages = pep[block_id][1]  # [1, 2, 3, 4, 5, 6, 7]
+
+                        # Create PyTorch model
+                        pytorch_model = create_combined_sage_model(
+                            stages=stages,
+                            in_channels=500,
+                            hidden_channels=256,
+                            out_channels=256
+                        )
+
+                        # Move to appropriate device
+                        if device == 'GPU' and torch.cuda.is_available():
+                            pytorch_model = pytorch_model.cuda()
+
+                        pytorch_model.eval()
+
+                        self.compiled_models[model_key] = pytorch_model
+                        print(f"      ✓ Loaded PyTorch model on {device}")
+
+                    except Exception as e:
+                        print(f"      ERROR: Failed to create PyTorch fallback: {e}")
+                        raise
 
         print(f"  ✓ All models loaded: {len(self.compiled_models)}")
 

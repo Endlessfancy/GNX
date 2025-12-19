@@ -129,17 +129,33 @@ class SubgraphExecutor:
         """
         model = self.models[(block_id, device)]
 
-        # 准备ONNX输入
-        input_dict = {
-            'x': x.cpu().numpy().astype(np.float32),
-            'edge_index': edge_index.cpu().numpy().astype(np.int64)
-        }
+        # Check if model is ONNX Runtime session or PyTorch model
+        if hasattr(model, 'run'):
+            # ONNX Runtime model
+            # 准备ONNX输入
+            input_dict = {
+                'x': x.cpu().numpy().astype(np.float32),
+                'edge_index': edge_index.cpu().numpy().astype(np.int64)
+            }
 
-        # 推理
-        outputs = model.run(None, input_dict)
+            # 推理
+            outputs = model.run(None, input_dict)
 
-        # 返回第一个输出（通常是node embeddings）
-        output = torch.from_numpy(outputs[0])
+            # 返回第一个输出（通常是node embeddings）
+            output = torch.from_numpy(outputs[0])
+        else:
+            # PyTorch model
+            with torch.no_grad():
+                # Move inputs to model's device
+                if device == 'GPU' and torch.cuda.is_available():
+                    x = x.cuda()
+                    edge_index = edge_index.cuda()
+
+                output = model(x, edge_index)
+
+                # Move back to CPU if needed
+                if output.is_cuda:
+                    output = output.cpu()
 
         return output
 
@@ -179,13 +195,29 @@ class SubgraphExecutor:
             # 执行推理
             model = self.models[(block_id, device)]
 
-            input_dict = {
-                'x': x.cpu().numpy().astype(np.float32),
-                'edge_index': device_edges.cpu().numpy().astype(np.int64)
-            }
+            if hasattr(model, 'run'):
+                # ONNX Runtime model
+                input_dict = {
+                    'x': x.cpu().numpy().astype(np.float32),
+                    'edge_index': device_edges.cpu().numpy().astype(np.int64)
+                }
 
-            model_outputs = model.run(None, input_dict)
-            device_output = torch.from_numpy(model_outputs[0])
+                model_outputs = model.run(None, input_dict)
+                device_output = torch.from_numpy(model_outputs[0])
+            else:
+                # PyTorch model
+                with torch.no_grad():
+                    x_input = x
+                    edge_input = device_edges
+
+                    if device == 'GPU' and torch.cuda.is_available():
+                        x_input = x_input.cuda()
+                        edge_input = edge_input.cuda()
+
+                    device_output = model(x_input, edge_input)
+
+                    if device_output.is_cuda:
+                        device_output = device_output.cpu()
 
             # 只保留target_nodes的输出
             outputs.append((target_nodes, device_output[target_nodes]))
