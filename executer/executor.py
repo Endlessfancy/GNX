@@ -112,7 +112,11 @@ class PipelineExecutor:
         # Step 3: 导出和加载模型
         print(f"\n[Step 3/4] Exporting and loading models...")
         # Pass compilation_result directory for resolving relative model paths
-        compilation_result_dir = Path(self.compilation_result_path).parent
+        if self.compilation_result_path is not None:
+            compilation_result_dir = Path(self.compilation_result_path).parent
+        else:
+            # 使用默认路径（用于自定义 execution_plan）
+            compilation_result_dir = Path(__file__).parent.parent / 'compiler' / 'output'
         self.model_manager = ModelManager(self.execution_plan, compilation_result_dir)
         self.model_manager.ensure_models_exist()
         self.model_manager.load_models()
