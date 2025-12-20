@@ -53,7 +53,23 @@ class PipelineExecutor:
         if custom_execution_plan is not None:
             # 使用自定义配置（测试模式）
             self.execution_plan = custom_execution_plan
-            self.partition_config = custom_partition_config if custom_partition_config else {'num_subgraphs': 16}
+
+            # partition_config 仍需从 compilation_result.json 加载（包含图分区信息）
+            if custom_partition_config is not None:
+                self.partition_config = custom_partition_config
+            else:
+                # 从默认路径加载 partition_config
+                default_result_path = Path(__file__).parent.parent / 'compiler' / 'output' / 'compilation_result.json'
+                if default_result_path.exists():
+                    with open(default_result_path, 'r') as f:
+                        compilation_result = json.load(f)
+                    self.partition_config = compilation_result['partition_config']
+                else:
+                    raise FileNotFoundError(
+                        f"partition_config not provided and default compilation_result.json not found at {default_result_path}. "
+                        "Please provide custom_partition_config or ensure compilation_result.json exists."
+                    )
+
             self.statistics = {'makespan': 0}  # Placeholder
         else:
             # 正常模式：加载JSON
