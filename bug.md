@@ -1,4 +1,4 @@
- (GNX) PS D:\Research\GNX\executer> python .\test_pipeline_execution.py
+(GNX) PS D:\Research\GNX\executer> python .\test_pipeline_execution.py
 ================================================================================
 Pipeline Execution Test
 ================================================================================
@@ -37,44 +37,12 @@ Preparing executor...
     Models directory: D:\Research\GNX\executer\models
 
   Checking model files...
-    Model missing: cluster_0_block_0_CPU
-      Exporting CPU model for stages [1, 2, 3, 4, 5]...
-  Exporting CPU model (stages [1, 2, 3, 4, 5]) to D:\Research\GNX\executer\models\c0_b0_CPU_stages_1_2_3_4_5.onnx
-C:\Users\29067\miniconda3\envs\GNX\lib\site-packages\torch\onnx\symbolic_opset9.py:6075: UserWarning: Warning: ONNX export does not support duplicated values in 'index' field, this will cause the ONNX model to be incorrect.
-  warnings.warn(
-  ✓ Model exported successfully (0.50 MB)
-  ⚠ Verification failed: Required inputs (['x', 'edge_index']) are missing from input feed (['input_0', 'input_1']).
-      ✓ Exported: 507.3 KB
-    Model missing: cluster_0_block_0_GPU
-      Exporting GPU model for stages [1, 2, 3, 4, 5]...
-  Exporting GPU model (stages [1, 2, 3, 4, 5]) to D:\Research\GNX\executer\models\c0_b0_GPU_stages_1_2_3_4_5.onnx
-  ✓ Model exported successfully (0.50 MB)
-  ⚠ Verification failed: Required inputs (['x', 'edge_index']) are missing from input feed (['input_0', 'input_1']).
-      ✓ Exported: 507.3 KB
-    Model missing: cluster_0_block_1_NPU
-      Exporting NPU model for stages [6, 7]...
-  Exporting NPU model (stages [6, 7]) to D:\Research\GNX\executer\models\c0_b1_NPU_stages_6_7.onnx
-  ✓ Model exported successfully (0.74 MB)
-  ⚠ Verification failed: local variable 'dummy_edge_index' referenced before assignment
-      ✓ Exported: 757.8 KB
-    Model missing: cluster_1_block_0_CPU
-      Exporting CPU model for stages [1, 2, 3, 4]...
-  Exporting CPU model (stages [1, 2, 3, 4]) to D:\Research\GNX\executer\models\c1_b0_CPU_stages_1_2_3_4.onnx
-  ✓ Model exported successfully (0.50 MB)
-  ⚠ Verification failed: Required inputs (['x', 'edge_index']) are missing from input feed (['input_0', 'input_1']).
-      ✓ Exported: 507.0 KB
-    Model missing: cluster_1_block_1_GPU
-      Exporting GPU model for stages [5, 6, 7]...
-  Exporting GPU model (stages [5, 6, 7]) to D:\Research\GNX\executer\models\c1_b1_GPU_stages_5_6_7.onnx
-  ✓ Model exported successfully (0.74 MB)
-  ⚠ Verification failed: local variable 'dummy_edge_index' referenced before assignment
-      ✓ Exported: 758.5 KB
-    Model missing: cluster_1_block_1_NPU
-      Exporting NPU model for stages [5, 6, 7]...
-  Exporting NPU model (stages [5, 6, 7]) to D:\Research\GNX\executer\models\c1_b1_NPU_stages_5_6_7.onnx
-  ✓ Model exported successfully (0.74 MB)
-  ⚠ Verification failed: local variable 'dummy_edge_index' referenced before assignment
-      ✓ Exported: 758.5 KB
+    ✓ Model exists: cluster_0_block_0_CPU (507.3 KB)
+    ✓ Model exists: cluster_0_block_0_GPU (507.3 KB)
+    ✓ Model exists: cluster_0_block_1_NPU (757.8 KB)
+    ✓ Model exists: cluster_1_block_0_CPU (507.0 KB)
+    ✓ Model exists: cluster_1_block_1_GPU (758.5 KB)
+    ✓ Model exists: cluster_1_block_1_NPU (758.5 KB)
 
   Loading and compiling models...
     Loading cluster_0_block_0_CPU...
@@ -106,16 +74,16 @@ Cluster 0: custom_pep_0
   Subgraphs: [0, 1, 2, 3, 4, 5, 6, 7]
 ======================================================================
 
-  Subgraph 0... 1223.56ms
-  Subgraph 1... 768.26ms
-  Subgraph 2... 500.56ms
-  Subgraph 3... 639.19ms
-  Subgraph 4... 499.56ms
-  Subgraph 5... 481.56ms
-  Subgraph 6... 513.99ms
-  Subgraph 7... 542.61ms
+  Subgraph 0... 1221.24ms
+  Subgraph 1... 792.62ms
+  Subgraph 2... 611.35ms
+  Subgraph 3... 470.92ms
+  Subgraph 4... 531.50ms
+  Subgraph 5... 508.97ms
+  Subgraph 6... 483.73ms
+  Subgraph 7... 349.20ms
 
-✓ Cluster 0 completed in 17930.68ms
+✓ Cluster 0 completed in 16835.13ms
 
 
 ======================================================================
@@ -124,18 +92,38 @@ Cluster 1: custom_pep_1
   Subgraphs: [8, 9, 10, 11, 12, 13, 14, 15]
 ======================================================================
 
-  Subgraph 8...   ✗ Execution failed: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Invalid rank for input: count Got: 2 Expected: 1 Please fix either the inputs/outputs or the model.
-Traceback (most recent call last):
-  File "D:\Research\GNX\executer\test_pipeline_execution.py", line 63, in main
-    result = executor.execute()
-  File "D:\Research\GNX\executer\executor.py", line 196, in execute
-    embeddings, sg_time = executor.execute(edge_index, x, owned_nodes)
-  File "D:\Research\GNX\executer\subgraph_executor.py", line 72, in execute
-    current_data = self._execute_block(
-  File "D:\Research\GNX\executer\subgraph_executor.py", line 122, in _execute_block
-    output_data = self._execute_data_parallel(
-  File "D:\Research\GNX\executer\subgraph_executor.py", line 236, in _execute_data_parallel
-    model_outputs = model.run(None, input_dict)
-  File "C:\Users\29067\miniconda3\envs\GNX\lib\site-packages\onnxruntime\capi\onnxruntime_inference_collection.py", line 287, in run
-    return self._sess.run(output_names, input_feed, run_options)
-onnxruntime.capi.onnxruntime_pybind11_state.InvalidArgument: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Invalid rank for input: count Got: 2 Expected: 1 Please fix either the inputs/outputs or the model.
+  Subgraph 8... 538.05ms
+  Subgraph 9... 329.12ms
+  Subgraph 10... 311.61ms
+  Subgraph 11... 222.02ms
+  Subgraph 12... 535.56ms
+  Subgraph 13... 340.50ms
+  Subgraph 14... 326.88ms
+  Subgraph 15... 349.03ms
+
+✓ Cluster 1 completed in 11784.55ms
+
+
+✓ All clusters executed
+  Total time: 29838.77ms
+  ✓ Execution complete
+
+================================================================================
+Execution Results
+================================================================================
+Total time: 29838.77ms
+Output embeddings shape: torch.Size([89250, 256])
+
+Per-cluster times:
+  Cluster 0: 16835.13ms
+  Cluster 1: 11784.55ms
+
+Per-subgraph times (first 5):
+  Subgraph 0: 1221.24ms
+  Subgraph 1: 792.62ms
+  Subgraph 2: 611.35ms
+  Subgraph 3: 470.92ms
+  Subgraph 4: 531.50ms
+
+✓ Pipeline execution test completed successfully!
+(GNX) PS D:\Research\GNX\executer>
