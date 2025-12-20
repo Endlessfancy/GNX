@@ -364,8 +364,8 @@ class SubgraphExecutor:
             # Stage 1-4完成，输出是concatenated [sum_agg, count]
             # 需要分离: sum_agg: [num_nodes, 256], count: [num_nodes, 1]
             # 下一个block (Stage 5-7)需要: (sum_agg, count, x)
-            sum_agg = output[:, :-1]  # All except last column
-            count = output[:, -1:]  # Last column
+            sum_agg = output[:, :-1]  # All except last column: [num_nodes, 256]
+            count = output[:, -1]  # Last column: [num_nodes] (squeezed)
             return {
                 'sum_agg': sum_agg,
                 'count': count,
