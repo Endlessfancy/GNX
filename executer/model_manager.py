@@ -56,7 +56,7 @@ class ModelManager:
         """
         all_refs = {}
 
-        for cluster in self.clusters:
+        for cluster_id, cluster in enumerate(self.clusters):
             # 如果 model_refs 为空（自定义 PEP），从 PEP 自动生成
             if not cluster.get('model_refs') or len(cluster['model_refs']) == 0:
                 pep = cluster['pep']
@@ -65,10 +65,11 @@ class ModelManager:
                     stages = block[1]   # [1, 2, 3, 4, 5] or [6, 7]
 
                     # 为每个设备生成模型引用
+                    # Use cluster-specific model keys to avoid conflicts
                     for device in devices:
                         stages_str = '_'.join(map(str, stages))
-                        model_key = f"block_{block_id}_{device}"
-                        model_filename = f"{device}_stages_{stages_str}.onnx"
+                        model_key = f"cluster_{cluster_id}_block_{block_id}_{device}"
+                        model_filename = f"c{cluster_id}_b{block_id}_{device}_stages_{stages_str}.onnx"
                         abs_path = str((self.models_dir / model_filename).resolve())
                         all_refs[model_key] = abs_path
             else:
@@ -106,35 +107,24 @@ class ModelManager:
         导出模型（使用standalone export utility）
 
         Args:
-            model_key: 例如 "block_0_CPU"
+            model_key: 例如 "cluster_0_block_0_CPU"
             model_path: 输出路径
         """
-        # 解析model_key: "block_0_CPU" → block_id=0, device="CPU"
+        # 解析model_key: "cluster_0_block_0_CPU" → cluster_id=0, block_id=0, device="CPU"
         parts = model_key.split('_')
-        block_id = int(parts[1])
-        device = parts[2]
+        cluster_id = int(parts[1])
+        block_id = int(parts[3])
+        device = parts[4]
 
-        # 从model_refs找到对应的cluster和PEP
-        # 需要查找哪个cluster包含这个model_key
-        cluster = None
-        pep = None
-        for c in self.clusters:
-            # Check if this cluster contains the model_key by regenerating keys
-            temp_pep = c['pep']
-            for bid, block in enumerate(temp_pep):
-                devices = block[0]
-                if bid == block_id and device in devices:
-                    cluster = c
-                    pep = temp_pep
-                    break
-            if cluster is not None:
-                break
+        # 从对应的cluster获取PEP
+        if cluster_id >= len(self.clusters):
+            raise ValueError(f"Cluster {cluster_id} not found")
 
-        if cluster is None or pep is None:
-            raise ValueError(f"Model {model_key} not found in any cluster")
+        cluster = self.clusters[cluster_id]
+        pep = cluster['pep']
 
         if block_id >= len(pep):
-            raise ValueError(f"Block {block_id} not found in PEP")
+            raise ValueError(f"Block {block_id} not found in cluster {cluster_id}")
 
         block = pep[block_id]
         stages = block[1]  # [1, 2, 3, 4, 5, 6, 7]
@@ -285,7 +275,7 @@ class ModelManager:
             devices = block[0]  # ['CPU', 'GPU']
 
             for device in devices:
-                model_key = f"block_{block_id}_{device}"
+                model_key = f"cluster_{cluster_id}_block_{block_id}_{device}"
                 if model_key in self.compiled_models:
                     models[(block_id, device)] = self.compiled_models[model_key]
 

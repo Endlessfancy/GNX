@@ -36,15 +36,20 @@ class SAGEStage1_Gather(torch.nn.Module):
 
 class SAGEStage2_Message(torch.nn.Module):
     """
-    Stage 2: MESSAGE - Message computation
-    Input: x_j [num_edges, feat_dim]
-    Output: messages [num_edges, feat_dim]
+    Stage 2: MESSAGE - Linear transformation to hidden dimension
+    Input: x_j [num_edges, in_dim]
+    Output: messages [num_edges, hidden_dim]
     """
-    def __init__(self):
+    def __init__(self, in_channels: int = 500, hidden_channels: int = 256):
         super().__init__()
+        self.lin = Linear(in_channels, hidden_channels, bias=False)
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        self.lin.reset_parameters()
 
     def forward(self, x_j: torch.Tensor) -> torch.Tensor:
-        return x_j
+        return self.lin(x_j)
 
 
 class SAGEStage3_ReduceSum(torch.nn.Module):
@@ -303,7 +308,7 @@ class SimpleModelExporter:
         """
         self.stage_modules = [
             SAGEStage1_Gather(),
-            SAGEStage2_Message(),
+            SAGEStage2_Message(in_dim, hid_dim),  # in_channels, hidden_channels
             SAGEStage3_ReduceSum(),
             SAGEStage4_ReduceCount(),
             SAGEStage5_Normalize(),

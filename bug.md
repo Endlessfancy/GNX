@@ -33,13 +33,49 @@ Preparing executor...
 
 [Step 3/4] Exporting and loading models...
   ✓ Model manager initialized
-    Unique models needed: 0
+    Unique models needed: 4
     Models directory: D:\Research\GNX\executer\models
 
   Checking model files...
+    Model missing: block_0_CPU
+      Exporting CPU model for stages [1, 2, 3, 4, 5]...
+  Exporting CPU model (stages [1, 2, 3, 4, 5]) to D:\Research\GNX\executer\models\CPU_stages_1_2_3_4.onnx
+C:\Users\29067\miniconda3\envs\GNX\lib\site-packages\torch\onnx\symbolic_opset9.py:6075: UserWarning: Warning: ONNX export does not support duplicated values in 'index' field, this will cause the ONNX model to be incorrect.
+  warnings.warn(
+  ✓ Model exported successfully (0.01 MB)
+  ⚠ Verification failed: Required inputs (['x', 'edge_index']) are missing from input feed (['input_0', 'input_1']).
+      ✓ Exported: 7.0 KB
+    Model missing: block_0_GPU
+      Exporting GPU model for stages [1, 2, 3, 4, 5]...
+  Exporting GPU model (stages [1, 2, 3, 4, 5]) to D:\Research\GNX\executer\models\GPU_stages_1_2_3_4_5.onnx
+  ✓ Model exported successfully (0.01 MB)
+  ⚠ Verification failed: Required inputs (['x', 'edge_index']) are missing from input feed (['input_0', 'input_1']).
+      ✓ Exported: 7.0 KB
+    Model missing: block_1_NPU
+      Exporting NPU model for stages [6, 7]...
+  Exporting NPU model (stages [6, 7]) to D:\Research\GNX\executer\models\NPU_stages_5_6_7.onnx
+  ✓ Model exported successfully (0.74 MB)
+  ⚠ Verification failed: local variable 'dummy_edge_index' referenced before assignment
+      ✓ Exported: 757.8 KB
+    Model missing: block_1_GPU
+      Exporting GPU model for stages [5, 6, 7]...
+  Exporting GPU model (stages [5, 6, 7]) to D:\Research\GNX\executer\models\GPU_stages_5_6_7.onnx
+  ✓ Model exported successfully (0.74 MB)
+  ⚠ Verification failed: local variable 'dummy_edge_index' referenced before assignment
+      ✓ Exported: 758.5 KB
 
   Loading and compiling models...
-  ✓ All models loaded: 0
+    Loading block_0_CPU...
+      ✓ Compiled for CPUExecutionProvider
+    Loading block_0_GPU...
+C:\Users\29067\miniconda3\envs\GNX\lib\site-packages\onnxruntime\capi\onnxruntime_inference_collection.py:123: UserWarning: Specified provider 'CUDAExecutionProvider' is not in available provider names.Available providers: 'AzureExecutionProvider, CPUExecutionProvider'
+  warnings.warn(
+      ✓ Compiled for CUDAExecutionProvider
+    Loading block_1_NPU...
+      ✓ Compiled for CPUExecutionProvider
+    Loading block_1_GPU...
+      ✓ Compiled for CUDAExecutionProvider
+  ✓ All models loaded: 4
 
 [Step 4/4] Creating subgraph executors...
   ✓ Created 16 subgraph executors
@@ -56,7 +92,9 @@ Cluster 0: custom_pep_0
   Subgraphs: [0, 1, 2, 3, 4, 5, 6, 7]
 ======================================================================
 
-  Subgraph 0...   ✗ Execution failed: (0, 'CPU')
+  Subgraph 0...   ✗ Execution failed: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Got invalid dimensions for input: mean_agg for the following indices
+ index: 1 Got: 500 Expected: 256
+ Please fix either the inputs/outputs or the model.
 Traceback (most recent call last):
   File "D:\Research\GNX\executer\test_pipeline_execution.py", line 63, in main
     result = executor.execute()
@@ -64,8 +102,12 @@ Traceback (most recent call last):
     embeddings, sg_time = executor.execute(edge_index, x, owned_nodes)
   File "D:\Research\GNX\executer\subgraph_executor.py", line 72, in execute
     current_data = self._execute_block(
-  File "D:\Research\GNX\executer\subgraph_executor.py", line 122, in _execute_block
-    output_data = self._execute_data_parallel(
-  File "D:\Research\GNX\executer\subgraph_executor.py", line 224, in _execute_data_parallel
-    model = self.models[(block_id, device)]
-KeyError: (0, 'CPU')
+  File "D:\Research\GNX\executer\subgraph_executor.py", line 114, in _execute_block
+    output_data = self._execute_single_device(
+  File "D:\Research\GNX\executer\subgraph_executor.py", line 168, in _execute_single_device
+    outputs = model.run(None, input_dict)
+  File "C:\Users\29067\miniconda3\envs\GNX\lib\site-packages\onnxruntime\capi\onnxruntime_inference_collection.py", line 287, in run
+    return self._sess.run(output_names, input_feed, run_options)
+onnxruntime.capi.onnxruntime_pybind11_state.InvalidArgument: [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Got invalid dimensions for input: mean_agg for the following indices
+ index: 1 Got: 500 Expected: 256
+ Please fix either the inputs/outputs or the model.
