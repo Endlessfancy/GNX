@@ -275,6 +275,10 @@ class SubgraphExecutor:
             # Stage 1-N: 从原始输入开始
             return [input_data['x'], input_data['edge_index']]
 
+        elif first_stage == 5:
+            # Stage 5-7: 需要sum_agg, count, x
+            return [input_data['sum_agg'], input_data['count'], input_data['x']]
+
         elif first_stage == 6:
             # Stage 6-7: 需要mean_agg和x
             return [input_data['mean_agg'], input_data['x']]
@@ -304,6 +308,25 @@ class SubgraphExecutor:
         if first_stage == 1:
             # Stage 1-N: 使用x_full和partition的edge_index
             return [partition['x_full'], partition['edge_index']]
+
+        elif first_stage == 5:
+            # Stage 5-7: 使用sum_agg, count, x_owned
+            sum_agg = input_data.get('sum_agg')
+            count = input_data.get('count')
+            start, end = partition['node_range']
+
+            # Extract partition's owned nodes
+            if sum_agg.size(0) == partition['total_num_nodes']:
+                sum_agg_part = sum_agg[start:end]
+            else:
+                sum_agg_part = sum_agg
+
+            if count.size(0) == partition['total_num_nodes']:
+                count_part = count[start:end]
+            else:
+                count_part = count
+
+            return [sum_agg_part, count_part, partition['x_owned']]
 
         elif first_stage == 6:
             # Stage 6-7: 使用mean_agg和x_owned
@@ -337,7 +360,21 @@ class SubgraphExecutor:
         """
         last_stage = completed_stages[-1]
 
-        if last_stage == 5:
+        if last_stage == 4:
+            # Stage 1-4完成，输出是concatenated [sum_agg, count]
+            # 需要分离: sum_agg: [num_nodes, 256], count: [num_nodes, 1]
+            # 下一个block (Stage 5-7)需要: (sum_agg, count, x)
+            sum_agg = output[:, :-1]  # All except last column
+            count = output[:, -1:]  # Last column
+            return {
+                'sum_agg': sum_agg,
+                'count': count,
+                'x': input_data['x'],  # 原始特征
+                'edge_index': input_data['edge_index'],
+                'num_nodes': input_data['num_nodes']
+            }
+
+        elif last_stage == 5:
             # Stage 1-5完成，输出是mean_agg
             # 下一个block (Stage 6-7)需要: (mean_agg, x)
             return {

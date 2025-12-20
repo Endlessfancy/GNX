@@ -114,9 +114,24 @@ class ModelManager:
         block_id = int(parts[1])
         device = parts[2]
 
-        # 从execution_plan找到对应的PEP
-        cluster = self.clusters[0]  # 目前只有1个cluster
-        pep = cluster['pep']
+        # 从model_refs找到对应的cluster和PEP
+        # 需要查找哪个cluster包含这个model_key
+        cluster = None
+        pep = None
+        for c in self.clusters:
+            # Check if this cluster contains the model_key by regenerating keys
+            temp_pep = c['pep']
+            for bid, block in enumerate(temp_pep):
+                devices = block[0]
+                if bid == block_id and device in devices:
+                    cluster = c
+                    pep = temp_pep
+                    break
+            if cluster is not None:
+                break
+
+        if cluster is None or pep is None:
+            raise ValueError(f"Model {model_key} not found in any cluster")
 
         if block_id >= len(pep):
             raise ValueError(f"Block {block_id} not found in PEP")
