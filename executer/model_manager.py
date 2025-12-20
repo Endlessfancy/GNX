@@ -57,17 +57,29 @@ class ModelManager:
         all_refs = {}
 
         for cluster in self.clusters:
-            model_refs = cluster['model_refs']
-            for key, ref_path in model_refs.items():
-                if ref_path:
-                    # Extract model filename from compilation_result reference
-                    # ref_path could be:
-                    #   - "models/GPU_stages_1_2_3_4_5_6_7.onnx" (relative)
-                    #   - "/absolute/path/models/GPU_stages_1_2_3_4_5_6_7.onnx" (absolute)
-                    # We only care about the filename, store in executor/models/
-                    model_filename = Path(ref_path).name
-                    abs_path = str((self.models_dir / model_filename).resolve())
-                    all_refs[key] = abs_path
+            # 如果 model_refs 为空（自定义 PEP），从 PEP 自动生成
+            if not cluster.get('model_refs') or len(cluster['model_refs']) == 0:
+                pep = cluster['pep']
+                for block_id, block in enumerate(pep):
+                    devices = block[0]  # ['CPU', 'GPU'] or ['NPU']
+                    stages = block[1]   # [1, 2, 3, 4, 5] or [6, 7]
+
+                    # 为每个设备生成模型引用
+                    for device in devices:
+                        stages_str = '_'.join(map(str, stages))
+                        model_key = f"block_{block_id}_{device}"
+                        model_filename = f"{device}_stages_{stages_str}.onnx"
+                        abs_path = str((self.models_dir / model_filename).resolve())
+                        all_refs[model_key] = abs_path
+            else:
+                # 使用已有的 model_refs
+                model_refs = cluster['model_refs']
+                for key, ref_path in model_refs.items():
+                    if ref_path:
+                        # Extract model filename from compilation_result reference
+                        model_filename = Path(ref_path).name
+                        abs_path = str((self.models_dir / model_filename).resolve())
+                        all_refs[key] = abs_path
 
         return all_refs
 
