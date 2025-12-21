@@ -57,13 +57,25 @@ def main():
         return
     print()
 
-    # Execute
-    print("[4/4] Executing pipeline...")
+    # Execute (Sequential mode)
+    print("[4/5] Executing pipeline (Sequential mode)...")
     try:
-        result = executor.execute()
-        print("  ✓ Execution complete")
+        result_seq = executor.execute(use_pipeline_parallelism=False)
+        print("  ✓ Sequential execution complete")
     except Exception as e:
-        print(f"  ✗ Execution failed: {e}")
+        print(f"  ✗ Sequential execution failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return
+    print()
+
+    # Execute (Pipeline Parallel mode)
+    print("[5/5] Executing pipeline (Pipeline Parallel mode)...")
+    try:
+        result_par = executor.execute(use_pipeline_parallelism=True)
+        print("  ✓ Pipeline parallel execution complete")
+    except Exception as e:
+        print(f"  ✗ Pipeline parallel execution failed: {e}")
         import traceback
         traceback.print_exc()
         return
@@ -71,20 +83,37 @@ def main():
 
     # Print results
     print("="*80)
-    print("Execution Results")
+    print("Execution Results Comparison")
     print("="*80)
-    print(f"Total time: {result['total_time']:.2f}ms")
-    print(f"Output embeddings shape: {result['embeddings'].shape}")
     print()
 
-    print("Per-cluster times:")
-    for i, time_ms in enumerate(result['per_cluster_times']):
-        print(f"  Cluster {i}: {time_ms:.2f}ms")
+    print("Sequential Execution:")
+    print(f"  Total time: {result_seq['total_time']:.2f}ms")
+    print(f"  Output shape: {result_seq['embeddings'].shape}")
+    print(f"  Per-cluster times: {[f'{t:.2f}ms' for t in result_seq['per_cluster_times']]}")
     print()
 
-    print("Per-subgraph times (first 5):")
-    for i, time_ms in enumerate(result['per_subgraph_times'][:5]):
-        print(f"  Subgraph {i}: {time_ms:.2f}ms")
+    print("Pipeline Parallel Execution:")
+    print(f"  Total time: {result_par['total_time']:.2f}ms")
+    print(f"  Output shape: {result_par['embeddings'].shape}")
+    print(f"  Per-cluster times: {[f'{t:.2f}ms' for t in result_par['per_cluster_times']]}")
+    print()
+
+    print("Performance Comparison:")
+    speedup = result_seq['total_time'] / result_par['total_time']
+    time_saved = result_seq['total_time'] - result_par['total_time']
+    print(f"  Speedup: {speedup:.2f}x")
+    print(f"  Time saved: {time_saved:.2f}ms ({time_saved/result_seq['total_time']*100:.1f}%)")
+    print()
+
+    # Verify correctness
+    import torch
+    if torch.allclose(result_seq['embeddings'], result_par['embeddings'], atol=1e-4):
+        print("✓ Results verification: PASSED (outputs match)")
+    else:
+        print("✗ Results verification: FAILED (outputs differ!)")
+        max_diff = (result_seq['embeddings'] - result_par['embeddings']).abs().max().item()
+        print(f"  Max difference: {max_diff}")
     print()
 
     print("✓ Pipeline execution test completed successfully!")

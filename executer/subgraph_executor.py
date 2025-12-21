@@ -7,6 +7,7 @@ import time
 import torch
 import numpy as np
 from typing import Dict, List, Tuple, Optional
+from concurrent.futures import ThreadPoolExecutor
 
 # Import partitioner and NPU utils
 try:
@@ -187,13 +188,56 @@ class SubgraphExecutor:
 
         return output_data
 
+    def _run_partition_on_device(self, block_id: int, device: str,
+                                 partition: Dict, partition_input: List) -> torch.Tensor:
+        """
+        在单个设备上执行partition的推理（供ThreadPoolExecutor调用）
+
+        Args:
+            block_id: Block ID
+            device: 设备名称 ('CPU', 'GPU', 'NPU')
+            partition: 分区信息
+            partition_input: 模型输入数据
+
+        Returns:
+            device_output: 该设备的输出tensor
+        """
+        model = self.models[(block_id, device)]
+
+        if hasattr(model, 'run'):
+            # ONNX Runtime
+            input_names = [inp.name for inp in model.get_inputs()]
+            numpy_inputs = self._convert_to_numpy(partition_input)
+
+            if len(input_names) == len(numpy_inputs):
+                input_dict = {name: data for name, data in zip(input_names, numpy_inputs)}
+            else:
+                input_dict = {f'input_{i}': data for i, data in enumerate(numpy_inputs)}
+
+            model_outputs = model.run(None, input_dict)
+            device_output = torch.from_numpy(model_outputs[0])
+        else:
+            # PyTorch
+            with torch.no_grad():
+                partition_input_tensors = partition_input
+                if device == 'GPU' and torch.cuda.is_available():
+                    partition_input_tensors = [t.cuda() if isinstance(t, torch.Tensor) else t
+                                              for t in partition_input_tensors]
+
+                device_output = model(*partition_input_tensors)
+
+                if isinstance(device_output, torch.Tensor) and device_output.is_cuda:
+                    device_output = device_output.cpu()
+
+        return device_output
+
     def _execute_data_parallel(self, block_id: int, devices: List[str],
                                ratios: List[float], input_data: Dict,
                                owned_nodes: torch.Tensor, stages: List[int]) -> Dict:
         """
-        数据并行执行（多设备）
+        数据并行执行（多设备） - 真正并发执行
 
-        策略: 按ratio分割owned_nodes，每个设备处理一部分
+        策略: 按ratio分割owned_nodes，每个设备并发处理一部分
 
         Args:
             block_id: Block ID
@@ -215,40 +259,22 @@ class SubgraphExecutor:
             edge_index, num_nodes, ratios, x
         )
 
-        outputs = []
-        for partition, device in zip(partitions, devices):
-            # 准备该设备的输入
-            partition_input = self._prepare_partition_input(input_data, partition, stages)
+        # 并发执行多个设备
+        with ThreadPoolExecutor(max_workers=len(devices)) as executor:
+            futures = []
+            for partition, device in zip(partitions, devices):
+                # 准备该设备的输入
+                partition_input = self._prepare_partition_input(input_data, partition, stages)
 
-            # 执行推理
-            model = self.models[(block_id, device)]
+                # 提交任务到线程池
+                future = executor.submit(
+                    self._run_partition_on_device,
+                    block_id, device, partition, partition_input
+                )
+                futures.append(future)
 
-            if hasattr(model, 'run'):
-                # ONNX Runtime
-                input_names = [inp.name for inp in model.get_inputs()]
-                numpy_inputs = self._convert_to_numpy(partition_input)
-
-                if len(input_names) == len(numpy_inputs):
-                    input_dict = {name: data for name, data in zip(input_names, numpy_inputs)}
-                else:
-                    input_dict = {f'input_{i}': data for i, data in enumerate(numpy_inputs)}
-
-                model_outputs = model.run(None, input_dict)
-                device_output = torch.from_numpy(model_outputs[0])
-            else:
-                # PyTorch
-                with torch.no_grad():
-                    partition_input_tensors = partition_input
-                    if device == 'GPU' and torch.cuda.is_available():
-                        partition_input_tensors = [t.cuda() if isinstance(t, torch.Tensor) else t
-                                                  for t in partition_input_tensors]
-
-                    device_output = model(*partition_input_tensors)
-
-                    if isinstance(device_output, torch.Tensor) and device_output.is_cuda:
-                        device_output = device_output.cpu()
-
-            outputs.append(device_output)
+            # 等待所有设备完成并收集结果
+            outputs = [f.result() for f in futures]
 
         # 合并输出
         merged_output = NodeBasedPartitioner.merge_outputs(outputs, partitions)

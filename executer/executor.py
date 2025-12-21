@@ -149,9 +149,14 @@ class PipelineExecutor:
 
         print(f"  ✓ Created {len(self.subgraph_executors)} subgraph executors")
 
-    def execute(self) -> Dict:
+    def execute(self, use_pipeline_parallelism: bool = False) -> Dict:
         """
         执行推理（支持多cluster）
+
+        Args:
+            use_pipeline_parallelism: 是否启用流水线并行
+                - False: 顺序执行（默认，向后兼容）
+                - True: 使用流水线并行执行（block级别并行 + 数据并行）
 
         Returns:
             {
@@ -161,6 +166,10 @@ class PipelineExecutor:
                 'total_time': 总时间（ms）
             }
         """
+        print(f"\n{'='*70}")
+        print(f"Execution Mode: {'Pipeline Parallel' if use_pipeline_parallelism else 'Sequential'}")
+        print(f"{'='*70}\n")
+
         # 准备输出
         total_nodes = self.data_loader.full_data.num_nodes
         hidden_dim = 256  # GraphSAGE默认hidden dimension
@@ -170,40 +179,73 @@ class PipelineExecutor:
         per_cluster_times = []
         start_time = time.time()
 
-        # 按cluster执行
-        for cluster_id, cluster in enumerate(self.execution_plan['clusters']):
-            print(f"\n{'='*70}")
-            print(f"Cluster {cluster_id}: {cluster['pep_key']}")
-            print(f"  PEP: {cluster['pep']}")
-            print(f"  Subgraphs: {cluster['subgraph_ids']}")
-            print(f"{'='*70}\n")
+        if use_pipeline_parallelism:
+            # 使用流水线并行执行
+            try:
+                from .pipeline_executor import PipelineExecutor as PipelineExec
+            except ImportError:
+                from pipeline_executor import PipelineExecutor as PipelineExec
 
-            cluster_start = time.time()
+            for cluster_id, cluster in enumerate(self.execution_plan['clusters']):
+                print(f"\n{'='*70}")
+                print(f"Cluster {cluster_id}: {cluster['pep_key']} (Pipeline Mode)")
+                print(f"  PEP: {cluster['pep']}")
+                print(f"  Subgraphs: {cluster['subgraph_ids']}")
+                print(f"  Blocks: {len(cluster['pep'])}")
+                print(f"{'='*70}\n")
 
-            # 执行该cluster的所有subgraph
-            for sg_id in cluster['subgraph_ids']:
-                print(f"  Subgraph {sg_id}...", end=" ", flush=True)
+                cluster_start = time.time()
 
-                # 获取subgraph数据
-                sg_data = self.data_loader.get_subgraph_data(sg_id)
-                edge_index = sg_data['edge_index']
-                x = sg_data['x']
-                owned_nodes = sg_data['owned_nodes']
-                global_owned_nodes = sg_data['global_owned_nodes']
+                # 创建流水线执行器
+                pipeline_exec = PipelineExec(
+                    cluster_id, cluster, self.data_loader, self.subgraph_executors
+                )
 
-                # 执行推理
-                executor = self.subgraph_executors[sg_id]
-                embeddings, sg_time = executor.execute(edge_index, x, owned_nodes)
+                # 执行流水线
+                result = pipeline_exec.execute_pipeline()
 
-                # 存储结果（映射回全局节点ID）
-                all_embeddings[global_owned_nodes] = embeddings
+                # 合并embeddings
+                all_embeddings += result['embeddings']
 
-                per_subgraph_times.append(sg_time)
-                print(f"{sg_time:.2f}ms")
+                cluster_time = (time.time() - cluster_start) * 1000
+                per_cluster_times.append(cluster_time)
+                print(f"\n✓ Cluster {cluster_id} completed in {cluster_time:.2f}ms\n")
 
-            cluster_time = (time.time() - cluster_start) * 1000
-            per_cluster_times.append(cluster_time)
-            print(f"\n✓ Cluster {cluster_id} completed in {cluster_time:.2f}ms\n")
+        else:
+            # 原有的顺序执行逻辑
+            for cluster_id, cluster in enumerate(self.execution_plan['clusters']):
+                print(f"\n{'='*70}")
+                print(f"Cluster {cluster_id}: {cluster['pep_key']}")
+                print(f"  PEP: {cluster['pep']}")
+                print(f"  Subgraphs: {cluster['subgraph_ids']}")
+                print(f"{'='*70}\n")
+
+                cluster_start = time.time()
+
+                # 执行该cluster的所有subgraph
+                for sg_id in cluster['subgraph_ids']:
+                    print(f"  Subgraph {sg_id}...", end=" ", flush=True)
+
+                    # 获取subgraph数据
+                    sg_data = self.data_loader.get_subgraph_data(sg_id)
+                    edge_index = sg_data['edge_index']
+                    x = sg_data['x']
+                    owned_nodes = sg_data['owned_nodes']
+                    global_owned_nodes = sg_data['global_owned_nodes']
+
+                    # 执行推理
+                    executor = self.subgraph_executors[sg_id]
+                    embeddings, sg_time = executor.execute(edge_index, x, owned_nodes)
+
+                    # 存储结果（映射回全局节点ID）
+                    all_embeddings[global_owned_nodes] = embeddings
+
+                    per_subgraph_times.append(sg_time)
+                    print(f"{sg_time:.2f}ms")
+
+                cluster_time = (time.time() - cluster_start) * 1000
+                per_cluster_times.append(cluster_time)
+                print(f"\n✓ Cluster {cluster_id} completed in {cluster_time:.2f}ms\n")
 
         total_time = (time.time() - start_time) * 1000  # ms
 
