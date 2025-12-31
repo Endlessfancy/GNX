@@ -59,6 +59,17 @@ class PipelineExecutor:
         self.raw_data_cache = {}
         self.cache_lock = threading.Lock()
 
+        # 详细时间统计
+        self.detailed_timing = {
+            'block_times': {},      # {(sg_id, block_id): {'wait': t, 'exec': t, 'total': t}}
+            'timestamps': {},       # {(sg_id, block_id): {'start': t, 'end': t}}
+            'thread_ids': {},       # {block_id: thread_id}
+        }
+        self.timing_lock = threading.Lock()
+
+        # 保存实际流水线时间（用于性能分析）
+        self.actual_pipeline_time = 0.0
+
     def execute_pipeline(self) -> Dict:
         """
         执行流水线并行
@@ -88,6 +99,7 @@ class PipelineExecutor:
         final_embeddings = self._collect_final_embeddings()
 
         total_time = (time.time() - start_time) * 1000  # ms
+        self.actual_pipeline_time = total_time  # 保存用于性能分析
 
         return {
             'embeddings': final_embeddings,
@@ -109,8 +121,25 @@ class PipelineExecutor:
         Args:
             block_id: 当前block的ID (0 to num_blocks-1)
         """
+        import threading as th
+        thread_id = th.get_ident()
+
+        # 记录线程ID
+        with self.timing_lock:
+            self.detailed_timing['thread_ids'][block_id] = thread_id
+
         for sg_id in self.subgraph_ids:
-            sg_start_time = time.time()
+            total_start_time = time.time()
+            wait_time = 0.0
+
+            # 记录开始时间戳
+            with self.timing_lock:
+                self.detailed_timing['timestamps'][(sg_id, block_id)] = {
+                    'start': total_start_time
+                }
+
+            # 日志：开始处理
+            print(f"  [Block{block_id} Thread-{thread_id % 10000}] Starting SG{sg_id} at {total_start_time:.3f}s")
 
             # 获取输入数据
             if block_id == 0:
@@ -119,13 +148,18 @@ class PipelineExecutor:
             else:
                 # Block N: 等待Block N-1完成此subgraph
                 prev_block_id = block_id - 1
+
+                wait_start_time = time.time()
                 self.completion_events[(sg_id, prev_block_id)].wait()
+                wait_time = (time.time() - wait_start_time) * 1000  # ms
 
                 # 获取前一个block的输出
                 input_data = self._get_intermediate_result(sg_id, prev_block_id)
 
             # 执行当前block（会调用SubgraphExecutor执行单个block）
+            exec_start_time = time.time()
             output_data = self._execute_single_block(sg_id, block_id, input_data)
+            exec_time = (time.time() - exec_start_time) * 1000  # ms
 
             # 保存结果
             self._save_intermediate_result(sg_id, block_id, output_data)
@@ -133,11 +167,28 @@ class PipelineExecutor:
             # 发送完成信号，通知下一个block
             self.completion_events[(sg_id, block_id)].set()
 
-            sg_time = (time.time() - sg_start_time) * 1000
+            # 计算总时间
+            total_end_time = time.time()
+            total_time = (total_end_time - total_start_time) * 1000  # ms
 
-            # 只有最后一个block打印时间（避免多线程打印混乱）
+            # 记录结束时间戳
+            with self.timing_lock:
+                self.detailed_timing['timestamps'][(sg_id, block_id)]['end'] = total_end_time
+
+            # 保存详细统计
+            with self.timing_lock:
+                self.detailed_timing['block_times'][(sg_id, block_id)] = {
+                    'wait': wait_time,
+                    'exec': exec_time,
+                    'total': total_time
+                }
+
+            # 日志：完成处理
+            print(f"  [Block{block_id} Thread-{thread_id % 10000}] Finished SG{sg_id}: wait={wait_time:.0f}ms, exec={exec_time:.0f}ms, total={total_time:.0f}ms")
+
+            # 最后一个block额外打印汇总（兼容原有输出）
             if block_id == self.num_blocks - 1:
-                print(f"  Subgraph {sg_id}... {sg_time:.2f}ms")
+                print(f"  Subgraph {sg_id} completed: {total_time:.2f}ms")
 
     def _get_raw_subgraph_data(self, sg_id: int) -> Dict:
         """
@@ -278,3 +329,59 @@ class PipelineExecutor:
             final_tensor[global_ids] = embeds
 
         return final_tensor
+
+    def analyze_performance(self) -> Dict:
+        """
+        分析流水线性能
+
+        Returns:
+            性能分析结果字典
+        """
+        # 计算每个block的总执行时间（不含等待）
+        block_exec_times = {}
+        block_wait_times = {}
+
+        for block_id in range(self.num_blocks):
+            exec_sum = 0.0
+            wait_sum = 0.0
+
+            for sg_id in self.subgraph_ids:
+                timing = self.detailed_timing['block_times'].get((sg_id, block_id))
+                if timing:
+                    exec_sum += timing['exec']
+                    wait_sum += timing['wait']
+
+            block_exec_times[block_id] = exec_sum
+            block_wait_times[block_id] = wait_sum
+
+        # 理论顺序执行时间（所有block串行执行）
+        sequential_time = sum(block_exec_times.values())
+
+        # 实际流水线时间
+        pipeline_time = self.actual_pipeline_time
+
+        # 理论最大加速比（假设无overhead）
+        theoretical_speedup = self.num_blocks
+
+        # 实际加速比
+        actual_speedup = sequential_time / pipeline_time if pipeline_time > 0 else 0.0
+
+        # 流水线效率
+        efficiency = actual_speedup / theoretical_speedup if theoretical_speedup > 0 else 0.0
+
+        # 计算每个block的平均执行时间
+        avg_block_exec_times = {
+            block_id: exec_time / len(self.subgraph_ids)
+            for block_id, exec_time in block_exec_times.items()
+        }
+
+        return {
+            'sequential_time': sequential_time,
+            'pipeline_time': pipeline_time,
+            'theoretical_speedup': theoretical_speedup,
+            'actual_speedup': actual_speedup,
+            'efficiency': efficiency,
+            'block_exec_times': block_exec_times,
+            'block_wait_times': block_wait_times,
+            'avg_block_exec_times': avg_block_exec_times,
+        }

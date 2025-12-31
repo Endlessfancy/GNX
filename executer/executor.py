@@ -201,6 +201,9 @@ class PipelineExecutor:
                     cluster_id, cluster, self.data_loader, self.subgraph_executors
                 )
 
+                # 保存最后一个pipeline_exec实例（用于详细分析）
+                self.last_pipeline_exec = pipeline_exec
+
                 # 执行流水线
                 result = pipeline_exec.execute_pipeline()
 

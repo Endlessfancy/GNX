@@ -116,7 +116,45 @@ def main():
         print(f"  Max difference: {max_diff}")
     print()
 
-    print("✓ Pipeline execution test completed successfully!")
+    # 详细统计分析（如果有pipeline executor实例）
+    if hasattr(executor, 'last_pipeline_exec') and executor.last_pipeline_exec:
+        pipeline_exec = executor.last_pipeline_exec
+
+        # 打印详细时间统计表格
+        from gantt_visualizer import print_detailed_timing_table
+        print_detailed_timing_table(pipeline_exec.detailed_timing)
+
+        # 性能分析
+        perf = pipeline_exec.analyze_performance()
+        print("\n" + "="*80)
+        print("Pipeline Performance Analysis")
+        print("="*80)
+        print(f"\nTheoretical Performance:")
+        print(f"  Sum of all block execution times (sequential): {perf['sequential_time']:.0f}ms")
+        print(f"  Actual pipeline wallclock time:               {perf['pipeline_time']:.0f}ms")
+        print(f"\nSpeedup Analysis:")
+        print(f"  Theoretical maximum speedup (ideal):          {perf['theoretical_speedup']:.2f}x")
+        print(f"  Actual speedup achieved:                      {perf['actual_speedup']:.2f}x")
+        print(f"  Pipeline efficiency:                          {perf['efficiency']*100:.1f}%")
+        print(f"\nBlock Execution Times (excluding wait):")
+        for block_id in sorted(perf['block_exec_times'].keys()):
+            exec_time = perf['block_exec_times'][block_id]
+            wait_time = perf['block_wait_times'][block_id]
+            avg_exec = perf['avg_block_exec_times'][block_id]
+            print(f"  Block {block_id}: total_exec={exec_time:.0f}ms, total_wait={wait_time:.0f}ms, avg_exec={avg_exec:.0f}ms")
+
+        # 生成甘特图
+        print("\n" + "="*80)
+        print("Generating Gantt Chart...")
+        print("="*80)
+        from gantt_visualizer import generate_gantt_chart
+        gantt_output = generate_gantt_chart(pipeline_exec.detailed_timing, 'pipeline_gantt.txt')
+        print(gantt_output)
+        print("\n✓ Gantt chart saved to: pipeline_gantt.txt")
+    else:
+        print("\nNote: Detailed pipeline statistics not available (run with use_pipeline_parallelism=True)")
+
+    print("\n✓ Pipeline execution test completed successfully!")
 
 
 if __name__ == "__main__":
