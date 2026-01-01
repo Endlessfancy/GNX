@@ -69,13 +69,26 @@ def main():
         return
     print()
 
-    # Execute (Pipeline Parallel mode)
-    print("[5/5] Executing pipeline (Pipeline Parallel mode)...")
+    # Execute (Pipeline Parallel mode - Sync)
+    print("[5/6] Executing pipeline (Pipeline Parallel mode - Sync)...")
     try:
         result_par = executor.execute(use_pipeline_parallelism=True)
-        print("  ✓ Pipeline parallel execution complete")
+        print("  ✓ Pipeline parallel (sync) execution complete")
     except Exception as e:
-        print(f"  ✗ Pipeline parallel execution failed: {e}")
+        print(f"  ✗ Pipeline parallel (sync) execution failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return
+    print()
+
+    # Execute (Async Pipeline Parallel mode)
+    print("[6/6] Executing pipeline (Async Pipeline Parallel mode)...")
+    print("  【阶段3优化】Testing asyncio-based pipeline execution...")
+    try:
+        result_async = executor.execute(use_async=True)
+        print("  ✓ Async pipeline parallel execution complete")
+    except Exception as e:
+        print(f"  ✗ Async pipeline parallel execution failed: {e}")
         import traceback
         traceback.print_exc()
         return
@@ -93,27 +106,59 @@ def main():
     print(f"  Per-cluster times: {[f'{t:.2f}ms' for t in result_seq['per_cluster_times']]}")
     print()
 
-    print("Pipeline Parallel Execution:")
+    print("Pipeline Parallel Execution (Sync):")
     print(f"  Total time: {result_par['total_time']:.2f}ms")
     print(f"  Output shape: {result_par['embeddings'].shape}")
     print(f"  Per-cluster times: {[f'{t:.2f}ms' for t in result_par['per_cluster_times']]}")
     print()
 
+    print("Async Pipeline Parallel Execution:")
+    print(f"  Total time: {result_async['total_time']:.2f}ms")
+    print(f"  Output shape: {result_async['embeddings'].shape}")
+    print(f"  Per-cluster times: {[f'{t:.2f}ms' for t in result_async['per_cluster_times']]}")
+    print()
+
     print("Performance Comparison:")
-    speedup = result_seq['total_time'] / result_par['total_time']
-    time_saved = result_seq['total_time'] - result_par['total_time']
-    print(f"  Speedup: {speedup:.2f}x")
-    print(f"  Time saved: {time_saved:.2f}ms ({time_saved/result_seq['total_time']*100:.1f}%)")
+    speedup_sync = result_seq['total_time'] / result_par['total_time']
+    speedup_async = result_seq['total_time'] / result_async['total_time']
+    time_saved_sync = result_seq['total_time'] - result_par['total_time']
+    time_saved_async = result_seq['total_time'] - result_async['total_time']
+
+    print(f"  Sequential → Sync Pipeline:")
+    print(f"    Speedup: {speedup_sync:.2f}x")
+    print(f"    Time saved: {time_saved_sync:.2f}ms ({time_saved_sync/result_seq['total_time']*100:.1f}%)")
+
+    print(f"  Sequential → Async Pipeline:")
+    print(f"    Speedup: {speedup_async:.2f}x")
+    print(f"    Time saved: {time_saved_async:.2f}ms ({time_saved_async/result_seq['total_time']*100:.1f}%)")
+
+    print(f"  Sync Pipeline → Async Pipeline:")
+    async_vs_sync_speedup = result_par['total_time'] / result_async['total_time']
+    async_vs_sync_saved = result_par['total_time'] - result_async['total_time']
+    print(f"    Speedup: {async_vs_sync_speedup:.2f}x")
+    print(f"    Time saved: {async_vs_sync_saved:.2f}ms ({async_vs_sync_saved/result_par['total_time']*100:.1f}%)")
     print()
 
     # Verify correctness
     import torch
-    if torch.allclose(result_seq['embeddings'], result_par['embeddings'], atol=1e-4):
-        print("✓ Results verification: PASSED (outputs match)")
+    seq_vs_sync = torch.allclose(result_seq['embeddings'], result_par['embeddings'], atol=1e-4)
+    seq_vs_async = torch.allclose(result_seq['embeddings'], result_async['embeddings'], atol=1e-4)
+    sync_vs_async = torch.allclose(result_par['embeddings'], result_async['embeddings'], atol=1e-4)
+
+    print("Results Verification:")
+    if seq_vs_sync and seq_vs_async and sync_vs_async:
+        print("  ✓ ALL MODES MATCH: Sequential, Sync Pipeline, and Async Pipeline produce identical results")
     else:
-        print("✗ Results verification: FAILED (outputs differ!)")
-        max_diff = (result_seq['embeddings'] - result_par['embeddings']).abs().max().item()
-        print(f"  Max difference: {max_diff}")
+        print("  ✗ VERIFICATION FAILED: Results differ between modes!")
+        if not seq_vs_sync:
+            max_diff = (result_seq['embeddings'] - result_par['embeddings']).abs().max().item()
+            print(f"    Sequential vs Sync Pipeline: Max diff = {max_diff}")
+        if not seq_vs_async:
+            max_diff = (result_seq['embeddings'] - result_async['embeddings']).abs().max().item()
+            print(f"    Sequential vs Async Pipeline: Max diff = {max_diff}")
+        if not sync_vs_async:
+            max_diff = (result_par['embeddings'] - result_async['embeddings']).abs().max().item()
+            print(f"    Sync Pipeline vs Async Pipeline: Max diff = {max_diff}")
     print()
 
     # 详细统计分析（如果有pipeline executor实例）

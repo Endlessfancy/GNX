@@ -34,6 +34,8 @@ class NodeBasedPartitioner:
         """
         Partition graph by destination nodes.
 
+        【阶段2优化】向量化预计算所有partition边界，减少GIL持有时间
+
         Args:
             edge_index: [2, num_edges] - edge connectivity
             num_nodes: Total number of nodes
@@ -54,24 +56,20 @@ class NodeBasedPartitioner:
             edge_index = torch.tensor(edge_index, dtype=torch.long)
 
         num_edges = edge_index.size(1)
+        dest_nodes = edge_index[1]  # 【阶段2优化】提前提取，避免重复索引
+
+        # 【阶段2优化】向量化预计算所有partition的node ranges
+        node_boundaries = NodeBasedPartitioner._compute_node_boundaries(num_nodes, split_ratios)
+
+        # 【阶段2优化】预分配partitions列表
         partitions = []
 
-        # Calculate node ranges for each partition
-        start_node = 0
-        for i, ratio in enumerate(split_ratios):
-            # Calculate node range for this partition
-            partition_nodes = int(num_nodes * ratio)
+        # 遍历每个partition（通常只有2-3个，循环开销较小）
+        for i, (start_node, end_node) in enumerate(node_boundaries):
+            partition_nodes = end_node - start_node
 
-            # Handle last partition to include remaining nodes
-            if i == len(split_ratios) - 1:
-                partition_nodes = num_nodes - start_node
-
-            end_node = start_node + partition_nodes
-
-            # Filter edges: keep edges where destination is in [start_node, end_node)
-            dest_nodes = edge_index[1]  # Destination nodes
+            # 【阶段2优化】向量化的edge filtering（已经是tensor操作，释放GIL）
             edge_mask = (dest_nodes >= start_node) & (dest_nodes < end_node)
-
             partition_edges = edge_index[:, edge_mask]
             partition_num_edges = partition_edges.size(1)
 
@@ -82,7 +80,7 @@ class NodeBasedPartitioner:
                 'edge_mask': edge_mask,
                 'num_edges': partition_num_edges,
                 'num_nodes': partition_nodes,
-                'total_num_nodes': num_nodes,  # Keep track of total for gather operations
+                'total_num_nodes': num_nodes,
                 'node_indices': torch.arange(start_node, end_node, dtype=torch.long)
             }
 
@@ -91,15 +89,47 @@ class NodeBasedPartitioner:
                 partition_info['x_full'] = x  # Full graph features (for Gather stage)
                 partition_info['x_owned'] = x[start_node:end_node]  # Owned nodes only (for Transform stage)
 
-            # Statistics
-            src_nodes = partition_edges[0]
-            unique_src_nodes = torch.unique(src_nodes)
-            partition_info['num_unique_src_nodes'] = unique_src_nodes.size(0)
+            # Statistics - 【阶段2优化】torch.unique释放GIL，保留原逻辑
+            if partition_num_edges > 0:
+                src_nodes = partition_edges[0]
+                unique_src_nodes = torch.unique(src_nodes)
+                partition_info['num_unique_src_nodes'] = unique_src_nodes.size(0)
+            else:
+                partition_info['num_unique_src_nodes'] = 0
 
             partitions.append(partition_info)
-            start_node = end_node
 
         return partitions
+
+    @staticmethod
+    def _compute_node_boundaries(num_nodes: int, split_ratios: List[float]) -> List[Tuple[int, int]]:
+        """
+        【阶段2优化】向量化计算所有partition的node boundaries
+
+        预先计算所有partition的[start, end)范围，避免循环中重复计算
+
+        Args:
+            num_nodes: 总节点数
+            split_ratios: 分割比例列表
+
+        Returns:
+            [(start_0, end_0), (start_1, end_1), ...] 每个partition的节点范围
+        """
+        # 向量化计算每个partition的节点数
+        partition_sizes = [int(num_nodes * ratio) for ratio in split_ratios]
+
+        # 调整最后一个partition以包含剩余节点
+        partition_sizes[-1] = num_nodes - sum(partition_sizes[:-1])
+
+        # 计算累积边界
+        boundaries = []
+        start_node = 0
+        for size in partition_sizes:
+            end_node = start_node + size
+            boundaries.append((start_node, end_node))
+            start_node = end_node
+
+        return boundaries
 
     @staticmethod
     def apply_npu_padding(

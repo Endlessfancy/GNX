@@ -93,7 +93,8 @@ class SubgraphExecutor:
         return output, execution_time
 
     def _execute_block(self, block_id: int, block: List,
-                      input_data: Dict, owned_nodes: torch.Tensor) -> Dict:
+                      input_data: Dict, owned_nodes: torch.Tensor,
+                      precomputed_partitions: Optional[List[Dict]] = None) -> Dict:
         """
         执行单个block
 
@@ -102,6 +103,7 @@ class SubgraphExecutor:
             block: [devices, stages, ratios]
             input_data: 输入数据字典 {'x': ..., 'edge_index': ..., 其他中间结果}
             owned_nodes: [n] owned节点ID
+            precomputed_partitions: 【阶段1优化】预计算的partition（可选）
 
         Returns:
             output_data: 输出数据字典（传递给下一个block）
@@ -126,7 +128,8 @@ class SubgraphExecutor:
                 ratios,
                 input_data,
                 owned_nodes,
-                stages
+                stages,
+                precomputed_partitions  # 【阶段1优化】传递预计算的partition
             )
 
         return output_data
@@ -233,7 +236,8 @@ class SubgraphExecutor:
 
     def _execute_data_parallel(self, block_id: int, devices: List[str],
                                ratios: List[float], input_data: Dict,
-                               owned_nodes: torch.Tensor, stages: List[int]) -> Dict:
+                               owned_nodes: torch.Tensor, stages: List[int],
+                               precomputed_partitions: Optional[List[Dict]] = None) -> Dict:
         """
         数据并行执行（多设备） - 真正并发执行
 
@@ -246,6 +250,7 @@ class SubgraphExecutor:
             input_data: 输入数据
             owned_nodes: [n] owned节点ID
             stages: 该block执行的stages
+            precomputed_partitions: 【阶段1优化】预计算的partition（可选）
 
         Returns:
             output_data: 合并后的输出数据
@@ -254,10 +259,14 @@ class SubgraphExecutor:
         edge_index = input_data['edge_index']
         num_nodes = input_data.get('num_nodes', x.size(0))
 
-        # 使用NodePartitioner分割数据
-        partitions = NodeBasedPartitioner.partition_by_nodes(
-            edge_index, num_nodes, ratios, x
-        )
+        # 【阶段1优化】优先使用预计算的partition
+        if precomputed_partitions is not None:
+            partitions = precomputed_partitions
+        else:
+            # Fallback: runtime计算partition（会有GIL竞争）
+            partitions = NodeBasedPartitioner.partition_by_nodes(
+                edge_index, num_nodes, ratios, x
+            )
 
         # 并发执行多个设备
         with ThreadPoolExecutor(max_workers=len(devices)) as executor:

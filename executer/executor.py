@@ -149,14 +149,17 @@ class PipelineExecutor:
 
         print(f"  ✓ Created {len(self.subgraph_executors)} subgraph executors")
 
-    def execute(self, use_pipeline_parallelism: bool = False) -> Dict:
+    def execute(self, use_pipeline_parallelism: bool = False, use_async: bool = False) -> Dict:
         """
         执行推理（支持多cluster）
 
         Args:
-            use_pipeline_parallelism: 是否启用流水线并行
+            use_pipeline_parallelism: 是否启用流水线并行（sync版本）
                 - False: 顺序执行（默认，向后兼容）
                 - True: 使用流水线并行执行（block级别并行 + 数据并行）
+            use_async: 【阶段3优化】是否使用异步pipeline执行
+                - False: 使用sync版本（ThreadPoolExecutor）
+                - True: 使用async版本（asyncio）- 真正的并行执行
 
         Returns:
             {
@@ -166,8 +169,16 @@ class PipelineExecutor:
                 'total_time': 总时间（ms）
             }
         """
+        # 确定执行模式
+        if use_async:
+            mode = 'Async Pipeline Parallel'
+        elif use_pipeline_parallelism:
+            mode = 'Pipeline Parallel (Sync)'
+        else:
+            mode = 'Sequential'
+
         print(f"\n{'='*70}")
-        print(f"Execution Mode: {'Pipeline Parallel' if use_pipeline_parallelism else 'Sequential'}")
+        print(f"Execution Mode: {mode}")
         print(f"{'='*70}\n")
 
         # 准备输出
@@ -179,8 +190,51 @@ class PipelineExecutor:
         per_cluster_times = []
         start_time = time.time()
 
-        if use_pipeline_parallelism:
-            # 使用流水线并行执行
+        if use_async:
+            # 【阶段3优化】使用异步流水线并行执行
+            import asyncio
+
+            try:
+                from .async_pipeline_executor import AsyncPipelineExecutor
+            except ImportError:
+                from async_pipeline_executor import AsyncPipelineExecutor
+
+            # 创建asyncio event loop并执行
+            async def run_async_pipeline():
+                for cluster_id, cluster in enumerate(self.execution_plan['clusters']):
+                    print(f"\n{'='*70}")
+                    print(f"Cluster {cluster_id}: {cluster['pep_key']} (Async Pipeline Mode)")
+                    print(f"  PEP: {cluster['pep']}")
+                    print(f"  Subgraphs: {cluster['subgraph_ids']}")
+                    print(f"  Blocks: {len(cluster['pep'])}")
+                    print(f"{'='*70}\n")
+
+                    cluster_start = time.time()
+
+                    # 创建异步流水线执行器
+                    async_pipeline_exec = AsyncPipelineExecutor(
+                        cluster_id, cluster, self.data_loader, self.subgraph_executors
+                    )
+
+                    # 保存最后一个实例（用于详细分析）
+                    self.last_pipeline_exec = async_pipeline_exec
+
+                    # 异步执行流水线
+                    result = await async_pipeline_exec.execute_pipeline_async()
+
+                    # 合并embeddings
+                    nonlocal all_embeddings
+                    all_embeddings += result['embeddings']
+
+                    cluster_time = (time.time() - cluster_start) * 1000
+                    per_cluster_times.append(cluster_time)
+                    print(f"\n✓ Cluster {cluster_id} completed in {cluster_time:.2f}ms\n")
+
+            # 运行异步任务
+            asyncio.run(run_async_pipeline())
+
+        elif use_pipeline_parallelism:
+            # 使用流水线并行执行（sync版本）
             try:
                 from .pipeline_executor import PipelineExecutor as PipelineExec
             except ImportError:

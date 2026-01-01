@@ -59,11 +59,19 @@ class PipelineExecutor:
         self.raw_data_cache = {}
         self.cache_lock = threading.Lock()
 
+        # 【阶段1优化】预计算的partition缓存
+        # {(sg_id, block_id): [partition1, partition2, ...]}
+        self.partition_cache = {}
+
+        # 【阶段1优化】预加载标志
+        self.is_preloaded = False
+
         # 详细时间统计
         self.detailed_timing = {
             'block_times': {},      # {(sg_id, block_id): {'wait': t, 'exec': t, 'total': t}}
             'timestamps': {},       # {(sg_id, block_id): {'start': t, 'end': t}}
             'thread_ids': {},       # {block_id: thread_id}
+            'preload_time': 0.0,    # 【阶段1优化】预加载时间统计
         }
         self.timing_lock = threading.Lock()
 
@@ -81,6 +89,12 @@ class PipelineExecutor:
                 'total_time': float  # 总执行时间（ms）
             }
         """
+        # 【阶段1优化】首次执行时预加载所有数据
+        if not self.is_preloaded:
+            print(f"  [Optimization] Pre-loading all data for cluster {self.cluster_id}...")
+            self._preload_all_data()
+            print(f"  [Optimization] Pre-loading completed in {self.detailed_timing['preload_time']:.0f}ms")
+
         print(f"  Starting pipeline execution with {self.num_blocks} blocks...")
         start_time = time.time()
 
@@ -252,12 +266,16 @@ class PipelineExecutor:
             raw_data = self._get_raw_subgraph_data(sg_id)
             input_data['owned_nodes'] = raw_data['owned_nodes']
 
+        # 【阶段1优化】获取预计算的partition（如果有）
+        precomputed_partitions = self.partition_cache.get((sg_id, block_id), None)
+
         # 调用SubgraphExecutor的_execute_block（内部会处理数据并行）
         output_data = executor._execute_block(
             block_id,
             block,
             input_data,
-            input_data['owned_nodes']
+            input_data['owned_nodes'],
+            precomputed_partitions  # 【阶段1优化】传递预计算的partition
         )
 
         return output_data
@@ -385,3 +403,76 @@ class PipelineExecutor:
             'block_wait_times': block_wait_times,
             'avg_block_exec_times': avg_block_exec_times,
         }
+
+    def _preload_all_data(self):
+        """
+        【阶段1优化】预加载所有subgraph数据和预计算所有partition
+
+        在pipeline执行前一次性完成所有数据准备工作，避免runtime时的GIL竞争
+        """
+        preload_start = time.time()
+
+        # Step 1: 预加载所有subgraph的原始数据
+        print(f"    Preloading {len(self.subgraph_ids)} subgraphs...")
+        for sg_id in self.subgraph_ids:
+            if sg_id not in self.raw_data_cache:
+                self.raw_data_cache[sg_id] = self.data_loader.get_subgraph_data(sg_id)
+
+        # Step 2: 预计算所有需要data parallelism的partition
+        print(f"    Precomputing partitions for {self.num_blocks} blocks...")
+        for block_id, block in enumerate(self.pep):
+            devices = block[0]
+
+            # 只有多设备的block需要预计算partition
+            if len(devices) > 1:
+                stages = block[1]
+                ratios = block[2] if len(block) > 2 else [1.0 / len(devices)] * len(devices)
+
+                for sg_id in self.subgraph_ids:
+                    # 获取原始数据
+                    raw_data = self.raw_data_cache[sg_id]
+
+                    # 预计算partition
+                    partitions = self._precompute_partitions_for_block(
+                        sg_id, block_id, raw_data, ratios
+                    )
+
+                    # 缓存
+                    self.partition_cache[(sg_id, block_id)] = partitions
+
+        preload_time = (time.time() - preload_start) * 1000
+        self.detailed_timing['preload_time'] = preload_time
+        self.is_preloaded = True
+
+        print(f"    ✓ Preloaded {len(self.raw_data_cache)} subgraphs, "
+              f"{len(self.partition_cache)} partitions in {preload_time:.0f}ms")
+
+    def _precompute_partitions_for_block(self, sg_id: int, block_id: int,
+                                         raw_data: Dict, ratios: List[float]) -> List[Dict]:
+        """
+        【阶段1优化】为特定block预计算partition
+
+        Args:
+            sg_id: Subgraph ID
+            block_id: Block ID
+            raw_data: 原始subgraph数据
+            ratios: partition ratios
+
+        Returns:
+            partitions: List of partition dicts
+        """
+        try:
+            from .node_partitioner import NodeBasedPartitioner
+        except ImportError:
+            from node_partitioner import NodeBasedPartitioner
+
+        x = raw_data['x']
+        edge_index = raw_data['edge_index']
+        num_nodes = raw_data.get('num_nodes', x.size(0))
+
+        # 使用NodeBasedPartitioner分割数据
+        partitions = NodeBasedPartitioner.partition_by_nodes(
+            edge_index, num_nodes, ratios, x
+        )
+
+        return partitions
