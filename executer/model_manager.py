@@ -1,6 +1,8 @@
 """
 Model Manager - Export, Load, and Cache Models
 模型导出、加载和缓存管理
+
+使用 OpenVINO 进行推理，支持异步执行
 """
 
 import os
@@ -11,6 +13,15 @@ from typing import Dict, Tuple, List, Optional
 
 # Import our standalone model export utilities
 from model_export_utils import SimpleModelExporter, check_and_export_model
+
+# OpenVINO imports
+try:
+    from openvino.runtime import Core
+    import openvino as ov
+    OPENVINO_AVAILABLE = True
+except ImportError:
+    OPENVINO_AVAILABLE = False
+    print("WARNING: OpenVINO not available, will use ONNX Runtime fallback")
 
 
 class ModelManager:
@@ -43,9 +54,17 @@ class ModelManager:
         # 编译后的模型缓存
         self.compiled_models = {}
 
+        # OpenVINO Core (延迟初始化)
+        self.ov_core = None
+
+        # IR 模型目录
+        self.ir_models_dir = self.models_dir / 'ir'
+        self.ir_models_dir.mkdir(parents=True, exist_ok=True)
+
         print(f"  ✓ Model manager initialized")
         print(f"    Unique models needed: {len(self.model_refs)}")
         print(f"    Models directory: {self.models_dir}")
+        print(f"    OpenVINO available: {OPENVINO_AVAILABLE}")
 
     def _collect_model_refs(self) -> Dict[str, str]:
         """
@@ -158,85 +177,137 @@ class ModelManager:
             print(f"      ERROR: Failed to export model: {e}")
             raise
 
+    def _convert_onnx_to_ir(self, onnx_path: str, model_key: str) -> str:
+        """
+        将 ONNX 模型转换为 OpenVINO IR 格式
+
+        Args:
+            onnx_path: ONNX 模型路径
+            model_key: 模型标识符
+
+        Returns:
+            ir_xml_path: IR 模型的 XML 文件路径
+        """
+        ir_xml_path = self.ir_models_dir / f"{model_key}.xml"
+        ir_bin_path = self.ir_models_dir / f"{model_key}.bin"
+
+        # 如果 IR 模型已存在且比 ONNX 更新，则跳过转换
+        if ir_xml_path.exists() and ir_bin_path.exists():
+            onnx_mtime = os.path.getmtime(onnx_path)
+            ir_mtime = os.path.getmtime(ir_xml_path)
+            if ir_mtime >= onnx_mtime:
+                print(f"      ✓ IR model exists: {model_key}")
+                return str(ir_xml_path)
+
+        print(f"      Converting ONNX to IR: {model_key}...")
+
+        try:
+            # 使用 OpenVINO Model Optimizer 转换
+            ov_model = ov.convert_model(onnx_path)
+
+            # 保存 IR 模型
+            ov.save_model(ov_model, str(ir_xml_path))
+
+            print(f"      ✓ Converted to IR: {ir_xml_path.name}")
+            return str(ir_xml_path)
+
+        except Exception as e:
+            print(f"      ERROR: Failed to convert ONNX to IR: {e}")
+            raise
+
     def load_models(self):
         """
-        加载和编译所有模型
+        加载和编译所有模型（使用 OpenVINO）
         """
         print(f"\n  Loading and compiling models...")
 
+        if OPENVINO_AVAILABLE:
+            # 初始化 OpenVINO Core
+            self.ov_core = Core()
+            print(f"    Using OpenVINO backend")
+            print(f"    Available devices: {self.ov_core.available_devices}")
+
+            for model_key, onnx_path in self.model_refs.items():
+                if model_key not in self.compiled_models:
+                    print(f"    Loading {model_key}...")
+
+                    # 解析设备
+                    parts = model_key.split('_')
+                    device = parts[-1]  # 最后一个部分是设备名
+
+                    try:
+                        # 转换 ONNX 到 IR
+                        ir_path = self._convert_onnx_to_ir(onnx_path, model_key)
+
+                        # 读取模型
+                        model = self.ov_core.read_model(ir_path)
+
+                        # 选择 OpenVINO 设备
+                        if device == 'NPU':
+                            ov_device = 'NPU'
+                        elif device == 'GPU':
+                            # 检查 GPU 是否可用
+                            if 'GPU' in self.ov_core.available_devices:
+                                ov_device = 'GPU'
+                            else:
+                                ov_device = 'CPU'
+                                print(f"      WARNING: GPU not available, using CPU")
+                        else:
+                            ov_device = 'CPU'
+
+                        # 编译模型
+                        compiled_model = self.ov_core.compile_model(model, ov_device)
+
+                        self.compiled_models[model_key] = compiled_model
+                        print(f"      ✓ Compiled for {ov_device}")
+
+                    except Exception as e:
+                        print(f"      ERROR: Failed to load model: {e}")
+                        raise
+
+        else:
+            # Fallback 到 ONNX Runtime
+            print(f"    Using ONNX Runtime backend (OpenVINO not available)")
+            self._load_models_onnxruntime()
+
+        print(f"  ✓ All models loaded: {len(self.compiled_models)}")
+
+    def _load_models_onnxruntime(self):
+        """
+        使用 ONNX Runtime 加载模型（fallback）
+        """
         try:
             import onnxruntime as ort
-            use_onnx = True
         except ImportError:
-            print("    WARNING: onnxruntime not available, using PyTorch models as fallback")
-            use_onnx = False
+            raise ImportError("Neither OpenVINO nor ONNX Runtime is available")
 
         for model_key, model_path in self.model_refs.items():
             if model_key not in self.compiled_models:
                 print(f"    Loading {model_key}...")
 
-                # 根据设备选择provider
-                device = model_key.split('_')[2]
+                parts = model_key.split('_')
+                device = parts[-1]
 
-                if use_onnx:
-                    # 使用ONNX Runtime加载模型
-                    session_options = ort.SessionOptions()
-                    session_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+                session_options = ort.SessionOptions()
+                session_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
 
-                    if device == 'CPU':
-                        providers = ['CPUExecutionProvider']
-                    elif device == 'GPU':
-                        providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
-                    else:  # NPU
-                        # NPU需要OpenVINO，这里先用CPU fallback
-                        providers = ['CPUExecutionProvider']
-
-                    try:
-                        session = ort.InferenceSession(
-                            model_path,
-                            sess_options=session_options,
-                            providers=providers
-                        )
-
-                        self.compiled_models[model_key] = session
-                        print(f"      ✓ Compiled for {providers[0]}")
-
-                    except Exception as e:
-                        print(f"      ERROR: Failed to load ONNX model: {e}")
-                        raise
+                if device == 'GPU':
+                    providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
                 else:
-                    # Fallback: Create PyTorch model
-                    try:
-                        from model_export_utils import create_combined_sage_model
+                    providers = ['CPUExecutionProvider']
 
-                        # Extract stages from model_key (e.g., "block_0_GPU" -> stages from PEP)
-                        block_id = int(model_key.split('_')[1])
-                        cluster = self.clusters[0]
-                        pep = cluster['pep']
-                        stages = pep[block_id][1]  # [1, 2, 3, 4, 5, 6, 7]
+                try:
+                    session = ort.InferenceSession(
+                        model_path,
+                        sess_options=session_options,
+                        providers=providers
+                    )
+                    self.compiled_models[model_key] = session
+                    print(f"      ✓ Compiled for {providers[0]}")
 
-                        # Create PyTorch model
-                        pytorch_model = create_combined_sage_model(
-                            stages=stages,
-                            in_channels=500,
-                            hidden_channels=256,
-                            out_channels=256
-                        )
-
-                        # Move to appropriate device
-                        if device == 'GPU' and torch.cuda.is_available():
-                            pytorch_model = pytorch_model.cuda()
-
-                        pytorch_model.eval()
-
-                        self.compiled_models[model_key] = pytorch_model
-                        print(f"      ✓ Loaded PyTorch model on {device}")
-
-                    except Exception as e:
-                        print(f"      ERROR: Failed to create PyTorch fallback: {e}")
-                        raise
-
-        print(f"  ✓ All models loaded: {len(self.compiled_models)}")
+                except Exception as e:
+                    print(f"      ERROR: Failed to load ONNX model: {e}")
+                    raise
 
     def get_model(self, block_id: int, device: str):
         """

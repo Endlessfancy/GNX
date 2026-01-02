@@ -1,12 +1,14 @@
 """
 Subgraph Executor - Execute One Subgraph with PEP
 单个subgraph执行器（支持灵活的1-3个block + data parallelism + pipeline）
+
+支持 OpenVINO 异步推理
 """
 
 import time
 import torch
 import numpy as np
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, Any
 from concurrent.futures import ThreadPoolExecutor
 
 # Import partitioner and NPU utils
@@ -16,6 +18,13 @@ try:
 except ImportError:
     from node_partitioner import NodeBasedPartitioner
     from npu_utils import pad_graph_data_for_npu, unpad_tensor_from_npu
+
+# OpenVINO support
+try:
+    from openvino.runtime import CompiledModel, InferRequest
+    OPENVINO_AVAILABLE = True
+except ImportError:
+    OPENVINO_AVAILABLE = False
 
 
 class SubgraphExecutor:
@@ -150,8 +159,12 @@ class SubgraphExecutor:
         # 准备模型输入（根据stages确定）
         model_input = self._prepare_model_input(input_data, stages)
 
-        # Check if model is ONNX Runtime session or PyTorch model
-        if hasattr(model, 'run'):
+        # 检查模型类型
+        if OPENVINO_AVAILABLE and hasattr(model, 'create_infer_request'):
+            # OpenVINO CompiledModel
+            output = self._run_openvino_inference(model, model_input)
+
+        elif hasattr(model, 'run'):
             # ONNX Runtime model
             input_names = [inp.name for inp in model.get_inputs()]
 
@@ -188,6 +201,112 @@ class SubgraphExecutor:
 
         return output_data
 
+    def _run_openvino_inference(self, compiled_model: Any, model_input: List) -> torch.Tensor:
+        """
+        使用 OpenVINO 执行同步推理
+
+        Args:
+            compiled_model: OpenVINO CompiledModel
+            model_input: 模型输入列表
+
+        Returns:
+            output: PyTorch Tensor
+        """
+        # 创建推理请求
+        infer_request = compiled_model.create_infer_request()
+
+        # 获取输入名称
+        input_names = [inp.any_name for inp in compiled_model.inputs]
+
+        # 转换为numpy
+        numpy_inputs = self._convert_to_numpy(model_input)
+
+        # 设置输入
+        for i, (name, data) in enumerate(zip(input_names, numpy_inputs)):
+            infer_request.set_tensor(name, self._to_ov_tensor(data))
+
+        # 同步推理
+        infer_request.infer()
+
+        # 获取输出
+        output_tensor = infer_request.get_output_tensor(0)
+        output = torch.from_numpy(output_tensor.data.copy())
+
+        return output
+
+    def create_async_infer_request(self, block_id: int, device: str) -> Optional[Any]:
+        """
+        创建异步推理请求
+
+        Args:
+            block_id: Block ID
+            device: 设备名称
+
+        Returns:
+            infer_request: OpenVINO InferRequest 或 None
+        """
+        model = self.models[(block_id, device)]
+
+        if OPENVINO_AVAILABLE and hasattr(model, 'create_infer_request'):
+            return model.create_infer_request()
+
+        return None
+
+    def start_async_inference(self, infer_request: Any, input_data: Dict, stages: List[int]):
+        """
+        启动异步推理（立即返回）
+
+        Args:
+            infer_request: OpenVINO InferRequest
+            input_data: 输入数据
+            stages: 执行的 stages
+        """
+        # 准备输入
+        model_input = self._prepare_model_input(input_data, stages)
+        numpy_inputs = self._convert_to_numpy(model_input)
+
+        # 获取编译模型的输入名称
+        compiled_model = infer_request.get_compiled_model()
+        input_names = [inp.any_name for inp in compiled_model.inputs]
+
+        # 设置输入
+        for name, data in zip(input_names, numpy_inputs):
+            infer_request.set_tensor(name, self._to_ov_tensor(data))
+
+        # 启动异步推理
+        infer_request.start_async()
+
+    def wait_and_get_output(self, infer_request: Any, stages: List[int], input_data: Dict) -> Dict:
+        """
+        等待异步推理完成并获取输出
+
+        Args:
+            infer_request: OpenVINO InferRequest
+            stages: 执行的 stages
+            input_data: 原始输入数据（用于构建输出）
+
+        Returns:
+            output_data: 输出数据字典
+        """
+        # 等待完成
+        infer_request.wait()
+
+        # 获取输出
+        output_tensor = infer_request.get_output_tensor(0)
+        output = torch.from_numpy(output_tensor.data.copy())
+
+        # 准备输出数据
+        output_data = self._prepare_next_input(output, stages, input_data)
+
+        return output_data
+
+    def _to_ov_tensor(self, data: np.ndarray):
+        """
+        将 numpy 数组转换为 OpenVINO Tensor
+        """
+        from openvino.runtime import Tensor
+        return Tensor(data)
+
     def _run_partition_on_device(self, block_id: int, device: str,
                                  partition: Dict, partition_input: List) -> torch.Tensor:
         """
@@ -204,7 +323,11 @@ class SubgraphExecutor:
         """
         model = self.models[(block_id, device)]
 
-        if hasattr(model, 'run'):
+        # OpenVINO CompiledModel
+        if OPENVINO_AVAILABLE and hasattr(model, 'create_infer_request'):
+            device_output = self._run_openvino_inference(model, partition_input)
+
+        elif hasattr(model, 'run'):
             # ONNX Runtime
             input_names = [inp.name for inp in model.get_inputs()]
             numpy_inputs = self._convert_to_numpy(partition_input)

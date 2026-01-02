@@ -1,13 +1,22 @@
 """
 Pipeline Executor - Block-level Pipeline Parallelism
 Block级别流水线并行执行器
+
+支持 OpenVINO 异步推理模式
 """
 
 import time
 import torch
 import threading
-from typing import Dict, List
+from typing import Dict, List, Optional, Any
 from concurrent.futures import ThreadPoolExecutor
+
+# OpenVINO support
+try:
+    from openvino.runtime import CompiledModel, InferRequest
+    OPENVINO_AVAILABLE = True
+except ImportError:
+    OPENVINO_AVAILABLE = False
 
 
 class PipelineExecutor:
@@ -70,9 +79,15 @@ class PipelineExecutor:
         # 保存实际流水线时间（用于性能分析）
         self.actual_pipeline_time = 0.0
 
-    def execute_pipeline(self) -> Dict:
+        # 异步推理模式标志
+        self.use_async_inference = False
+
+    def execute_pipeline(self, use_async: bool = False) -> Dict:
         """
         执行流水线并行
+
+        Args:
+            use_async: 是否使用 OpenVINO 异步推理模式
 
         Returns:
             {
@@ -81,14 +96,23 @@ class PipelineExecutor:
                 'total_time': float  # 总执行时间（ms）
             }
         """
-        print(f"  Starting pipeline execution with {self.num_blocks} blocks...")
+        self.use_async_inference = use_async and OPENVINO_AVAILABLE
+
+        if self.use_async_inference:
+            print(f"  Starting pipeline execution with {self.num_blocks} blocks (OpenVINO Async Mode)...")
+        else:
+            print(f"  Starting pipeline execution with {self.num_blocks} blocks...")
+
         start_time = time.time()
 
         # 创建线程池，每个block一个worker
         with ThreadPoolExecutor(max_workers=self.num_blocks) as executor:
             futures = []
             for block_id in range(self.num_blocks):
-                future = executor.submit(self._block_worker, block_id)
+                if self.use_async_inference:
+                    future = executor.submit(self._block_worker_async, block_id)
+                else:
+                    future = executor.submit(self._block_worker, block_id)
                 futures.append(future)
 
             # 等待所有block完成
@@ -187,6 +211,182 @@ class PipelineExecutor:
             print(f"  [Block{block_id} Thread-{thread_id % 10000}] Finished SG{sg_id}: wait={wait_time:.0f}ms, exec={exec_time:.0f}ms, total={total_time:.0f}ms")
 
             # 最后一个block额外打印汇总（兼容原有输出）
+            if block_id == self.num_blocks - 1:
+                print(f"  Subgraph {sg_id} completed: {total_time:.2f}ms")
+
+    def _block_worker_async(self, block_id: int):
+        """
+        Block worker线程（OpenVINO 异步推理模式）
+
+        使用 launch all → wait all 模式：
+        1. 为所有 subgraph 启动异步推理
+        2. 批量等待推理完成
+        3. 通知下一个 block
+
+        这种模式可以最大化硬件利用率，减少 GIL 竞争
+
+        Args:
+            block_id: 当前block的ID (0 to num_blocks-1)
+        """
+        import threading as th
+        thread_id = th.get_ident()
+
+        # 记录线程ID
+        with self.timing_lock:
+            self.detailed_timing['thread_ids'][block_id] = thread_id
+
+        block = self.pep[block_id]
+        devices = block[0]  # ['CPU', 'GPU'] or ['NPU']
+        stages = block[1]
+
+        # 对于单设备情况，使用异步推理
+        if len(devices) == 1:
+            device = devices[0]
+            self._run_block_single_device_async(block_id, device, stages, thread_id)
+        else:
+            # 多设备数据并行，回退到同步模式
+            # (后续可以扩展为异步数据并行)
+            for sg_id in self.subgraph_ids:
+                total_start_time = time.time()
+                wait_time = 0.0
+
+                with self.timing_lock:
+                    self.detailed_timing['timestamps'][(sg_id, block_id)] = {
+                        'start': total_start_time
+                    }
+
+                print(f"  [Block{block_id} Thread-{thread_id % 10000}] Starting SG{sg_id} (data parallel)")
+
+                if block_id == 0:
+                    input_data = self._get_raw_subgraph_data(sg_id)
+                else:
+                    prev_block_id = block_id - 1
+                    wait_start_time = time.time()
+                    self.completion_events[(sg_id, prev_block_id)].wait()
+                    wait_time = (time.time() - wait_start_time) * 1000
+
+                    input_data = self._get_intermediate_result(sg_id, prev_block_id)
+
+                exec_start_time = time.time()
+                output_data = self._execute_single_block(sg_id, block_id, input_data)
+                exec_time = (time.time() - exec_start_time) * 1000
+
+                self._save_intermediate_result(sg_id, block_id, output_data)
+                self.completion_events[(sg_id, block_id)].set()
+
+                total_end_time = time.time()
+                total_time = (total_end_time - total_start_time) * 1000
+
+                with self.timing_lock:
+                    self.detailed_timing['timestamps'][(sg_id, block_id)]['end'] = total_end_time
+                    self.detailed_timing['block_times'][(sg_id, block_id)] = {
+                        'wait': wait_time,
+                        'exec': exec_time,
+                        'total': total_time
+                    }
+
+                print(f"  [Block{block_id} Thread-{thread_id % 10000}] Finished SG{sg_id}: wait={wait_time:.0f}ms, exec={exec_time:.0f}ms")
+
+                if block_id == self.num_blocks - 1:
+                    print(f"  Subgraph {sg_id} completed: {total_time:.2f}ms")
+
+    def _run_block_single_device_async(self, block_id: int, device: str, stages: List[int], thread_id: int):
+        """
+        单设备异步推理模式
+
+        Launch all → Wait all 模式：
+        1. 遍历所有 subgraph，为每个启动异步推理
+        2. 在需要等待前一个 block 完成时等待
+        3. 批量收集结果并通知下一个 block
+
+        Args:
+            block_id: Block ID
+            device: 设备名称
+            stages: 执行的 stages
+            thread_id: 线程 ID
+        """
+        # Phase 1: 准备所有推理请求
+        pending_inferences = []  # [(sg_id, infer_request, input_data, start_time)]
+
+        for sg_id in self.subgraph_ids:
+            total_start_time = time.time()
+            wait_time = 0.0
+
+            with self.timing_lock:
+                self.detailed_timing['timestamps'][(sg_id, block_id)] = {
+                    'start': total_start_time
+                }
+
+            # 获取输入数据
+            if block_id == 0:
+                input_data = self._get_raw_subgraph_data(sg_id)
+            else:
+                prev_block_id = block_id - 1
+                wait_start_time = time.time()
+                self.completion_events[(sg_id, prev_block_id)].wait()
+                wait_time = (time.time() - wait_start_time) * 1000
+
+                input_data = self._get_intermediate_result(sg_id, prev_block_id)
+
+            # 获取 executor 和创建异步推理请求
+            executor = self.subgraph_executors[sg_id]
+            infer_request = executor.create_async_infer_request(block_id, device)
+
+            if infer_request is not None:
+                # 启动异步推理
+                print(f"  [Block{block_id} Thread-{thread_id % 10000}] Launching async SG{sg_id}")
+                executor.start_async_inference(infer_request, input_data, stages)
+                pending_inferences.append((sg_id, infer_request, input_data, total_start_time, wait_time))
+            else:
+                # Fallback 到同步模式
+                print(f"  [Block{block_id} Thread-{thread_id % 10000}] Starting SG{sg_id} (sync fallback)")
+                exec_start_time = time.time()
+                output_data = self._execute_single_block(sg_id, block_id, input_data)
+                exec_time = (time.time() - exec_start_time) * 1000
+
+                self._save_intermediate_result(sg_id, block_id, output_data)
+                self.completion_events[(sg_id, block_id)].set()
+
+                total_end_time = time.time()
+                total_time = (total_end_time - total_start_time) * 1000
+
+                with self.timing_lock:
+                    self.detailed_timing['timestamps'][(sg_id, block_id)]['end'] = total_end_time
+                    self.detailed_timing['block_times'][(sg_id, block_id)] = {
+                        'wait': wait_time,
+                        'exec': exec_time,
+                        'total': total_time
+                    }
+
+                print(f"  [Block{block_id} Thread-{thread_id % 10000}] Finished SG{sg_id}: wait={wait_time:.0f}ms, exec={exec_time:.0f}ms")
+
+        # Phase 2: 等待所有异步推理完成并收集结果
+        for sg_id, infer_request, input_data, start_time, wait_time in pending_inferences:
+            exec_start_time = time.time()
+
+            # 等待推理完成并获取输出
+            executor = self.subgraph_executors[sg_id]
+            output_data = executor.wait_and_get_output(infer_request, stages, input_data)
+
+            exec_time = (time.time() - exec_start_time) * 1000
+
+            # 保存结果并通知
+            self._save_intermediate_result(sg_id, block_id, output_data)
+            self.completion_events[(sg_id, block_id)].set()
+
+            total_end_time = time.time()
+            total_time = (total_end_time - start_time) * 1000
+
+            with self.timing_lock:
+                self.detailed_timing['timestamps'][(sg_id, block_id)]['end'] = total_end_time
+                self.detailed_timing['block_times'][(sg_id, block_id)] = {
+                    'wait': wait_time,
+                    'exec': exec_time,
+                    'total': total_time
+                }
+
+            print(f"  [Block{block_id} Thread-{thread_id % 10000}] Finished SG{sg_id}: wait={wait_time:.0f}ms, exec={exec_time:.0f}ms (async)")
+
             if block_id == self.num_blocks - 1:
                 print(f"  Subgraph {sg_id} completed: {total_time:.2f}ms")
 
