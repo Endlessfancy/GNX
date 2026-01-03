@@ -37,23 +37,20 @@ class SAGEStage1_Gather(torch.nn.Module):
 
 class SAGEStage2_Message(torch.nn.Module):
     """
-    Stage 2: MESSAGE - Linear transformation to hidden dimension
-    Input: x_j [num_edges, in_dim]
-    Output: messages [num_edges, hidden_dim]
+    Stage 2: MESSAGE - Message computation (identity for standard GraphSAGE mean aggregator)
+    Input: x_j [num_edges, feat_dim]
+    Output: messages [num_edges, feat_dim]
 
-    Note: Uses torch.nn.Linear instead of torch_geometric.nn.dense.linear.Linear
-    to avoid ONNX export issues that cause OpenVINO GPU compilation failures.
+    Note: This is identity function - no transformation.
+    The linear transformation happens in Stage 6 (TRANSFORM), not here.
+    This matches the profiling implementation and standard GraphSAGE.
     """
-    def __init__(self, in_channels: int = 500, hidden_channels: int = 256):
+    def __init__(self):
         super().__init__()
-        self.lin = nn.Linear(in_channels, hidden_channels, bias=False)
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        nn.init.xavier_uniform_(self.lin.weight)
 
     def forward(self, x_j: torch.Tensor) -> torch.Tensor:
-        return self.lin(x_j)
+        # Identity function - just pass through neighbor features
+        return x_j
 
 
 class SAGEStage3_ReduceSum(torch.nn.Module):
@@ -110,19 +107,18 @@ class SAGEStage5_Normalize(torch.nn.Module):
 class SAGEStage6_Transform(torch.nn.Module):
     """
     Stage 6: TRANSFORM - Linear transformations
-    Input: mean_agg [num_nodes, agg_dim], x [num_nodes, in_dim]
+    Input: mean_agg [num_nodes, in_dim], x [num_nodes, in_dim]
     Output: out [num_nodes, out_dim]
 
-    Note: For pipeline execution, agg_dim is typically different from in_dim
-    - agg_dim: dimension of aggregated features (256 for hidden layers)
-    - in_dim: dimension of original features (500 for input)
+    Since Stage 2 is identity, mean_agg has the same dimension as x (in_dim).
+    This matches the profiling implementation and standard GraphSAGE.
 
     Uses torch.nn.Linear instead of torch_geometric.nn.dense.linear.Linear
     to avoid ONNX export issues that cause OpenVINO GPU compilation failures.
     """
-    def __init__(self, agg_channels: int, in_channels: int, out_channels: int, bias_l=True, bias_r=False):
+    def __init__(self, in_channels: int, out_channels: int, bias_l=True, bias_r=False):
         super().__init__()
-        self.lin_l = nn.Linear(agg_channels, out_channels, bias=bias_l)  # For mean_agg
+        self.lin_l = nn.Linear(in_channels, out_channels, bias=bias_l)  # For mean_agg
         self.lin_r = nn.Linear(in_channels, out_channels, bias=bias_r)   # For x
         self.reset_parameters()
 
@@ -226,7 +222,7 @@ class CombinedStagesModel(nn.Module):
             mean_agg = self.stages[self.stage_indices.index(5)](sum_agg, count)
         else:
             # If ending at stage 4, return concatenated [sum_agg, count] for next block
-            # sum_agg: [num_nodes, 256], count: [num_nodes] → unsqueeze count → [num_nodes, 257]
+            # sum_agg: [num_nodes, feat_dim], count: [num_nodes] → unsqueeze count → [num_nodes, feat_dim+1]
             return torch.cat([sum_agg, count.unsqueeze(-1)], dim=1)
 
         # Stage 6: Transform
@@ -246,9 +242,11 @@ class CombinedStagesModel(nn.Module):
         """Execute stage 5-6-7 (Normalize + Transform + Activate)
 
         Args:
-            args[0]: sum_agg [num_nodes, hidden_dim] - sum aggregation from stage 3
-            args[1]: count [num_nodes, 1] - count from stage 4
+            args[0]: sum_agg [num_nodes, in_dim] - sum aggregation from stage 3
+            args[1]: count [num_nodes] - count from stage 4
             args[2]: x [num_nodes, in_dim] - original node features
+
+        Note: sum_agg has same dim as x since Stage 2 is identity.
 
         Returns:
             output [num_nodes, out_dim] - final embeddings
@@ -278,8 +276,10 @@ class CombinedStagesModel(nn.Module):
         """Execute stage 6-7 (Transform + Activate)
 
         Args:
-            args[0]: mean_agg [num_nodes, hidden_dim] - aggregated features from stage 5
+            args[0]: mean_agg [num_nodes, in_dim] - aggregated features from stage 5
             args[1]: x [num_nodes, in_dim] - original node features
+
+        Note: mean_agg has same dim as x since Stage 2 is identity.
 
         Returns:
             output [num_nodes, out_dim] - final embeddings
@@ -310,21 +310,23 @@ class SimpleModelExporter:
     def __init__(self):
         self.stage_modules = None
 
-    def initialize_stages(self, in_dim: int = 500, hid_dim: int = 256, out_dim: int = 256):
+    def initialize_stages(self, in_dim: int = 500, out_dim: int = 256):
         """Initialize all 7 stage modules
 
         Args:
             in_dim: Input feature dimension (original node features)
-            hid_dim: Hidden dimension for aggregated features (output from Stage 5)
             out_dim: Output dimension
+
+        Note: Stage 2 is identity (no transformation), so aggregated features
+        have the same dimension as input (in_dim). This matches profiling.
         """
         self.stage_modules = [
             SAGEStage1_Gather(),
-            SAGEStage2_Message(in_dim, hid_dim),  # in_channels, hidden_channels
+            SAGEStage2_Message(),  # Identity - no parameters
             SAGEStage3_ReduceSum(),
             SAGEStage4_ReduceCount(),
             SAGEStage5_Normalize(),
-            SAGEStage6_Transform(hid_dim, in_dim, out_dim),  # agg_channels, in_channels, out_channels
+            SAGEStage6_Transform(in_dim, out_dim),  # in_channels, out_channels
             SAGEStage7_Activate()
         ]
 
@@ -345,7 +347,7 @@ class SimpleModelExporter:
         """
         # Initialize stages if not done
         if self.stage_modules is None:
-            self.initialize_stages(in_dim=num_features, hid_dim=256, out_dim=256)
+            self.initialize_stages(in_dim=num_features, out_dim=256)
 
         # Get stage modules
         stage_list = [self.stage_modules[s - 1] for s in stages]
@@ -372,7 +374,8 @@ class SimpleModelExporter:
             } if use_dynamic else None
         elif first_stage == 5:
             # Stage 5-7: input is (sum_agg, count, x)
-            dummy_sum_agg = torch.randn(num_nodes, 256)  # Output from stage 3 (FP32)
+            # Note: sum_agg has same dim as x (num_features) since Stage 2 is identity
+            dummy_sum_agg = torch.randn(num_nodes, num_features)  # Output from stage 3 (FP32)
             dummy_count = torch.randn(num_nodes)  # Output from stage 4 (1D tensor, FP32)
             dummy_x = torch.randn(num_nodes, num_features)  # FP32
             dummy_inputs = (dummy_sum_agg, dummy_count, dummy_x)
@@ -385,7 +388,8 @@ class SimpleModelExporter:
             } if use_dynamic else None
         elif first_stage == 6:
             # Stage 6-7: input is (mean_agg, x)
-            dummy_mean_agg = torch.randn(num_nodes, 256)  # Output from stage 5 (FP32)
+            # Note: mean_agg has same dim as x (num_features) since Stage 2 is identity
+            dummy_mean_agg = torch.randn(num_nodes, num_features)  # Output from stage 5 (FP32)
             dummy_x = torch.randn(num_nodes, num_features)  # FP32
             dummy_inputs = (dummy_mean_agg, dummy_x)
             input_names = ['mean_agg', 'x']
