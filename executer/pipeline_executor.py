@@ -333,10 +333,10 @@ class PipelineExecutor:
             infer_request = executor.create_async_infer_request(block_id, device)
 
             if infer_request is not None:
-                # 启动异步推理
+                # 启动异步推理（传递 device 用于 NPU padding）
                 print(f"  [Block{block_id} Thread-{thread_id % 10000}] Launching async SG{sg_id}")
-                executor.start_async_inference(infer_request, input_data, stages)
-                pending_inferences.append((sg_id, infer_request, input_data, total_start_time, wait_time))
+                executor.start_async_inference(infer_request, input_data, stages, device)
+                pending_inferences.append((sg_id, infer_request, input_data, total_start_time, wait_time, device))
             else:
                 # Fallback 到同步模式
                 print(f"  [Block{block_id} Thread-{thread_id % 10000}] Starting SG{sg_id} (sync fallback)")
@@ -361,12 +361,12 @@ class PipelineExecutor:
                 print(f"  [Block{block_id} Thread-{thread_id % 10000}] Finished SG{sg_id}: wait={wait_time:.0f}ms, exec={exec_time:.0f}ms")
 
         # Phase 2: 等待所有异步推理完成并收集结果
-        for sg_id, infer_request, input_data, start_time, wait_time in pending_inferences:
+        for sg_id, infer_request, input_data, start_time, wait_time, device in pending_inferences:
             exec_start_time = time.time()
 
-            # 等待推理完成并获取输出
+            # 等待推理完成并获取输出（传递 device 用于 NPU unpad）
             executor = self.subgraph_executors[sg_id]
-            output_data = executor.wait_and_get_output(infer_request, stages, input_data)
+            output_data = executor.wait_and_get_output(infer_request, stages, input_data, device)
 
             exec_time = (time.time() - exec_start_time) * 1000
 

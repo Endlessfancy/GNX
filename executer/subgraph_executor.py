@@ -268,7 +268,8 @@ class SubgraphExecutor:
 
         return None
 
-    def start_async_inference(self, infer_request: Any, input_data: Dict, stages: List[int]):
+    def start_async_inference(self, infer_request: Any, input_data: Dict, stages: List[int],
+                               device: str = None):
         """
         启动异步推理（立即返回）
 
@@ -276,9 +277,18 @@ class SubgraphExecutor:
             infer_request: OpenVINO InferRequest
             input_data: 输入数据
             stages: 执行的 stages
+            device: 设备名称（用于 NPU padding）
         """
         # 准备输入
         model_input = self._prepare_model_input(input_data, stages)
+
+        # NPU 需要 padding 到静态大小
+        original_num_nodes = None
+        if device == 'NPU' and self.npu_static_nodes > 0:
+            model_input, original_num_nodes = self._pad_input_for_npu(model_input, stages)
+            # 保存原始节点数，供 wait_and_get_output 使用
+            self._async_original_nodes = original_num_nodes
+
         numpy_inputs = self._convert_to_numpy(model_input)
 
         # 获取编译模型的输入名称
@@ -292,7 +302,8 @@ class SubgraphExecutor:
         # 启动异步推理
         infer_request.start_async()
 
-    def wait_and_get_output(self, infer_request: Any, stages: List[int], input_data: Dict) -> Dict:
+    def wait_and_get_output(self, infer_request: Any, stages: List[int], input_data: Dict,
+                            device: str = None) -> Dict:
         """
         等待异步推理完成并获取输出
 
@@ -300,6 +311,7 @@ class SubgraphExecutor:
             infer_request: OpenVINO InferRequest
             stages: 执行的 stages
             input_data: 原始输入数据（用于构建输出）
+            device: 设备名称（用于 NPU unpad）
 
         Returns:
             output_data: 输出数据字典
@@ -310,6 +322,11 @@ class SubgraphExecutor:
         # 获取输出
         output_tensor = infer_request.get_output_tensor(0)
         output = torch.from_numpy(output_tensor.data.copy())
+
+        # NPU 输出需要 unpad
+        if device == 'NPU' and hasattr(self, '_async_original_nodes') and self._async_original_nodes is not None:
+            output = unpad_tensor_from_npu(output, self._async_original_nodes, dim=0)
+            self._async_original_nodes = None  # 清理
 
         # 准备输出数据
         output_data = self._prepare_next_input(output, stages, input_data)
