@@ -14,10 +14,10 @@ from concurrent.futures import ThreadPoolExecutor
 # Import partitioner and NPU utils
 try:
     from .node_partitioner import NodeBasedPartitioner
-    from .npu_utils import pad_graph_data_for_npu, unpad_tensor_from_npu
+    from .npu_utils import pad_graph_data_for_npu, unpad_tensor_from_npu, pad_tensor_for_npu
 except ImportError:
     from node_partitioner import NodeBasedPartitioner
-    from npu_utils import pad_graph_data_for_npu, unpad_tensor_from_npu
+    from npu_utils import pad_graph_data_for_npu, unpad_tensor_from_npu, pad_tensor_for_npu
 
 # OpenVINO support
 try:
@@ -39,13 +39,16 @@ class SubgraphExecutor:
     5. 返回owned nodes的embeddings
     """
 
-    def __init__(self, subgraph_id: int, subgraph_config: Dict, pep: List, models: Dict):
+    def __init__(self, subgraph_id: int, subgraph_config: Dict, pep: List, models: Dict,
+                 npu_static_nodes: int = 0, npu_static_edges: int = 0):
         """
         Args:
             subgraph_id: Subgraph ID
             subgraph_config: Subgraph配置 (from partition_config)
             pep: PEP定义 [[devices, stages, ratios], ...]
             models: {(block_id, device): compiled_model}
+            npu_static_nodes: NPU模型的静态节点数（用于padding）
+            npu_static_edges: NPU模型的静态边数（用于padding）
         """
         self.subgraph_id = subgraph_id
         self.subgraph_config = subgraph_config
@@ -54,7 +57,11 @@ class SubgraphExecutor:
 
         self.num_blocks = len(pep)
         self.n = subgraph_config['n']  # owned nodes
-        self.n_pad = subgraph_config['n_pad']
+        self.n_pad = subgraph_config.get('n_pad', 0)
+
+        # NPU 静态 shape 信息（用于 padding）
+        self.npu_static_nodes = npu_static_nodes
+        self.npu_static_edges = npu_static_edges
 
     def execute(self, edge_index: torch.Tensor, x: torch.Tensor,
                 owned_nodes: torch.Tensor) -> Tuple[torch.Tensor, float]:
@@ -159,10 +166,19 @@ class SubgraphExecutor:
         # 准备模型输入（根据stages确定）
         model_input = self._prepare_model_input(input_data, stages)
 
+        # NPU 需要 padding 到静态大小
+        original_num_nodes = None
+        if device == 'NPU' and self.npu_static_nodes > 0:
+            model_input, original_num_nodes = self._pad_input_for_npu(model_input, stages)
+
         # 检查模型类型
         if OPENVINO_AVAILABLE and hasattr(model, 'create_infer_request'):
             # OpenVINO CompiledModel
             output = self._run_openvino_inference(model, model_input)
+
+            # NPU 输出需要 unpad
+            if device == 'NPU' and original_num_nodes is not None:
+                output = unpad_tensor_from_npu(output, original_num_nodes, dim=0)
 
         elif hasattr(model, 'run'):
             # ONNX Runtime model
@@ -566,3 +582,50 @@ class SubgraphExecutor:
             else:
                 numpy_arrays.append(t)
         return numpy_arrays
+
+    def _pad_input_for_npu(self, model_input: List, stages: List[int]) -> Tuple[List, int]:
+        """
+        为 NPU 静态模型 padding 输入数据
+
+        Args:
+            model_input: 模型输入列表
+            stages: 执行的 stages
+
+        Returns:
+            (padded_input, original_num_nodes)
+        """
+        first_stage = stages[0]
+
+        if first_stage == 1:
+            # Stage 1-N: input is (x, edge_index)
+            x, edge_index = model_input[0], model_input[1]
+            x_padded, edge_index_padded, original_nodes, _ = pad_graph_data_for_npu(
+                x, edge_index,
+                self.npu_static_nodes, self.npu_static_edges
+            )
+            return [x_padded, edge_index_padded], original_nodes
+
+        elif first_stage == 5:
+            # Stage 5-7: input is (sum_agg, count, x)
+            sum_agg, count, x = model_input[0], model_input[1], model_input[2]
+            original_nodes = sum_agg.size(0)
+
+            sum_agg_padded, _ = pad_tensor_for_npu(sum_agg, self.npu_static_nodes)
+            count_padded, _ = pad_tensor_for_npu(count, self.npu_static_nodes)
+            x_padded, _ = pad_tensor_for_npu(x, self.npu_static_nodes)
+
+            return [sum_agg_padded, count_padded, x_padded], original_nodes
+
+        elif first_stage == 6:
+            # Stage 6-7: input is (mean_agg, x)
+            mean_agg, x = model_input[0], model_input[1]
+            original_nodes = mean_agg.size(0)
+
+            mean_agg_padded, _ = pad_tensor_for_npu(mean_agg, self.npu_static_nodes)
+            x_padded, _ = pad_tensor_for_npu(x, self.npu_static_nodes)
+
+            return [mean_agg_padded, x_padded], original_nodes
+
+        else:
+            # 其他情况：不 padding
+            return model_input, model_input[0].size(0) if isinstance(model_input[0], torch.Tensor) else 0

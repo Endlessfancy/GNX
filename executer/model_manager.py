@@ -35,18 +35,24 @@ class ModelManager:
     4. 缓存编译后的模型
     """
 
-    def __init__(self, execution_plan: Dict, compilation_result_dir: Optional[Path] = None):
+    def __init__(self, execution_plan: Dict, compilation_result_dir: Optional[Path] = None,
+                 partition_config: Optional[Dict] = None):
         """
         Args:
             execution_plan: Compiler输出的execution_plan部分
             compilation_result_dir: compilation_result.json所在目录（用于解析相对路径，已废弃）
+            partition_config: Compiler输出的partition_config部分（用于计算NPU静态shape）
         """
         self.execution_plan = execution_plan
         self.clusters = execution_plan['clusters']
+        self.partition_config = partition_config
 
         # Use executor's own models directory (independent from compiler)
         self.models_dir = Path(__file__).parent / 'models'
         self.models_dir.mkdir(parents=True, exist_ok=True)
+
+        # 计算最大 subgraph 大小（用于 NPU 静态 shape）
+        self.max_subgraph_nodes, self.max_subgraph_edges = self._calculate_max_subgraph_size()
 
         # 收集所有需要的模型
         self.model_refs = self._collect_model_refs()
@@ -65,6 +71,40 @@ class ModelManager:
         print(f"    Unique models needed: {len(self.model_refs)}")
         print(f"    Models directory: {self.models_dir}")
         print(f"    OpenVINO available: {OPENVINO_AVAILABLE}")
+        if self.max_subgraph_nodes > 0:
+            print(f"    NPU static shape: max_nodes={self.max_subgraph_nodes}, max_edges={self.max_subgraph_edges}")
+
+    def _calculate_max_subgraph_size(self) -> Tuple[int, int]:
+        """
+        计算所有 subgraph 中的最大节点数和边数
+        用于 NPU 静态 shape 模型导出
+
+        Returns:
+            (max_nodes, max_edges)
+        """
+        if self.partition_config is None:
+            # 没有 partition_config，使用默认值
+            return 0, 0
+
+        subgraphs = self.partition_config.get('subgraphs', [])
+        if not subgraphs:
+            return 0, 0
+
+        max_nodes = 0
+        max_edges = 0
+
+        for sg in subgraphs:
+            n = sg.get('n', 0)  # 节点数
+            m = sg.get('m', 0)  # 边数
+            max_nodes = max(max_nodes, n)
+            max_edges = max(max_edges, m)
+
+        # 考虑 ghost nodes，增加 50% 的余量
+        # 因为实际运行时 subgraph 包含 owned + ghost nodes
+        max_nodes = int(max_nodes * 1.5)
+        max_edges = int(max_edges * 1.5)
+
+        return max_nodes, max_edges
 
     def _collect_model_refs(self) -> Dict[str, str]:
         """
@@ -154,10 +194,17 @@ class ModelManager:
             # 使用standalone exporter
             exporter = SimpleModelExporter()
 
-            # 从compilation_result.json中获取数据集信息
-            # 默认使用Flickr的参数
-            num_nodes = 89250  # Flickr默认
-            num_edges = 899756
+            # 根据设备类型选择模型大小
+            # NPU 使用最大 subgraph 大小（静态 shape）
+            # CPU/GPU 使用完整数据集大小（动态 shape）
+            if device == 'NPU' and self.max_subgraph_nodes > 0:
+                num_nodes = self.max_subgraph_nodes
+                num_edges = self.max_subgraph_edges
+                print(f"      Using NPU static shape: nodes={num_nodes}, edges={num_edges}")
+            else:
+                # 默认使用Flickr的参数
+                num_nodes = 89250  # Flickr默认
+                num_edges = 899756
             num_features = 500
 
             # 导出模型
@@ -168,7 +215,7 @@ class ModelManager:
                 num_nodes=num_nodes,
                 num_edges=num_edges,
                 num_features=num_features,
-                dynamic=True  # CPU/GPU使用动态模型
+                dynamic=True  # CPU/GPU使用动态模型，NPU内部会设置为False
             )
 
             print(f"      ✓ Exported: {os.path.getsize(model_path) / 1024:.1f} KB")

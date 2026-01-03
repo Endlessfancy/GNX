@@ -117,7 +117,7 @@ class PipelineExecutor:
         else:
             # 使用默认路径（用于自定义 execution_plan）
             compilation_result_dir = Path(__file__).parent.parent / 'compiler' / 'output'
-        self.model_manager = ModelManager(self.execution_plan, compilation_result_dir)
+        self.model_manager = ModelManager(self.execution_plan, compilation_result_dir, self.partition_config)
         self.model_manager.ensure_models_exist()
         self.model_manager.load_models()
 
@@ -140,11 +140,14 @@ class PipelineExecutor:
                 # 找到对应的subgraph配置
                 sg_config = self.partition_config['subgraphs'][sg_id]
 
+                # 传递 NPU 静态大小（用于 padding）
                 self.subgraph_executors[sg_id] = SubgraphExecutor(
                     subgraph_id=sg_id,
                     subgraph_config=sg_config,
                     pep=pep,
-                    models=models
+                    models=models,
+                    npu_static_nodes=self.model_manager.max_subgraph_nodes,
+                    npu_static_edges=self.model_manager.max_subgraph_edges
                 )
 
         print(f"  ✓ Created {len(self.subgraph_executors)} subgraph executors")
