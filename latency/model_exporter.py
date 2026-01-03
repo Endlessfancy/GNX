@@ -11,9 +11,15 @@ import argparse
 from pathlib import Path
 from typing import List, Dict, Tuple, Optional
 
-# Add executer to path
-_parent_dir = Path(__file__).parent.parent
-sys.path.insert(0, str(_parent_dir / 'executer'))
+# Add current directory and executer to path
+_current_dir = Path(__file__).parent
+_parent_dir = _current_dir.parent
+
+# Add latency first (higher priority for local modules like pep_config)
+if str(_current_dir) not in sys.path:
+    sys.path.insert(0, str(_current_dir))
+# Then add executer (for model_export_utils)
+sys.path.insert(1, str(_parent_dir / 'executer'))
 
 import numpy as np
 
