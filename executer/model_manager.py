@@ -261,7 +261,8 @@ class ModelManager:
             ov_model = ov.convert_model(onnx_path)
 
             # Save model without FP16 compression for better GPU compatibility
-            ov.save_model(ov_model, str(ir_xml_path))
+            # Intel GPU lacks kernels for F16→F32 conversion, so keep everything in FP32
+            ov.save_model(ov_model, str(ir_xml_path), compress_to_fp16=False)
 
             print(f"      ✓ Converted to IR: {ir_xml_path.name}")
             return str(ir_xml_path)
