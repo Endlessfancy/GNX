@@ -13,7 +13,8 @@ import torch.nn.functional as F
 import numpy as np
 from pathlib import Path
 from typing import List, Dict, Tuple, Optional
-from torch_geometric.nn.dense.linear import Linear
+# Use standard PyTorch Linear instead of torch_geometric.nn.dense.linear.Linear
+# to avoid ONNX export issues that cause OpenVINO GPU compilation failures
 from torch_scatter import scatter_add
 
 
@@ -39,14 +40,17 @@ class SAGEStage2_Message(torch.nn.Module):
     Stage 2: MESSAGE - Linear transformation to hidden dimension
     Input: x_j [num_edges, in_dim]
     Output: messages [num_edges, hidden_dim]
+
+    Note: Uses torch.nn.Linear instead of torch_geometric.nn.dense.linear.Linear
+    to avoid ONNX export issues that cause OpenVINO GPU compilation failures.
     """
     def __init__(self, in_channels: int = 500, hidden_channels: int = 256):
         super().__init__()
-        self.lin = Linear(in_channels, hidden_channels, bias=False)
+        self.lin = nn.Linear(in_channels, hidden_channels, bias=False)
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lin.reset_parameters()
+        nn.init.xavier_uniform_(self.lin.weight)
 
     def forward(self, x_j: torch.Tensor) -> torch.Tensor:
         return self.lin(x_j)
@@ -112,16 +116,23 @@ class SAGEStage6_Transform(torch.nn.Module):
     Note: For pipeline execution, agg_dim is typically different from in_dim
     - agg_dim: dimension of aggregated features (256 for hidden layers)
     - in_dim: dimension of original features (500 for input)
+
+    Uses torch.nn.Linear instead of torch_geometric.nn.dense.linear.Linear
+    to avoid ONNX export issues that cause OpenVINO GPU compilation failures.
     """
     def __init__(self, agg_channels: int, in_channels: int, out_channels: int, bias_l=True, bias_r=False):
         super().__init__()
-        self.lin_l = Linear(agg_channels, out_channels, bias=bias_l)  # For mean_agg
-        self.lin_r = Linear(in_channels, out_channels, bias=bias_r)   # For x
+        self.lin_l = nn.Linear(agg_channels, out_channels, bias=bias_l)  # For mean_agg
+        self.lin_r = nn.Linear(in_channels, out_channels, bias=bias_r)   # For x
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lin_l.reset_parameters()
-        self.lin_r.reset_parameters()
+        nn.init.xavier_uniform_(self.lin_l.weight)
+        if self.lin_l.bias is not None:
+            nn.init.zeros_(self.lin_l.bias)
+        nn.init.xavier_uniform_(self.lin_r.weight)
+        if self.lin_r.bias is not None:
+            nn.init.zeros_(self.lin_r.bias)
 
     def forward(self, mean_agg: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
         out = self.lin_l(mean_agg)
