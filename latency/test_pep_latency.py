@@ -1,16 +1,16 @@
 """
-PEP-based Latency Testing with Flickr Dataset
+PEP-based Pipeline Latency Testing with Flickr Dataset
 
-Test GNN pipeline latency using:
-- Flickr dataset partitioned into subgraphs
-- Real 7-Stage GraphSAGE models (fused kernels)
-- Multi-device async parallel execution
+Industrial-grade pipeline benchmark using:
+- Flickr dataset partitioned into subgraphs (batches)
+- Real 7-Stage GraphSAGE models
+- True pipeline execution with cross-cycle buffer
+- 1-hop Halo Node graph partitioning for data parallel
 - PERF_COUNT precise timing
 
 Usage:
     python test_pep_latency.py                    # Run with default PEP1
     python test_pep_latency.py --pep pep2         # Run with PEP2
-    python test_pep_latency.py --pep all          # Run all PEPs
     python test_pep_latency.py --export-only      # Only export models
 """
 
@@ -28,49 +28,57 @@ _parent_dir = _current_dir.parent
 if str(_parent_dir) not in sys.path:
     sys.path.insert(0, str(_parent_dir))
 
-# Import from latency package (all dependencies are now self-contained)
+# Import from latency package
 from latency.profiler import PipelineProfiler
 from latency.flickr_loader import FlickrSubgraphLoader
-from latency.model_exporter import GNNModelExporter
-from latency.stage_executor import StageExecutor, ProfilingResult, OPENVINO_AVAILABLE
-from latency.async_executor import AsyncBlockExecutor, BlockExecutionResult
+from latency.pipeline_executor import (
+    PipelineBenchmark,
+    SingleDeviceStage,
+    DataParallelStage,
+    OPENVINO_AVAILABLE
+)
 from latency.pep_config import (
     ALL_PEPS, PEP1, PEP2,
     analyze_pep, print_pep
 )
 
+# Model exporter requires torch_scatter - make it optional
+try:
+    from latency.model_exporter import GNNModelExporter
+    MODEL_EXPORTER_AVAILABLE = True
+except ImportError as e:
+    GNNModelExporter = None
+    MODEL_EXPORTER_AVAILABLE = False
+    print(f"Warning: GNNModelExporter not available: {e}")
+
 if OPENVINO_AVAILABLE:
     from openvino.runtime import Core
 
 
-class PEPLatencyTester:
+class PEPPipelineTester:
     """
-    Test latency for PEP configurations using Flickr data.
+    Pipeline tester for PEP configurations using Flickr data.
 
     Features:
-    - Loads real Flickr data partitioned into subgraphs
-    - Uses fused 7-Stage GraphSAGE models
-    - Supports single and data-parallel execution
-    - Precise timing with PERF_COUNT
+    - True pipeline execution with cross-cycle buffer
+    - 1-hop halo node expansion for graph data parallel
+    - Per-stage, per-device timing breakdown
     """
 
     def __init__(self,
-                 profiler: PipelineProfiler,
                  num_subgraphs: int = 8,
                  models_dir: Path = None):
         """
         Initialize tester.
 
         Args:
-            profiler: PipelineProfiler instance
-            num_subgraphs: Number of Flickr subgraphs
+            num_subgraphs: Number of Flickr subgraphs (batches)
             models_dir: Directory for model files
         """
-        self.profiler = profiler
-        self.num_subgraphs = num_subgraphs
-
         if not OPENVINO_AVAILABLE:
-            raise RuntimeError("OpenVINO is required for PEP latency testing")
+            raise RuntimeError("OpenVINO is required for pipeline testing")
+
+        self.num_subgraphs = num_subgraphs
 
         # Initialize OpenVINO
         self.core = Core()
@@ -85,10 +93,11 @@ class PEPLatencyTester:
 
         # Model exporter
         self.models_dir = models_dir or Path(__file__).parent / 'models'
-        self.exporter = GNNModelExporter(output_dir=self.models_dir)
-
-        # Cache for block executors
-        self._executor_cache: Dict[str, AsyncBlockExecutor] = {}
+        if MODEL_EXPORTER_AVAILABLE:
+            self.exporter = GNNModelExporter(output_dir=self.models_dir)
+        else:
+            self.exporter = None
+            print("Warning: Model exporter not available. Use pre-exported models.")
 
     def _get_available_device(self, device: str) -> str:
         """Get available device, fallback to CPU if needed."""
@@ -97,63 +106,82 @@ class PEPLatencyTester:
         print(f"  WARNING: {device} not available, using CPU")
         return "CPU"
 
-    def _export_models_for_pep(self, pep: List, force: bool = False) -> Dict[int, Dict[str, Path]]:
-        """
-        Export all models needed for a PEP.
+    def _prepare_batches(self) -> List[Dict[str, np.ndarray]]:
+        """Prepare all subgraphs as batches."""
+        batches = []
+        for i in range(self.num_subgraphs):
+            sg = self.data_loader.get_subgraph(i)
+            batches.append({
+                'x': sg['x'].numpy().astype(np.float32),
+                'edge_index': sg['edge_index'].numpy().astype(np.int64)
+            })
+        return batches
 
-        Returns:
-            {block_id: {device: model_path}}
-        """
+    def _export_models_for_pep(self, pep: List, force: bool = False):
+        """Export all models needed for a PEP."""
+        if self.exporter is None:
+            print("  Skipping model export (exporter not available)")
+            return
         self.exporter.export_for_pep(pep, self.max_nodes, self.max_edges, force)
 
-        model_paths = {}
+    def _create_pipeline(self,
+                         pep: List,
+                         profiler: PipelineProfiler) -> PipelineBenchmark:
+        """Create PipelineBenchmark from PEP configuration."""
+        pipeline = PipelineBenchmark(profiler)
+
         for block_id, block in enumerate(pep):
             devices = block[0]
             stages = block[1]
-            model_paths[block_id] = {}
+            ratios = block[2] if len(block) > 2 else [1.0 / len(devices)] * len(devices)
 
-            for device in devices:
-                actual_device = self._get_available_device(device)
-                path = self.exporter.get_model_path(stages, actual_device)
-                if path:
-                    model_paths[block_id][actual_device] = path
+            # Map to available devices
+            actual_devices = [self._get_available_device(d) for d in devices]
+
+            # Get model paths
+            model_paths = {}
+            for device in actual_devices:
+                if self.exporter is not None:
+                    path = self.exporter.get_model_path(stages, device)
                 else:
-                    print(f"  WARNING: Model not found for block {block_id}, device {actual_device}")
+                    # Try to find pre-exported model
+                    stage_str = '_'.join(map(str, stages))
+                    shape_type = "static" if device == "NPU" else "dynamic"
+                    path = self.models_dir / f"stages_{stage_str}_{shape_type}.xml"
+                    if not path.exists():
+                        path = None
+                if path:
+                    model_paths[device] = path
 
-        return model_paths
+            stage_name = f"Block{block_id}_S{'_'.join(map(str, stages))}"
 
-    def _create_block_executor(self,
-                               block_id: int,
-                               block: List,
-                               model_paths: Dict[str, Path]) -> AsyncBlockExecutor:
-        """Create executor for a PEP block."""
-        devices = block[0]
-        stages = block[1]
-        ratios = block[2] if len(block) > 2 else [1.0 / len(devices)] * len(devices)
+            # Determine if this is a graph stage (stages 1-5) or dense stage (6-7)
+            is_graph_stage = any(s <= 5 for s in stages)
 
-        # Map to available devices
-        actual_devices = [self._get_available_device(d) for d in devices]
-        actual_model_paths = {
-            self._get_available_device(d): model_paths.get(self._get_available_device(d))
-            for d in devices
-            if model_paths.get(self._get_available_device(d))
-        }
+            if len(actual_devices) == 1:
+                # Single device stage
+                device = actual_devices[0]
+                if device in model_paths:
+                    pipeline.add_single_stage(
+                        name=stage_name,
+                        model_path=model_paths[device],
+                        device=device,
+                        npu_static_nodes=self.max_nodes if device == 'NPU' else None,
+                        npu_static_edges=self.max_edges if device == 'NPU' else None
+                    )
+            else:
+                # Data parallel stage
+                pipeline.add_dp_stage(
+                    name=stage_name,
+                    model_paths=model_paths,
+                    devices=list(model_paths.keys()),
+                    ratios=ratios[:len(model_paths)],
+                    is_graph_stage=is_graph_stage,
+                    npu_static_nodes=self.max_nodes,
+                    npu_static_edges=self.max_edges
+                )
 
-        stage_name = f"Block{block_id}_S{'_'.join(map(str, stages))}"
-
-        # Pass NPU static size for NPU padding
-        executor = AsyncBlockExecutor(
-            core=self.core,
-            model_paths=actual_model_paths,
-            devices=list(actual_model_paths.keys()),
-            ratios=ratios[:len(actual_model_paths)],
-            stage_name=stage_name,
-            profiler=self.profiler,
-            npu_static_nodes=self.max_nodes,
-            npu_static_edges=self.max_edges
-        )
-
-        return executor
+        return pipeline
 
     def run_pep(self,
                 pep: List,
@@ -161,16 +189,16 @@ class PEPLatencyTester:
                 pep_name: str = "PEP",
                 warmup: int = 3) -> Dict:
         """
-        Run latency test for a single PEP.
+        Run pipeline benchmark for a PEP configuration.
 
         Args:
             pep: PEP configuration
-            num_iterations: Number of iterations per subgraph
+            num_iterations: Number of iterations
             pep_name: Name for logging
-            warmup: Number of warmup iterations
+            warmup: Warmup iterations
 
         Returns:
-            Timing statistics
+            Benchmark results
         """
         print(f"\n{'='*70}")
         print(f"Testing {pep_name}")
@@ -185,178 +213,110 @@ class PEPLatencyTester:
 
         # 1. Export models
         print("\nExporting models...")
-        model_paths = self._export_models_for_pep(pep)
+        self._export_models_for_pep(pep)
 
-        # 2. Create block executors
-        print("\nCreating block executors...")
-        block_executors = []
-        for block_id, block in enumerate(pep):
-            executor = self._create_block_executor(block_id, block, model_paths[block_id])
-            block_executors.append(executor)
+        # 2. Prepare batches
+        print("\nPreparing batches...")
+        batches = self._prepare_batches()
+        print(f"  Prepared {len(batches)} batches")
 
-        # 3. Warmup
-        print(f"\nWarming up ({warmup} iterations)...")
-        sg0 = self.data_loader.get_subgraph(0)
-        warmup_inputs = {
-            'x': sg0['x'].numpy().astype(np.float32),
-            'edge_index': sg0['edge_index'].numpy().astype(np.int64)
-        }
-
-        for _ in range(warmup):
-            current = warmup_inputs
-            for executor in block_executors:
-                result = executor.run(current, batch_id=-1)
-                current = result.outputs
+        # 3. Create profiler and pipeline
+        profiler = PipelineProfiler(f"{pep_name}_Pipeline")
+        pipeline = self._create_pipeline(pep, profiler)
 
         # 4. Run benchmark
-        print(f"\nRunning {num_iterations} iterations on {self.num_subgraphs} subgraphs...")
+        results = pipeline.run_pipeline(
+            batches=batches,
+            iterations=num_iterations,
+            warmup=warmup
+        )
 
-        all_times = []
-        per_block_times = [[] for _ in range(len(pep))]
-        per_subgraph_times = []
+        # 5. Print report
+        pipeline.print_report(results)
 
-        batch_id = 0
-        for sg_id in range(self.num_subgraphs):
-            sg_data = self.data_loader.get_subgraph(sg_id)
-            inputs = {
-                'x': sg_data['x'].numpy().astype(np.float32),
-                'edge_index': sg_data['edge_index'].numpy().astype(np.int64)
-            }
+        # 6. Export trace
+        trace_dir = Path(__file__).parent / 'traces'
+        trace_dir.mkdir(exist_ok=True)
+        trace_path = trace_dir / f"{pep_name.lower()}_pipeline_trace.json"
+        profiler.export_chrome_trace(str(trace_path))
+        print(f"\nTrace saved to: {trace_path}")
 
-            sg_times = []
-
-            for iter_id in range(num_iterations):
-                iter_start = time.perf_counter()
-
-                # Execute all blocks
-                current = inputs
-                block_times = []
-
-                for block_id, executor in enumerate(block_executors):
-                    result = executor.run(current, batch_id)
-                    block_times.append(result.wall_time_ms)
-                    per_block_times[block_id].append(result.wall_time_ms)
-                    current = result.outputs
-
-                iter_time = (time.perf_counter() - iter_start) * 1000
-                all_times.append(iter_time)
-                sg_times.append(iter_time)
-                batch_id += 1
-
-            sg_avg = np.mean(sg_times)
-            per_subgraph_times.append(sg_avg)
-
-            if sg_id % max(1, self.num_subgraphs // 4) == 0:
-                print(f"  Subgraph {sg_id}: avg={sg_avg:.2f}ms, "
-                      f"nodes={sg_data['num_nodes']}, edges={sg_data['num_edges']}")
-
-        # 5. Calculate statistics
-        stats = {
-            'pep_name': pep_name,
-            'num_subgraphs': self.num_subgraphs,
-            'num_iterations': num_iterations,
-            'total_batches': batch_id,
-            'avg_time_ms': np.mean(all_times),
-            'std_time_ms': np.std(all_times),
-            'min_time_ms': np.min(all_times),
-            'max_time_ms': np.max(all_times),
-            'p50_time_ms': np.percentile(all_times, 50),
-            'p95_time_ms': np.percentile(all_times, 95),
-            'p99_time_ms': np.percentile(all_times, 99),
-            'per_block_avg_ms': [np.mean(times) for times in per_block_times],
-            'per_subgraph_avg_ms': per_subgraph_times,
-            'throughput_batches_per_sec': 1000.0 / np.mean(all_times)
-        }
-
-        # Print results
-        print(f"\n--- {pep_name} Results ---")
-        print(f"  Total batches: {stats['total_batches']}")
-        print(f"  Avg Time: {stats['avg_time_ms']:.2f} +/- {stats['std_time_ms']:.2f} ms")
-        print(f"  Min/Max: {stats['min_time_ms']:.2f} / {stats['max_time_ms']:.2f} ms")
-        print(f"  P50/P95/P99: {stats['p50_time_ms']:.2f} / {stats['p95_time_ms']:.2f} / {stats['p99_time_ms']:.2f} ms")
-        print(f"  Throughput: {stats['throughput_batches_per_sec']:.1f} batches/sec")
-        print(f"  Per-Block Avg: {[f'{t:.2f}ms' for t in stats['per_block_avg_ms']]}")
-
-        return stats
+        return results
 
     def run_all_peps(self, num_iterations: int = 10) -> Dict:
         """Run all predefined PEP configurations."""
-        results = {}
+        all_results = {}
 
         for name, pep in ALL_PEPS.items():
             try:
-                stats = self.run_pep(pep, num_iterations, name.upper())
-                results[name] = stats
+                results = self.run_pep(pep, num_iterations, name.upper())
+                all_results[name] = results
             except Exception as e:
                 print(f"  ERROR running {name}: {e}")
                 import traceback
                 traceback.print_exc()
-                results[name] = {'error': str(e)}
+                all_results[name] = {'error': str(e)}
 
         # Summary comparison
-        self._print_comparison(results)
+        self._print_comparison(all_results)
 
-        return results
+        return all_results
 
-    def _print_comparison(self, results: Dict):
+    def _print_comparison(self, all_results: Dict):
         """Print comparison table for multiple PEPs."""
         print(f"\n{'='*70}")
         print("PEP Comparison")
         print(f"{'='*70}")
-        print(f"{'PEP':<15} {'Avg (ms)':<12} {'Std (ms)':<12} {'P95 (ms)':<12} {'Throughput':<12}")
+        print(f"{'PEP':<15} {'Cycle Time (ms)':<18} {'Throughput (b/s)':<18}")
         print("-" * 70)
 
-        for name, stats in results.items():
-            if 'error' in stats:
-                print(f"{name:<15} ERROR: {stats['error']}")
+        for name, results in all_results.items():
+            if 'error' in results:
+                print(f"{name:<15} ERROR: {results['error']}")
             else:
-                print(f"{name:<15} "
-                      f"{stats['avg_time_ms']:<12.2f} "
-                      f"{stats['std_time_ms']:<12.2f} "
-                      f"{stats['p95_time_ms']:<12.2f} "
-                      f"{stats['throughput_batches_per_sec']:<12.1f}")
+                pipeline = results.get('pipeline', {})
+                cycle_time = pipeline.get('avg_cycle_time_ms', 0)
+                throughput = pipeline.get('throughput_batches_per_sec', 0)
+                print(f"{name:<15} {cycle_time:<18.2f} {throughput:<18.1f}")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="PEP-based Latency Testing with Flickr")
+    parser = argparse.ArgumentParser(description="PEP Pipeline Latency Testing")
     parser.add_argument("--pep", type=str, default="pep1",
                         choices=list(ALL_PEPS.keys()) + ['all'],
                         help="PEP configuration to test")
     parser.add_argument("--num-iterations", type=int, default=10,
-                        help="Number of iterations per subgraph")
+                        help="Number of iterations per batch")
     parser.add_argument("--num-subgraphs", type=int, default=8,
-                        help="Number of Flickr subgraphs")
+                        help="Number of Flickr subgraphs (batches)")
     parser.add_argument("--warmup", type=int, default=3,
                         help="Number of warmup iterations")
-    parser.add_argument("--output", type=str, default="pep_latency_trace.json",
-                        help="Output trace file")
+    parser.add_argument("--output", type=str, default="pipeline_results.json",
+                        help="Output results file")
     parser.add_argument("--export-only", action="store_true",
                         help="Only export models, don't run benchmark")
 
     args = parser.parse_args()
 
     print("=" * 70)
-    print("PEP-based Latency Testing with Flickr Dataset")
+    print("PEP Pipeline Latency Testing with Flickr Dataset")
     print("=" * 70)
     print(f"PEP: {args.pep}")
     print(f"Subgraphs: {args.num_subgraphs}")
-    print(f"Iterations per subgraph: {args.num_iterations}")
+    print(f"Iterations: {args.num_iterations}")
     print(f"Output: {args.output}")
 
     if not OPENVINO_AVAILABLE:
-        print("\nERROR: OpenVINO is required for PEP latency testing")
+        print("\nERROR: OpenVINO is required for pipeline testing")
         return
 
-    # Create profiler
-    profiler = PipelineProfiler("PEP_Latency_Test")
-
     # Create tester
-    tester = PEPLatencyTester(
-        profiler=profiler,
-        num_subgraphs=args.num_subgraphs
-    )
+    tester = PEPPipelineTester(num_subgraphs=args.num_subgraphs)
 
     if args.export_only:
+        if not MODEL_EXPORTER_AVAILABLE:
+            print("\nERROR: Model exporter requires torch_scatter. Cannot export models.")
+            return
         print("\nExport-only mode: exporting models for all PEPs...")
         for name, pep in ALL_PEPS.items():
             print(f"\nExporting models for {name}...")
@@ -371,18 +331,10 @@ def main():
         pep = ALL_PEPS[args.pep]
         results = tester.run_pep(pep, args.num_iterations, args.pep.upper(), args.warmup)
 
-    # Export trace and analyze
-    trace_dir = Path(__file__).parent / 'traces'
-    trace_dir.mkdir(exist_ok=True)
-    trace_path = trace_dir / args.output
-
-    profiler.export_chrome_trace(str(trace_path))
-    profiler.analyze_metrics()
-
-    # Save results to JSON
+    # Save results
     results_dir = Path(__file__).parent / 'results'
     results_dir.mkdir(exist_ok=True)
-    results_path = results_dir / f"{args.pep}_results.json"
+    results_path = results_dir / args.output
 
     # Convert numpy types for JSON serialization
     def convert_numpy(obj):
@@ -402,10 +354,9 @@ def main():
         json.dump(convert_numpy(results), f, indent=2)
 
     print(f"\n{'='*70}")
-    print("Test Complete!")
-    print(f"Trace saved to: {trace_path}")
+    print("Pipeline Benchmark Complete!")
     print(f"Results saved to: {results_path}")
-    print("Open trace in chrome://tracing or https://ui.perfetto.dev")
+    print("Open trace files in chrome://tracing or https://ui.perfetto.dev")
     print(f"{'='*70}")
 
 

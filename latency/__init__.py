@@ -7,15 +7,16 @@ GNN inference pipelines running on heterogeneous hardware (CPU/GPU/NPU).
 Features:
 - Real Flickr dataset with subgraph partitioning
 - 7-Stage GraphSAGE models (self-contained, no external dependencies)
-- Multi-device async parallel execution
+- Multi-device async parallel execution with 1-hop Halo Node graph partitioning
+- True pipeline execution with cross-cycle buffer
 - PERF_COUNT hardware-level timing
 - Chrome Tracing visualization
 
 Components:
 - FlickrSubgraphLoader: Load and partition Flickr dataset
 - GNNModelExporter: Export 7-stage models (ONNX -> OpenVINO IR)
-- StageExecutor: Single-device inference with timing
-- AsyncBlockExecutor: Multi-device parallel execution
+- HaloPartitioner: 1-hop Halo Node graph partitioning for data parallel
+- PipelineBenchmark: Industrial-grade pipeline benchmark with cross-cycle buffer
 - PipelineProfiler: Central profiler with Chrome Tracing export
 
 Usage:
@@ -23,8 +24,8 @@ Usage:
         FlickrSubgraphLoader,
         GNNModelExporter,
         PipelineProfiler,
-        StageExecutor,
-        AsyncBlockExecutor
+        PipelineBenchmark,
+        HaloPartitioner
     )
 
     # Load data
@@ -35,9 +36,11 @@ Usage:
     exporter = GNNModelExporter()
     exporter.export_for_pep(PEP1, max_nodes, max_edges)
 
-    # Run with profiling
+    # Run pipeline benchmark
     profiler = PipelineProfiler("MyTest")
-    # ... create executors and run ...
+    pipeline = PipelineBenchmark(profiler)
+    pipeline.add_single_stage(...)
+    results = pipeline.run_pipeline(batches, iterations=10)
     profiler.export_chrome_trace("trace.json")
 
 PEP Testing:
@@ -104,6 +107,32 @@ try:
 except ImportError:
     PEP1 = PEP2 = None
 
+try:
+    from latency.graph_partitioner import (
+        HaloPartitioner,
+        PartitionData
+    )
+except ImportError as e:
+    HaloPartitioner = None
+    PartitionData = None
+    print(f"Warning: graph_partitioner not available: {e}")
+
+try:
+    from latency.pipeline_executor import (
+        PipelineBenchmark,
+        PipelineBuffer,
+        SingleDeviceStage,
+        DataParallelStage,
+        StageStats,
+        OPENVINO_AVAILABLE as PIPELINE_OV_AVAILABLE
+    )
+except ImportError as e:
+    PipelineBenchmark = None
+    PipelineBuffer = None
+    SingleDeviceStage = None
+    DataParallelStage = None
+    print(f"Warning: pipeline_executor not available: {e}")
+
 __all__ = [
     # Profiler
     'PipelineProfiler',
@@ -113,7 +142,16 @@ __all__ = [
     'FlickrSubgraphLoader',
     # Model export
     'GNNModelExporter',
-    # Executors
+    # Graph Partitioning (1-hop Halo Node)
+    'HaloPartitioner',
+    'PartitionData',
+    # Pipeline Benchmark (industrial-grade)
+    'PipelineBenchmark',
+    'PipelineBuffer',
+    'SingleDeviceStage',
+    'DataParallelStage',
+    'StageStats',
+    # Legacy Executors (deprecated, use PipelineBenchmark instead)
     'StageExecutor',
     'MultiDeviceExecutor',
     'AsyncBlockExecutor',
