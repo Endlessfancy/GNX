@@ -552,11 +552,15 @@ class SubgraphExecutor:
             }
 
     def _convert_to_numpy(self, tensors: List) -> List[np.ndarray]:
-        """将torch.Tensor转换为numpy数组"""
+        """将torch.Tensor转换为numpy数组（使用FP16精度）"""
         numpy_arrays = []
         for t in tensors:
             if isinstance(t, torch.Tensor):
-                numpy_arrays.append(t.cpu().numpy().astype(np.float32 if t.dtype == torch.float32 else np.int64))
+                # 使用 FP16 精度以匹配 OpenVINO 模型（Intel AI PC 优化）
+                if t.dtype in [torch.float32, torch.float16]:
+                    numpy_arrays.append(t.cpu().numpy().astype(np.float16))
+                else:
+                    numpy_arrays.append(t.cpu().numpy().astype(np.int64))
             elif isinstance(t, int):
                 numpy_arrays.append(np.array(t, dtype=np.int64))
             else:
