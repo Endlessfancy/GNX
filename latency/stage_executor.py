@@ -9,9 +9,16 @@ Wraps OpenVINO InferRequest with:
 - NPU static shape padding/unpadding
 """
 
+# Path setup for running as script or module
+import sys
+from pathlib import Path
+_current_dir = Path(__file__).parent
+_parent_dir = _current_dir.parent
+if str(_parent_dir) not in sys.path:
+    sys.path.insert(0, str(_parent_dir))
+
 import time
 import numpy as np
-from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any, Union
 from dataclasses import dataclass
 
@@ -23,20 +30,13 @@ except ImportError:
     OPENVINO_AVAILABLE = False
     print("WARNING: OpenVINO not available")
 
-try:
-    from profiler import PipelineProfiler
-    from npu_utils import (
-        prepare_npu_inputs,
-        unpad_npu_outputs,
-        NPUPaddingInfo
-    )
-except ImportError:
-    from .profiler import PipelineProfiler
-    from .npu_utils import (
-        prepare_npu_inputs,
-        unpad_npu_outputs,
-        NPUPaddingInfo
-    )
+# Import from latency package (works both as script and module)
+from latency.profiler import PipelineProfiler
+from latency.npu_utils import (
+    prepare_npu_inputs,
+    unpad_npu_outputs,
+    NPUPaddingInfo
+)
 
 
 @dataclass
@@ -443,7 +443,7 @@ if __name__ == "__main__":
     # Test basic execution
     print("Testing StageExecutor...")
 
-    from model_exporter import GNNModelExporter
+    from latency.model_exporter import GNNModelExporter
 
     # Export a test model
     exporter = GNNModelExporter()

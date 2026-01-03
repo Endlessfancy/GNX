@@ -5,21 +5,17 @@ Exports 7-Stage GraphSAGE models for PEP configurations.
 Reuses executer's model definitions with ONNX → OpenVINO IR conversion.
 """
 
+# Path setup for running as script or module
 import os
 import sys
 import argparse
 from pathlib import Path
-from typing import List, Dict, Tuple, Optional
-
-# Add current directory and executer to path
 _current_dir = Path(__file__).parent
 _parent_dir = _current_dir.parent
+if str(_parent_dir) not in sys.path:
+    sys.path.insert(0, str(_parent_dir))
 
-# Add latency first (higher priority for local modules like pep_config)
-if str(_current_dir) not in sys.path:
-    sys.path.insert(0, str(_current_dir))
-# Then add executer (for model_export_utils)
-sys.path.insert(1, str(_parent_dir / 'executer'))
+from typing import List, Dict, Tuple, Optional
 
 import numpy as np
 
@@ -30,8 +26,9 @@ except ImportError:
     OPENVINO_AVAILABLE = False
     print("WARNING: OpenVINO not available for IR conversion")
 
-from model_export_utils import SimpleModelExporter
-from pep_config import ALL_PEPS, PEP1, PEP2
+# Import from latency package (works both as script and module)
+from latency.model_export_utils import SimpleModelExporter
+from latency.pep_config import ALL_PEPS, PEP1, PEP2
 
 
 class GNNModelExporter:

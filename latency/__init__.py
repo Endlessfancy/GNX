@@ -6,7 +6,7 @@ GNN inference pipelines running on heterogeneous hardware (CPU/GPU/NPU).
 
 Features:
 - Real Flickr dataset with subgraph partitioning
-- 7-Stage GraphSAGE models (fused kernels from executer)
+- 7-Stage GraphSAGE models (self-contained, no external dependencies)
 - Multi-device async parallel execution
 - PERF_COUNT hardware-level timing
 - Chrome Tracing visualization
@@ -44,22 +44,22 @@ PEP Testing:
     python latency/test_pep_latency.py --pep pep1 --num-subgraphs 8
 """
 
-from .profiler import PipelineProfiler, TraceEvent, TimingContext
+from latency.profiler import PipelineProfiler, TraceEvent, TimingContext
 
 try:
-    from .flickr_loader import FlickrSubgraphLoader
+    from latency.flickr_loader import FlickrSubgraphLoader
 except ImportError as e:
     FlickrSubgraphLoader = None
     print(f"Warning: FlickrSubgraphLoader not available: {e}")
 
 try:
-    from .model_exporter import GNNModelExporter
+    from latency.model_exporter import GNNModelExporter
 except ImportError as e:
     GNNModelExporter = None
     print(f"Warning: GNNModelExporter not available: {e}")
 
 try:
-    from .stage_executor import (
+    from latency.stage_executor import (
         StageExecutor,
         MultiDeviceExecutor,
         ProfilingResult,
@@ -72,7 +72,7 @@ except ImportError as e:
     print(f"Warning: StageExecutor not available: {e}")
 
 try:
-    from .async_executor import (
+    from latency.async_executor import (
         AsyncBlockExecutor,
         PipelineExecutor,
         BlockExecutionResult
@@ -82,7 +82,7 @@ except ImportError as e:
     PipelineExecutor = None
 
 try:
-    from .npu_utils import (
+    from latency.npu_utils import (
         pad_array_for_npu,
         unpad_array_from_npu,
         pad_graph_data_for_npu,
@@ -96,7 +96,7 @@ except ImportError as e:
     print(f"Warning: npu_utils not available: {e}")
 
 try:
-    from .pep_config import (
+    from latency.pep_config import (
         PEP1, PEP2, PEP_CPU_ONLY, PEP_GPU_ONLY, PEP_3BLOCK, PEP_FINE_DP,
         ALL_PEPS, get_two_pep_test_plan, get_single_pep_test_plan,
         analyze_pep, print_pep

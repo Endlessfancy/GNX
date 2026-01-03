@@ -9,9 +9,16 @@ Provides async parallel execution across CPU/GPU/NPU with:
 - NPU static shape padding support
 """
 
+# Path setup for running as script or module
+import sys
+from pathlib import Path
+_current_dir = Path(__file__).parent
+_parent_dir = _current_dir.parent
+if str(_parent_dir) not in sys.path:
+    sys.path.insert(0, str(_parent_dir))
+
 import time
 import numpy as np
-from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass, field
 from concurrent.futures import ThreadPoolExecutor
@@ -23,14 +30,10 @@ try:
 except ImportError:
     OPENVINO_AVAILABLE = False
 
-try:
-    from profiler import PipelineProfiler
-    from stage_executor import StageExecutor, ProfilingResult
-    from npu_utils import NPUPaddingInfo
-except ImportError:
-    from .profiler import PipelineProfiler
-    from .stage_executor import StageExecutor, ProfilingResult
-    from .npu_utils import NPUPaddingInfo
+# Import from latency package (works both as script and module)
+from latency.profiler import PipelineProfiler
+from latency.stage_executor import StageExecutor, ProfilingResult
+from latency.npu_utils import NPUPaddingInfo
 
 
 @dataclass
@@ -378,8 +381,8 @@ if __name__ == "__main__":
         print("OpenVINO not available")
         exit(0)
 
-    from pep_config import PEP1
-    from model_exporter import GNNModelExporter
+    from latency.pep_config import PEP1
+    from latency.model_exporter import GNNModelExporter
 
     print("Testing AsyncBlockExecutor...")
 

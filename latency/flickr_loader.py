@@ -5,18 +5,20 @@ Loads Flickr dataset and partitions into subgraphs for PEP testing.
 Uses the same data loading logic as executer.
 """
 
+# Path setup for running as script or module
 import sys
 from pathlib import Path
+_current_dir = Path(__file__).parent
+_parent_dir = _current_dir.parent
+if str(_parent_dir) not in sys.path:
+    sys.path.insert(0, str(_parent_dir))
+
 from typing import Dict, List, Tuple, Optional
 import numpy as np
-
-# Add parent directories to path for imports
-_parent_dir = Path(__file__).parent.parent
-sys.path.insert(0, str(_parent_dir / 'compiler'))
-sys.path.insert(0, str(_parent_dir / 'executer'))
-
 import torch
-from utils.graph_loader import GraphLoader
+
+# Import from latency package (works both as script and module)
+from latency.graph_loader import GraphLoader
 
 
 class FlickrSubgraphLoader:

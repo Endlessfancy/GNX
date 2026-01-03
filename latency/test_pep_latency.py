@@ -22,17 +22,19 @@ import numpy as np
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 
-# Ensure latency directory is in path (for running as script)
+# For running as script: add parent dir to path so 'latency' package is importable
 _current_dir = Path(__file__).parent
-if str(_current_dir) not in sys.path:
-    sys.path.insert(0, str(_current_dir))
+_parent_dir = _current_dir.parent
+if str(_parent_dir) not in sys.path:
+    sys.path.insert(0, str(_parent_dir))
 
-from profiler import PipelineProfiler
-from flickr_loader import FlickrSubgraphLoader
-from model_exporter import GNNModelExporter
-from stage_executor import StageExecutor, ProfilingResult, OPENVINO_AVAILABLE
-from async_executor import AsyncBlockExecutor, BlockExecutionResult
-from pep_config import (
+# Import from latency package (all dependencies are now self-contained)
+from latency.profiler import PipelineProfiler
+from latency.flickr_loader import FlickrSubgraphLoader
+from latency.model_exporter import GNNModelExporter
+from latency.stage_executor import StageExecutor, ProfilingResult, OPENVINO_AVAILABLE
+from latency.async_executor import AsyncBlockExecutor, BlockExecutionResult
+from latency.pep_config import (
     ALL_PEPS, PEP1, PEP2,
     analyze_pep, print_pep
 )
