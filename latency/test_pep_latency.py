@@ -17,9 +17,15 @@ Usage:
 import argparse
 import time
 import json
+import sys
 import numpy as np
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
+
+# Ensure latency directory is in path (for running as script)
+_current_dir = Path(__file__).parent
+if str(_current_dir) not in sys.path:
+    sys.path.insert(0, str(_current_dir))
 
 from profiler import PipelineProfiler
 from flickr_loader import FlickrSubgraphLoader

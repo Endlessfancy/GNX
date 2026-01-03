@@ -23,12 +23,20 @@ except ImportError:
     OPENVINO_AVAILABLE = False
     print("WARNING: OpenVINO not available")
 
-from profiler import PipelineProfiler
-from npu_utils import (
-    prepare_npu_inputs,
-    unpad_npu_outputs,
-    NPUPaddingInfo
-)
+try:
+    from profiler import PipelineProfiler
+    from npu_utils import (
+        prepare_npu_inputs,
+        unpad_npu_outputs,
+        NPUPaddingInfo
+    )
+except ImportError:
+    from .profiler import PipelineProfiler
+    from .npu_utils import (
+        prepare_npu_inputs,
+        unpad_npu_outputs,
+        NPUPaddingInfo
+    )
 
 
 @dataclass

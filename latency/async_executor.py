@@ -23,9 +23,14 @@ try:
 except ImportError:
     OPENVINO_AVAILABLE = False
 
-from profiler import PipelineProfiler
-from stage_executor import StageExecutor, ProfilingResult
-from npu_utils import NPUPaddingInfo
+try:
+    from profiler import PipelineProfiler
+    from stage_executor import StageExecutor, ProfilingResult
+    from npu_utils import NPUPaddingInfo
+except ImportError:
+    from .profiler import PipelineProfiler
+    from .stage_executor import StageExecutor, ProfilingResult
+    from .npu_utils import NPUPaddingInfo
 
 
 @dataclass
