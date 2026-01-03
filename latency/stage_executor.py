@@ -104,8 +104,11 @@ class StageExecutor:
         wall_start_ns = time.perf_counter_ns()
 
         # 2. Set inputs and run inference
-        for name, data in inputs.items():
-            self.request.set_tensor(name, ov.Tensor(data))
+        # Map input dict to model's actual input names by order
+        input_values = list(inputs.values())
+        for i, model_input_name in enumerate(self.input_names):
+            if i < len(input_values):
+                self.request.set_tensor(model_input_name, ov.Tensor(input_values[i]))
 
         self.request.infer()
 
@@ -127,10 +130,12 @@ class StageExecutor:
             extra_args={"transfer_time_ms": transfer_time_ms}
         )
 
-        # 6. Get outputs
+        # 6. Get outputs - use generic 'output' key for compatibility
         outputs = {}
-        for name in self.output_names:
-            outputs[name] = self.request.get_tensor(name).data.copy()
+        for i, name in enumerate(self.output_names):
+            # Use 'output' as key for single output, otherwise use model names
+            out_key = 'output' if len(self.output_names) == 1 else name
+            outputs[out_key] = self.request.get_tensor(name).data.copy()
 
         return outputs, hw_time_ms
 
@@ -146,8 +151,11 @@ class StageExecutor:
         """
         wall_start_ns = time.perf_counter_ns()
 
-        for name, data in inputs.items():
-            self.request.set_tensor(name, ov.Tensor(data))
+        # Map input dict to model's actual input names by order
+        input_values = list(inputs.values())
+        for i, model_input_name in enumerate(self.input_names):
+            if i < len(input_values):
+                self.request.set_tensor(model_input_name, ov.Tensor(input_values[i]))
 
         self.request.start_async()
 
@@ -183,10 +191,11 @@ class StageExecutor:
             extra_args={"transfer_time_ms": transfer_time_ms}
         )
 
-        # Get outputs
+        # Get outputs - use generic 'output' key for compatibility
         outputs = {}
-        for name in self.output_names:
-            outputs[name] = self.request.get_tensor(name).data.copy()
+        for i, name in enumerate(self.output_names):
+            out_key = 'output' if len(self.output_names) == 1 else name
+            outputs[out_key] = self.request.get_tensor(name).data.copy()
 
         return outputs, hw_time_ms
 
