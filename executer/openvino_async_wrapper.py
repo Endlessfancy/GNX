@@ -186,15 +186,16 @@ def prepare_inputs_for_openvino(input_data: Dict, stages: List[int]) -> Dict[str
     first_stage = stages[0]
 
     def to_numpy(t):
+        """Convert tensor to numpy array with FP16 precision for Intel AI PC"""
         if isinstance(t, torch.Tensor):
-            return t.cpu().numpy().astype(np.float32)
-        return np.array(t, dtype=np.float32)
+            return t.cpu().numpy().astype(np.float16)  # FP16 for Intel AI PC
+        return np.array(t, dtype=np.float16)
 
     if first_stage == 1:
         # Stage 1-N: 需要 x 和 edge_index
         return {
             'x': to_numpy(input_data['x']),
-            'edge_index': input_data['edge_index'].cpu().numpy().astype(np.int64)
+            'edge_index': input_data['edge_index'].cpu().numpy().astype(np.int64)  # INT64 stays unchanged
         }
 
     elif first_stage == 5:
@@ -216,5 +217,5 @@ def prepare_inputs_for_openvino(input_data: Dict, stages: List[int]) -> Dict[str
         # 默认情况
         return {
             'x': to_numpy(input_data['x']),
-            'edge_index': input_data['edge_index'].cpu().numpy().astype(np.int64)
+            'edge_index': input_data['edge_index'].cpu().numpy().astype(np.int64)  # INT64 stays unchanged
         }

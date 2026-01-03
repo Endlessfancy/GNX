@@ -204,13 +204,13 @@ class ModelManager:
 
         try:
             # 使用 OpenVINO Model Optimizer 转换
-            # 强制使用 FP32 精度，避免 GPU 上的 FP16 转换问题
+            # ONNX 模型已经是 FP16，直接保存，不需要额外压缩
             ov_model = ov.convert_model(onnx_path)
 
-            # 保存 IR 模型（使用 FP32 精度）
-            ov.save_model(ov_model, str(ir_xml_path), compress_to_fp16=False)
+            # 保存 IR 模型（ONNX 已是 FP16，无需 compress_to_fp16 参数）
+            ov.save_model(ov_model, str(ir_xml_path))
 
-            print(f"      ✓ Converted to IR: {ir_xml_path.name}")
+            print(f"      ✓ Converted to IR (FP16): {ir_xml_path.name}")
             return str(ir_xml_path)
 
         except Exception as e:
