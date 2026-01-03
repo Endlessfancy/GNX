@@ -204,8 +204,8 @@ class PipelineExecutor:
                 # 保存最后一个pipeline_exec实例（用于详细分析）
                 self.last_pipeline_exec = pipeline_exec
 
-                # 执行流水线
-                result = pipeline_exec.execute_pipeline()
+                # 执行流水线（启用 OpenVINO 异步推理模式）
+                result = pipeline_exec.execute_pipeline(use_async=True)
 
                 # 合并embeddings
                 all_embeddings += result['embeddings']
