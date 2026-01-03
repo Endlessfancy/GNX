@@ -109,6 +109,10 @@ class PipelineExecutor:
         print(f"\n[Step 2/4] Collecting ghost node features...")
         self.ghost_handler = GhostNodeHandler(self.data_loader)
 
+        # 计算实际的最大 subgraph 大小（包含 ghost nodes）
+        actual_max_nodes, actual_max_edges = self.data_loader.get_max_subgraph_size()
+        print(f"  Actual max subgraph size: nodes={actual_max_nodes}, edges={actual_max_edges}")
+
         # Step 3: 导出和加载模型
         print(f"\n[Step 3/4] Exporting and loading models...")
         # Pass compilation_result directory for resolving relative model paths
@@ -117,7 +121,10 @@ class PipelineExecutor:
         else:
             # 使用默认路径（用于自定义 execution_plan）
             compilation_result_dir = Path(__file__).parent.parent / 'compiler' / 'output'
-        self.model_manager = ModelManager(self.execution_plan, compilation_result_dir, self.partition_config)
+        self.model_manager = ModelManager(
+            self.execution_plan, compilation_result_dir, self.partition_config,
+            actual_max_nodes=actual_max_nodes, actual_max_edges=actual_max_edges
+        )
         self.model_manager.ensure_models_exist()
         self.model_manager.load_models()
 

@@ -181,3 +181,40 @@ class GraphDataLoader:
     def get_partition_mapping(self) -> Dict[int, torch.Tensor]:
         """返回partition映射"""
         return self.partition_mapping
+
+    def get_max_subgraph_size(self) -> Tuple[int, int]:
+        """
+        计算所有 subgraph 中的最大节点数和边数（包含 ghost nodes）
+        用于 NPU 静态 shape 模型导出
+
+        Returns:
+            (max_nodes, max_edges): 最大节点数（owned + ghost）和最大边数
+        """
+        max_nodes = 0
+        max_edges = 0
+
+        for sg_id in range(self.num_subgraphs):
+            # 获取 owned nodes 数量
+            owned_nodes = self.partition_mapping[sg_id]
+            num_owned = len(owned_nodes)
+
+            # 获取 ghost nodes 数量
+            ghost_info = self.ghost_node_mapping[sg_id]
+            num_ghosts = ghost_info['num_ghosts']
+
+            # 总节点数 = owned + ghost
+            total_nodes = num_owned + num_ghosts
+
+            # 计算该 subgraph 的边数
+            edge_index = self.full_data.edge_index
+            mask = torch.isin(edge_index[1], owned_nodes)
+            num_edges = mask.sum().item()
+
+            max_nodes = max(max_nodes, total_nodes)
+            max_edges = max(max_edges, num_edges)
+
+        # 添加 10% 安全余量
+        max_nodes = int(max_nodes * 1.1)
+        max_edges = int(max_edges * 1.1)
+
+        return max_nodes, max_edges

@@ -36,12 +36,15 @@ class ModelManager:
     """
 
     def __init__(self, execution_plan: Dict, compilation_result_dir: Optional[Path] = None,
-                 partition_config: Optional[Dict] = None):
+                 partition_config: Optional[Dict] = None,
+                 actual_max_nodes: Optional[int] = None, actual_max_edges: Optional[int] = None):
         """
         Args:
             execution_plan: Compiler输出的execution_plan部分
             compilation_result_dir: compilation_result.json所在目录（用于解析相对路径，已废弃）
             partition_config: Compiler输出的partition_config部分（用于计算NPU静态shape）
+            actual_max_nodes: 实际的最大 subgraph 节点数（包含 ghost nodes，由 DataLoader 计算）
+            actual_max_edges: 实际的最大 subgraph 边数（由 DataLoader 计算）
         """
         self.execution_plan = execution_plan
         self.clusters = execution_plan['clusters']
@@ -51,8 +54,13 @@ class ModelManager:
         self.models_dir = Path(__file__).parent / 'models'
         self.models_dir.mkdir(parents=True, exist_ok=True)
 
-        # 计算最大 subgraph 大小（用于 NPU 静态 shape）
-        self.max_subgraph_nodes, self.max_subgraph_edges = self._calculate_max_subgraph_size()
+        # 使用实际的最大 subgraph 大小（如果提供），否则使用估算值
+        if actual_max_nodes is not None and actual_max_edges is not None:
+            self.max_subgraph_nodes = actual_max_nodes
+            self.max_subgraph_edges = actual_max_edges
+        else:
+            # Fallback: 使用估算值（可能不准确）
+            self.max_subgraph_nodes, self.max_subgraph_edges = self._calculate_max_subgraph_size()
 
         # 收集所有需要的模型
         self.model_refs = self._collect_model_refs()
