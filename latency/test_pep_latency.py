@@ -1,156 +1,165 @@
 """
-PEP-based Latency Testing
+PEP-based Latency Testing with Flickr Dataset
 
-Test GNN pipeline latency using the same PEP configurations as the executer.
+Test GNN pipeline latency using:
+- Flickr dataset partitioned into subgraphs
+- Real 7-Stage GraphSAGE models (fused kernels)
+- Multi-device async parallel execution
+- PERF_COUNT precise timing
 
 Usage:
     python test_pep_latency.py                    # Run with default PEP1
     python test_pep_latency.py --pep pep2         # Run with PEP2
     python test_pep_latency.py --pep all          # Run all PEPs
-    python test_pep_latency.py --two-pep          # Run two-PEP test plan
+    python test_pep_latency.py --export-only      # Only export models
 """
 
 import argparse
 import time
+import json
 import numpy as np
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 
 from profiler import PipelineProfiler
-from stage_executor import StageExecutor, create_dummy_model, OPENVINO_AVAILABLE
+from flickr_loader import FlickrSubgraphLoader
+from model_exporter import GNNModelExporter
+from stage_executor import StageExecutor, ProfilingResult, OPENVINO_AVAILABLE
+from async_executor import AsyncBlockExecutor, BlockExecutionResult
 from pep_config import (
-    ALL_PEPS, PEP1, PEP2, PEP_CPU_ONLY, PEP_GPU_ONLY,
-    get_two_pep_test_plan, get_single_pep_test_plan,
-    analyze_pep, print_pep, print_execution_plan
+    ALL_PEPS, PEP1, PEP2,
+    analyze_pep, print_pep
 )
 
-try:
-    from data_parallel_stage import DataParallelStage, DataParallelStageAsync
-    DATA_PARALLEL_AVAILABLE = True
-except ImportError:
-    DATA_PARALLEL_AVAILABLE = False
-
-try:
-    import openvino as ov
+if OPENVINO_AVAILABLE:
     from openvino.runtime import Core
-except ImportError:
-    pass
 
 
 class PEPLatencyTester:
     """
-    Test latency for PEP configurations.
+    Test latency for PEP configurations using Flickr data.
 
-    Simulates the GNN pipeline execution with precise timing for each block.
+    Features:
+    - Loads real Flickr data partitioned into subgraphs
+    - Uses fused 7-Stage GraphSAGE models
+    - Supports single and data-parallel execution
+    - Precise timing with PERF_COUNT
     """
 
-    # Stage input/output dimensions
-    STAGE_DIMS = {
-        # stage_id: (input_features, output_features)
-        1: (500, 500),   # Gather: x -> x_j
-        2: (500, 500),   # Message: x_j -> messages (identity)
-        3: (500, 500),   # ReduceSum: messages -> sum_agg
-        4: (500, 1),     # ReduceCount: -> count
-        5: (500, 500),   # Normalize: sum_agg, count -> mean_agg
-        6: (500, 256),   # Transform: mean_agg, x -> out
-        7: (256, 256),   # Activate: out -> activated
-    }
-
-    def __init__(self, profiler: PipelineProfiler, num_nodes: int = 1000):
+    def __init__(self,
+                 profiler: PipelineProfiler,
+                 num_subgraphs: int = 8,
+                 models_dir: Path = None):
         """
         Initialize tester.
 
         Args:
             profiler: PipelineProfiler instance
-            num_nodes: Number of nodes per batch
+            num_subgraphs: Number of Flickr subgraphs
+            models_dir: Directory for model files
         """
         self.profiler = profiler
-        self.num_nodes = num_nodes
+        self.num_subgraphs = num_subgraphs
 
         if not OPENVINO_AVAILABLE:
             raise RuntimeError("OpenVINO is required for PEP latency testing")
 
+        # Initialize OpenVINO
         self.core = Core()
         self.available_devices = self.core.available_devices
         print(f"Available devices: {self.available_devices}")
 
-        # Cache for compiled models
-        self._model_cache: Dict[str, StageExecutor] = {}
+        # Load Flickr data
+        print("\nLoading Flickr dataset...")
+        self.data_loader = FlickrSubgraphLoader(num_subgraphs=num_subgraphs)
+        self.max_nodes, self.max_edges = self.data_loader.get_max_size()
+        print(f"Max subgraph size: {self.max_nodes} nodes, {self.max_edges} edges")
 
-    def _get_device(self, device: str) -> str:
+        # Model exporter
+        self.models_dir = models_dir or Path(__file__).parent / 'models'
+        self.exporter = GNNModelExporter(output_dir=self.models_dir)
+
+        # Cache for block executors
+        self._executor_cache: Dict[str, AsyncBlockExecutor] = {}
+
+    def _get_available_device(self, device: str) -> str:
         """Get available device, fallback to CPU if needed."""
         if device in self.available_devices:
             return device
         print(f"  WARNING: {device} not available, using CPU")
         return "CPU"
 
-    def _create_block_model(self, stages: List[int]) -> 'ov.Model':
+    def _export_models_for_pep(self, pep: List, force: bool = False) -> Dict[int, Dict[str, Path]]:
         """
-        Create a dummy model for a block of stages.
-
-        Args:
-            stages: List of stage IDs
+        Export all models needed for a PEP.
 
         Returns:
-            OpenVINO Model
+            {block_id: {device: model_path}}
         """
-        first_stage = stages[0]
-        last_stage = stages[-1]
+        self.exporter.export_for_pep(pep, self.max_nodes, self.max_edges, force)
 
-        # Determine input/output dimensions
-        in_dim = self.STAGE_DIMS[first_stage][0]
-        out_dim = self.STAGE_DIMS[last_stage][1]
+        model_paths = {}
+        for block_id, block in enumerate(pep):
+            devices = block[0]
+            stages = block[1]
+            model_paths[block_id] = {}
 
-        # More compute ops for more stages
-        compute_ops = max(1, len(stages))
+            for device in devices:
+                actual_device = self._get_available_device(device)
+                path = self.exporter.get_model_path(stages, actual_device)
+                if path:
+                    model_paths[block_id][actual_device] = path
+                else:
+                    print(f"  WARNING: Model not found for block {block_id}, device {actual_device}")
 
-        return create_dummy_model(
-            (self.num_nodes, in_dim),
-            (self.num_nodes, out_dim),
-            compute_ops=compute_ops
+        return model_paths
+
+    def _create_block_executor(self,
+                               block_id: int,
+                               block: List,
+                               model_paths: Dict[str, Path]) -> AsyncBlockExecutor:
+        """Create executor for a PEP block."""
+        devices = block[0]
+        stages = block[1]
+        ratios = block[2] if len(block) > 2 else [1.0 / len(devices)] * len(devices)
+
+        # Map to available devices
+        actual_devices = [self._get_available_device(d) for d in devices]
+        actual_model_paths = {
+            self._get_available_device(d): model_paths.get(self._get_available_device(d))
+            for d in devices
+            if model_paths.get(self._get_available_device(d))
+        }
+
+        stage_name = f"Block{block_id}_S{'_'.join(map(str, stages))}"
+
+        # Pass NPU static size for NPU padding
+        executor = AsyncBlockExecutor(
+            core=self.core,
+            model_paths=actual_model_paths,
+            devices=list(actual_model_paths.keys()),
+            ratios=ratios[:len(actual_model_paths)],
+            stage_name=stage_name,
+            profiler=self.profiler,
+            npu_static_nodes=self.max_nodes,
+            npu_static_edges=self.max_edges
         )
 
-    def _get_executor(self, block_id: int, device: str, stages: List[int],
-                      stream_id: int = 0) -> StageExecutor:
-        """
-        Get or create executor for a block.
+        return executor
 
-        Args:
-            block_id: Block ID
-            device: Target device
-            stages: Stages in this block
-            stream_id: Stream ID for data parallel
-
-        Returns:
-            StageExecutor instance
-        """
-        cache_key = f"block{block_id}_{device}_s{stream_id}_stages{'_'.join(map(str, stages))}"
-
-        if cache_key not in self._model_cache:
-            model = self._create_block_model(stages)
-            actual_device = self._get_device(device)
-
-            executor = StageExecutor(
-                core=self.core,
-                model=model,
-                device=actual_device,
-                stage_name=f"Block{block_id}_S{stages[0]}-{stages[-1]}",
-                profiler=self.profiler,
-                stream_id=stream_id
-            )
-            self._model_cache[cache_key] = executor
-
-        return self._model_cache[cache_key]
-
-    def run_pep(self, pep: List, num_batches: int = 10,
-                pep_name: str = "PEP") -> Dict:
+    def run_pep(self,
+                pep: List,
+                num_iterations: int = 10,
+                pep_name: str = "PEP",
+                warmup: int = 3) -> Dict:
         """
         Run latency test for a single PEP.
 
         Args:
             pep: PEP configuration
-            num_batches: Number of batches to run
+            num_iterations: Number of iterations per subgraph
             pep_name: Name for logging
+            warmup: Number of warmup iterations
 
         Returns:
             Timing statistics
@@ -166,230 +175,230 @@ class PEPLatencyTester:
         print(f"  Devices: {analysis['all_devices']}")
         print(f"  Data Parallel: {analysis['has_data_parallel']}")
 
-        # Create executors for each block
+        # 1. Export models
+        print("\nExporting models...")
+        model_paths = self._export_models_for_pep(pep)
+
+        # 2. Create block executors
+        print("\nCreating block executors...")
         block_executors = []
         for block_id, block in enumerate(pep):
-            devices = block[0]
-            stages = block[1]
-            ratios = block[2] if len(block) > 2 else [1.0 / len(devices)] * len(devices)
+            executor = self._create_block_executor(block_id, block, model_paths[block_id])
+            block_executors.append(executor)
 
-            if len(devices) == 1:
-                # Single device
-                executor = self._get_executor(block_id, devices[0], stages)
-                block_executors.append({
-                    'type': 'single',
-                    'executor': executor,
-                    'stages': stages,
-                })
-            else:
-                # Data parallel
-                if DATA_PARALLEL_AVAILABLE:
-                    dp_executors = []
-                    for i, device in enumerate(devices):
-                        exec = self._get_executor(block_id, device, stages, stream_id=i)
-                        dp_executors.append(exec)
-
-                    dp_stage = DataParallelStageAsync(
-                        name=f"Block{block_id}_DP",
-                        executors=dp_executors,
-                        ratios=ratios,
-                        profiler=self.profiler
-                    )
-                    block_executors.append({
-                        'type': 'data_parallel',
-                        'executor': dp_stage,
-                        'stages': stages,
-                        'devices': devices,
-                        'ratios': ratios,
-                    })
-                else:
-                    # Fallback: use first device only
-                    print(f"  WARNING: DataParallel not available, using {devices[0]} only")
-                    executor = self._get_executor(block_id, devices[0], stages)
-                    block_executors.append({
-                        'type': 'single',
-                        'executor': executor,
-                        'stages': stages,
-                    })
-
-        # Run batches
-        print(f"\nRunning {num_batches} batches...")
-        batch_times = []
-        block_times_all = [[] for _ in range(len(pep))]
-
-        for batch_id in range(num_batches):
-            batch_start = time.perf_counter()
-
-            # Initial input
-            current_data = np.random.randn(self.num_nodes, 500).astype(np.float32)
-
-            # Execute each block
-            for block_id, block_exec in enumerate(block_executors):
-                if block_exec['type'] == 'single':
-                    outputs, hw_time = block_exec['executor'].run(
-                        {'input': current_data}, batch_id
-                    )
-                    current_data = outputs['output']
-                    block_times_all[block_id].append(hw_time)
-
-                elif block_exec['type'] == 'data_parallel':
-                    outputs, timing = block_exec['executor'].run(
-                        {'input': current_data}, batch_id
-                    )
-                    current_data = outputs['output']
-                    block_times_all[block_id].append(timing['stage_total_ms'])
-
-            batch_end = time.perf_counter()
-            batch_time = (batch_end - batch_start) * 1000
-            batch_times.append(batch_time)
-
-            if batch_id % max(1, num_batches // 5) == 0:
-                print(f"  Batch {batch_id}: {batch_time:.2f}ms")
-
-        # Shutdown data parallel executors
-        for block_exec in block_executors:
-            if block_exec['type'] == 'data_parallel' and hasattr(block_exec['executor'], 'shutdown'):
-                block_exec['executor'].shutdown()
-
-        # Calculate statistics
-        stats = {
-            'pep_name': pep_name,
-            'num_batches': num_batches,
-            'avg_batch_time_ms': np.mean(batch_times),
-            'min_batch_time_ms': np.min(batch_times),
-            'max_batch_time_ms': np.max(batch_times),
-            'std_batch_time_ms': np.std(batch_times),
-            'block_avg_times_ms': [np.mean(times) for times in block_times_all],
+        # 3. Warmup
+        print(f"\nWarming up ({warmup} iterations)...")
+        sg0 = self.data_loader.get_subgraph(0)
+        warmup_inputs = {
+            'x': sg0['x'].numpy().astype(np.float32),
+            'edge_index': sg0['edge_index'].numpy().astype(np.int64)
         }
 
+        for _ in range(warmup):
+            current = warmup_inputs
+            for executor in block_executors:
+                result = executor.run(current, batch_id=-1)
+                current = result.outputs
+
+        # 4. Run benchmark
+        print(f"\nRunning {num_iterations} iterations on {self.num_subgraphs} subgraphs...")
+
+        all_times = []
+        per_block_times = [[] for _ in range(len(pep))]
+        per_subgraph_times = []
+
+        batch_id = 0
+        for sg_id in range(self.num_subgraphs):
+            sg_data = self.data_loader.get_subgraph(sg_id)
+            inputs = {
+                'x': sg_data['x'].numpy().astype(np.float32),
+                'edge_index': sg_data['edge_index'].numpy().astype(np.int64)
+            }
+
+            sg_times = []
+
+            for iter_id in range(num_iterations):
+                iter_start = time.perf_counter()
+
+                # Execute all blocks
+                current = inputs
+                block_times = []
+
+                for block_id, executor in enumerate(block_executors):
+                    result = executor.run(current, batch_id)
+                    block_times.append(result.wall_time_ms)
+                    per_block_times[block_id].append(result.wall_time_ms)
+                    current = result.outputs
+
+                iter_time = (time.perf_counter() - iter_start) * 1000
+                all_times.append(iter_time)
+                sg_times.append(iter_time)
+                batch_id += 1
+
+            sg_avg = np.mean(sg_times)
+            per_subgraph_times.append(sg_avg)
+
+            if sg_id % max(1, self.num_subgraphs // 4) == 0:
+                print(f"  Subgraph {sg_id}: avg={sg_avg:.2f}ms, "
+                      f"nodes={sg_data['num_nodes']}, edges={sg_data['num_edges']}")
+
+        # 5. Calculate statistics
+        stats = {
+            'pep_name': pep_name,
+            'num_subgraphs': self.num_subgraphs,
+            'num_iterations': num_iterations,
+            'total_batches': batch_id,
+            'avg_time_ms': np.mean(all_times),
+            'std_time_ms': np.std(all_times),
+            'min_time_ms': np.min(all_times),
+            'max_time_ms': np.max(all_times),
+            'p50_time_ms': np.percentile(all_times, 50),
+            'p95_time_ms': np.percentile(all_times, 95),
+            'p99_time_ms': np.percentile(all_times, 99),
+            'per_block_avg_ms': [np.mean(times) for times in per_block_times],
+            'per_subgraph_avg_ms': per_subgraph_times,
+            'throughput_batches_per_sec': 1000.0 / np.mean(all_times)
+        }
+
+        # Print results
         print(f"\n--- {pep_name} Results ---")
-        print(f"  Avg Batch Time: {stats['avg_batch_time_ms']:.2f} ms")
-        print(f"  Min/Max: {stats['min_batch_time_ms']:.2f} / {stats['max_batch_time_ms']:.2f} ms")
-        print(f"  Std Dev: {stats['std_batch_time_ms']:.2f} ms")
-        print(f"  Per-Block Avg Times: {[f'{t:.2f}ms' for t in stats['block_avg_times_ms']]}")
+        print(f"  Total batches: {stats['total_batches']}")
+        print(f"  Avg Time: {stats['avg_time_ms']:.2f} +/- {stats['std_time_ms']:.2f} ms")
+        print(f"  Min/Max: {stats['min_time_ms']:.2f} / {stats['max_time_ms']:.2f} ms")
+        print(f"  P50/P95/P99: {stats['p50_time_ms']:.2f} / {stats['p95_time_ms']:.2f} / {stats['p99_time_ms']:.2f} ms")
+        print(f"  Throughput: {stats['throughput_batches_per_sec']:.1f} batches/sec")
+        print(f"  Per-Block Avg: {[f'{t:.2f}ms' for t in stats['per_block_avg_ms']]}")
 
         return stats
 
-    def run_two_pep_test(self, num_batches: int = 10) -> Dict:
-        """
-        Run the standard two-PEP test plan.
-
-        Returns:
-            Combined statistics
-        """
-        print("\n" + "=" * 70)
-        print("Two-PEP Test Plan")
-        print("=" * 70)
-
-        plan = get_two_pep_test_plan()
-        print_execution_plan(plan)
-
-        results = {}
-
-        for cluster in plan['clusters']:
-            pep_name = cluster['pep_key']
-            pep = cluster['pep']
-            subgraphs = cluster['subgraph_ids']
-
-            print(f"\n>>> Testing Cluster '{pep_name}' (subgraphs {subgraphs})")
-
-            stats = self.run_pep(pep, num_batches, pep_name)
-            results[pep_name] = stats
-
-        # Summary
-        print("\n" + "=" * 70)
-        print("Two-PEP Test Summary")
-        print("=" * 70)
-
-        for name, stats in results.items():
-            print(f"\n{name}:")
-            print(f"  Avg Batch Time: {stats['avg_batch_time_ms']:.2f} ms")
-
-        return results
-
-    def run_all_peps(self, num_batches: int = 10) -> Dict:
-        """
-        Run all predefined PEP configurations.
-
-        Returns:
-            Dictionary of results
-        """
+    def run_all_peps(self, num_iterations: int = 10) -> Dict:
+        """Run all predefined PEP configurations."""
         results = {}
 
         for name, pep in ALL_PEPS.items():
             try:
-                stats = self.run_pep(pep, num_batches, name.upper())
+                stats = self.run_pep(pep, num_iterations, name.upper())
                 results[name] = stats
             except Exception as e:
                 print(f"  ERROR running {name}: {e}")
+                import traceback
+                traceback.print_exc()
                 results[name] = {'error': str(e)}
 
         # Summary comparison
-        print("\n" + "=" * 70)
-        print("All PEPs Comparison")
-        print("=" * 70)
-        print(f"{'PEP':<15} {'Avg Time (ms)':<15} {'Min-Max (ms)':<20}")
-        print("-" * 50)
+        self._print_comparison(results)
+
+        return results
+
+    def _print_comparison(self, results: Dict):
+        """Print comparison table for multiple PEPs."""
+        print(f"\n{'='*70}")
+        print("PEP Comparison")
+        print(f"{'='*70}")
+        print(f"{'PEP':<15} {'Avg (ms)':<12} {'Std (ms)':<12} {'P95 (ms)':<12} {'Throughput':<12}")
+        print("-" * 70)
 
         for name, stats in results.items():
             if 'error' in stats:
                 print(f"{name:<15} ERROR: {stats['error']}")
             else:
-                avg = stats['avg_batch_time_ms']
-                min_t = stats['min_batch_time_ms']
-                max_t = stats['max_batch_time_ms']
-                print(f"{name:<15} {avg:<15.2f} {min_t:.2f} - {max_t:.2f}")
-
-        return results
+                print(f"{name:<15} "
+                      f"{stats['avg_time_ms']:<12.2f} "
+                      f"{stats['std_time_ms']:<12.2f} "
+                      f"{stats['p95_time_ms']:<12.2f} "
+                      f"{stats['throughput_batches_per_sec']:<12.1f}")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="PEP-based Latency Testing")
+    parser = argparse.ArgumentParser(description="PEP-based Latency Testing with Flickr")
     parser.add_argument("--pep", type=str, default="pep1",
                         choices=list(ALL_PEPS.keys()) + ['all'],
                         help="PEP configuration to test")
-    parser.add_argument("--two-pep", action="store_true",
-                        help="Run two-PEP test plan")
-    parser.add_argument("--num-batches", type=int, default=10,
-                        help="Number of batches to run")
-    parser.add_argument("--num-nodes", type=int, default=1000,
-                        help="Number of nodes per batch")
+    parser.add_argument("--num-iterations", type=int, default=10,
+                        help="Number of iterations per subgraph")
+    parser.add_argument("--num-subgraphs", type=int, default=8,
+                        help="Number of Flickr subgraphs")
+    parser.add_argument("--warmup", type=int, default=3,
+                        help="Number of warmup iterations")
     parser.add_argument("--output", type=str, default="pep_latency_trace.json",
                         help="Output trace file")
+    parser.add_argument("--export-only", action="store_true",
+                        help="Only export models, don't run benchmark")
 
     args = parser.parse_args()
 
     print("=" * 70)
-    print("PEP-based Latency Testing")
+    print("PEP-based Latency Testing with Flickr Dataset")
     print("=" * 70)
-    print(f"Batches: {args.num_batches}")
-    print(f"Nodes per batch: {args.num_nodes}")
+    print(f"PEP: {args.pep}")
+    print(f"Subgraphs: {args.num_subgraphs}")
+    print(f"Iterations per subgraph: {args.num_iterations}")
     print(f"Output: {args.output}")
 
     if not OPENVINO_AVAILABLE:
         print("\nERROR: OpenVINO is required for PEP latency testing")
         return
 
+    # Create profiler
     profiler = PipelineProfiler("PEP_Latency_Test")
-    tester = PEPLatencyTester(profiler, num_nodes=args.num_nodes)
 
-    if args.two_pep:
-        results = tester.run_two_pep_test(args.num_batches)
-    elif args.pep == 'all':
-        results = tester.run_all_peps(args.num_batches)
+    # Create tester
+    tester = PEPLatencyTester(
+        profiler=profiler,
+        num_subgraphs=args.num_subgraphs
+    )
+
+    if args.export_only:
+        print("\nExport-only mode: exporting models for all PEPs...")
+        for name, pep in ALL_PEPS.items():
+            print(f"\nExporting models for {name}...")
+            tester._export_models_for_pep(pep, force=False)
+        print("\nModel export complete!")
+        return
+
+    # Run tests
+    if args.pep == 'all':
+        results = tester.run_all_peps(args.num_iterations)
     else:
         pep = ALL_PEPS[args.pep]
-        results = tester.run_pep(pep, args.num_batches, args.pep.upper())
+        results = tester.run_pep(pep, args.num_iterations, args.pep.upper(), args.warmup)
 
     # Export trace and analyze
-    profiler.export_chrome_trace(args.output)
+    trace_dir = Path(__file__).parent / 'traces'
+    trace_dir.mkdir(exist_ok=True)
+    trace_path = trace_dir / args.output
+
+    profiler.export_chrome_trace(str(trace_path))
     profiler.analyze_metrics()
 
-    print("\n" + "=" * 70)
+    # Save results to JSON
+    results_dir = Path(__file__).parent / 'results'
+    results_dir.mkdir(exist_ok=True)
+    results_path = results_dir / f"{args.pep}_results.json"
+
+    # Convert numpy types for JSON serialization
+    def convert_numpy(obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, (np.float32, np.float64)):
+            return float(obj)
+        elif isinstance(obj, (np.int32, np.int64)):
+            return int(obj)
+        elif isinstance(obj, dict):
+            return {k: convert_numpy(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [convert_numpy(v) for v in obj]
+        return obj
+
+    with open(results_path, 'w') as f:
+        json.dump(convert_numpy(results), f, indent=2)
+
+    print(f"\n{'='*70}")
     print("Test Complete!")
-    print(f"Trace saved to: {args.output}")
-    print("Open in chrome://tracing or https://ui.perfetto.dev")
-    print("=" * 70)
+    print(f"Trace saved to: {trace_path}")
+    print(f"Results saved to: {results_path}")
+    print("Open trace in chrome://tracing or https://ui.perfetto.dev")
+    print(f"{'='*70}")
 
 
 if __name__ == "__main__":
