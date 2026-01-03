@@ -192,6 +192,7 @@ class ModelManager:
         ir_bin_path = self.ir_models_dir / f"{model_key}.bin"
 
         # 如果 IR 模型已存在且比 ONNX 更新，则跳过转换
+        # 注意：如果之前的 IR 是 FP16 格式，需要删除 ir 目录重新转换
         if ir_xml_path.exists() and ir_bin_path.exists():
             onnx_mtime = os.path.getmtime(onnx_path)
             ir_mtime = os.path.getmtime(ir_xml_path)
@@ -203,10 +204,11 @@ class ModelManager:
 
         try:
             # 使用 OpenVINO Model Optimizer 转换
+            # 强制使用 FP32 精度，避免 GPU 上的 FP16 转换问题
             ov_model = ov.convert_model(onnx_path)
 
-            # 保存 IR 模型
-            ov.save_model(ov_model, str(ir_xml_path))
+            # 保存 IR 模型（使用 FP32 精度）
+            ov.save_model(ov_model, str(ir_xml_path), compress_to_fp16=False)
 
             print(f"      ✓ Converted to IR: {ir_xml_path.name}")
             return str(ir_xml_path)
@@ -255,11 +257,21 @@ class ModelManager:
                         else:
                             ov_device = 'CPU'
 
-                        # 编译模型
-                        compiled_model = self.ov_core.compile_model(model, ov_device)
-
-                        self.compiled_models[model_key] = compiled_model
-                        print(f"      ✓ Compiled for {ov_device}")
+                        # 编译模型（带 fallback 机制）
+                        try:
+                            compiled_model = self.ov_core.compile_model(model, ov_device)
+                            self.compiled_models[model_key] = compiled_model
+                            print(f"      ✓ Compiled for {ov_device}")
+                        except Exception as compile_error:
+                            # 如果 GPU/NPU 编译失败，fallback 到 CPU
+                            if ov_device != 'CPU':
+                                print(f"      WARNING: Failed to compile for {ov_device}, falling back to CPU")
+                                print(f"      Reason: {str(compile_error)[:100]}...")
+                                compiled_model = self.ov_core.compile_model(model, 'CPU')
+                                self.compiled_models[model_key] = compiled_model
+                                print(f"      ✓ Compiled for CPU (fallback)")
+                            else:
+                                raise
 
                     except Exception as e:
                         print(f"      ERROR: Failed to load model: {e}")
