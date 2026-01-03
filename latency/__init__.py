@@ -8,6 +8,7 @@ Components:
 - PipelineProfiler: Central profiler with Chrome Tracing export
 - StageExecutor: OpenVINO inference wrapper with PERF_COUNT timing
 - DataParallelStage: Multi-device parallel execution with partition/merge timing
+- PEP Configurations: Same PEP definitions as executer for consistent testing
 
 Usage:
     from latency import PipelineProfiler, StageExecutor
@@ -19,6 +20,10 @@ Usage:
 
     profiler.export_chrome_trace("trace.json")
     profiler.analyze_metrics()
+
+PEP Testing:
+    from latency.pep_config import PEP1, PEP2, get_two_pep_test_plan
+    from latency.test_pep_latency import PEPLatencyTester
 """
 
 from .profiler import PipelineProfiler, TraceEvent, TimingContext
@@ -36,15 +41,33 @@ except ImportError:
     DataParallelStage = None
     DataParallelStageAsync = None
 
+try:
+    from .pep_config import (
+        PEP1, PEP2, PEP_CPU_ONLY, PEP_GPU_ONLY, PEP_3BLOCK, PEP_FINE_DP,
+        ALL_PEPS, get_two_pep_test_plan, get_single_pep_test_plan,
+        analyze_pep, print_pep
+    )
+except ImportError:
+    PEP1 = PEP2 = None
+
 __all__ = [
+    # Profiler
     'PipelineProfiler',
     'TraceEvent',
     'TimingContext',
+    # Executors
     'StageExecutor',
     'AsyncStageExecutor',
     'DataParallelStage',
     'DataParallelStageAsync',
+    # Model utilities
     'create_dummy_model',
     'create_gather_scatter_model',
     'OPENVINO_AVAILABLE',
+    # PEP configurations
+    'PEP1',
+    'PEP2',
+    'ALL_PEPS',
+    'get_two_pep_test_plan',
+    'analyze_pep',
 ]
