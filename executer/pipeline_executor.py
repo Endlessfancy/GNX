@@ -520,10 +520,10 @@ class PipelineExecutor:
 
             all_embeddings_list.append((global_owned_nodes, embeddings))
 
-        # 合并为全局tensor
+        # 合并为全局tensor（使用 FP16 以匹配模型输出精度）
         total_nodes = self.data_loader.full_data.num_nodes
         embed_dim = all_embeddings_list[0][1].size(1)
-        final_tensor = torch.zeros(total_nodes, embed_dim)
+        final_tensor = torch.zeros(total_nodes, embed_dim, dtype=torch.float16)
 
         for global_ids, embeds in all_embeddings_list:
             final_tensor[global_ids] = embeds
