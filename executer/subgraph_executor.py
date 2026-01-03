@@ -324,7 +324,8 @@ class SubgraphExecutor:
         return Tensor(data)
 
     def _run_partition_on_device(self, block_id: int, device: str,
-                                 partition: Dict, partition_input: List) -> torch.Tensor:
+                                 partition: Dict, partition_input: List,
+                                 stages: List[int] = None) -> torch.Tensor:
         """
         在单个设备上执行partition的推理（供ThreadPoolExecutor调用）
 
@@ -333,15 +334,25 @@ class SubgraphExecutor:
             device: 设备名称 ('CPU', 'GPU', 'NPU')
             partition: 分区信息
             partition_input: 模型输入数据
+            stages: 执行的 stages（用于 NPU padding）
 
         Returns:
             device_output: 该设备的输出tensor
         """
         model = self.models[(block_id, device)]
 
+        # NPU 需要 padding 到静态大小
+        original_num_nodes = None
+        if device == 'NPU' and self.npu_static_nodes > 0 and stages is not None:
+            partition_input, original_num_nodes = self._pad_input_for_npu(partition_input, stages)
+
         # OpenVINO CompiledModel
         if OPENVINO_AVAILABLE and hasattr(model, 'create_infer_request'):
             device_output = self._run_openvino_inference(model, partition_input)
+
+            # NPU 输出需要 unpad
+            if device == 'NPU' and original_num_nodes is not None:
+                device_output = unpad_tensor_from_npu(device_output, original_num_nodes, dim=0)
 
         elif hasattr(model, 'run'):
             # ONNX Runtime
@@ -405,10 +416,10 @@ class SubgraphExecutor:
                 # 准备该设备的输入
                 partition_input = self._prepare_partition_input(input_data, partition, stages)
 
-                # 提交任务到线程池
+                # 提交任务到线程池（传递 stages 用于 NPU padding）
                 future = executor.submit(
                     self._run_partition_on_device,
-                    block_id, device, partition, partition_input
+                    block_id, device, partition, partition_input, stages
                 )
                 futures.append(future)
 
