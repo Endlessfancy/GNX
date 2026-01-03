@@ -81,9 +81,9 @@ class SAGEStage4_ReduceCount(torch.nn.Module):
 
     def forward(self, edge_index: torch.Tensor, num_nodes: int, num_edges: int) -> torch.Tensor:
         target_nodes = edge_index[1]
-        # Use float16 for FP16 inference on Intel AI PC
-        ones = torch.ones(num_edges, dtype=torch.float16, device=edge_index.device)
-        count = torch.zeros(num_nodes, dtype=torch.float16, device=edge_index.device)
+        # Use default float32 precision for compatibility with OpenVINO GPU
+        ones = torch.ones(num_edges, device=edge_index.device)
+        count = torch.zeros(num_nodes, device=edge_index.device)
         count = scatter_add(ones, target_nodes, dim=0, out=count)
         return count
 
@@ -339,19 +339,18 @@ class SimpleModelExporter:
         # Get stage modules
         stage_list = [self.stage_modules[s - 1] for s in stages]
 
-        # Create combined model and convert to FP16
+        # Create combined model (use default FP32 for GPU compatibility)
         combined_model = CombinedStagesModel(stage_list, stages)
-        combined_model = combined_model.half()  # Convert to FP16 for Intel AI PC
         combined_model.eval()
 
         # NPU 不支持动态 shape，必须使用静态 shape
         use_dynamic = dynamic and (device != 'NPU')
 
-        # Generate dummy inputs based on starting stage (all FP16)
+        # Generate dummy inputs based on starting stage (FP32 for GPU compatibility)
         first_stage = stages[0]
         if first_stage == 1:
             # Stage 1-4, 1-5 or 1-7: input is (x, edge_index)
-            dummy_x = torch.randn(num_nodes, num_features, dtype=torch.float16)
+            dummy_x = torch.randn(num_nodes, num_features)  # FP32
             dummy_edge_index = torch.randint(0, num_nodes, (2, num_edges))  # INT64 stays unchanged
             dummy_inputs = (dummy_x, dummy_edge_index)
             input_names = ['x', 'edge_index']
@@ -362,9 +361,9 @@ class SimpleModelExporter:
             } if use_dynamic else None
         elif first_stage == 5:
             # Stage 5-7: input is (sum_agg, count, x)
-            dummy_sum_agg = torch.randn(num_nodes, 256, dtype=torch.float16)  # Output from stage 3
-            dummy_count = torch.randn(num_nodes, dtype=torch.float16)  # Output from stage 4 (1D tensor)
-            dummy_x = torch.randn(num_nodes, num_features, dtype=torch.float16)
+            dummy_sum_agg = torch.randn(num_nodes, 256)  # Output from stage 3 (FP32)
+            dummy_count = torch.randn(num_nodes)  # Output from stage 4 (1D tensor, FP32)
+            dummy_x = torch.randn(num_nodes, num_features)  # FP32
             dummy_inputs = (dummy_sum_agg, dummy_count, dummy_x)
             input_names = ['sum_agg', 'count', 'x']
             dynamic_axes = {
@@ -375,8 +374,8 @@ class SimpleModelExporter:
             } if use_dynamic else None
         elif first_stage == 6:
             # Stage 6-7: input is (mean_agg, x)
-            dummy_mean_agg = torch.randn(num_nodes, 256, dtype=torch.float16)  # Output from stage 5
-            dummy_x = torch.randn(num_nodes, num_features, dtype=torch.float16)
+            dummy_mean_agg = torch.randn(num_nodes, 256)  # Output from stage 5 (FP32)
+            dummy_x = torch.randn(num_nodes, num_features)  # FP32
             dummy_inputs = (dummy_mean_agg, dummy_x)
             input_names = ['mean_agg', 'x']
             dynamic_axes = {
@@ -409,9 +408,6 @@ class SimpleModelExporter:
             raise RuntimeError(f"Exported model is too small ({file_size} bytes), export may have failed")
 
         print(f"  ✓ Model exported successfully ({file_size / 1024 / 1024:.2f} MB)")
-
-        # Skip verification for FP16 models (ONNX Runtime may have compatibility issues)
-        print(f"  ⚠ Skipping ONNX Runtime verification for FP16 model")
 
 
 # ====================================================================

@@ -239,7 +239,6 @@ class ModelManager:
         ir_bin_path = self.ir_models_dir / f"{model_key}.bin"
 
         # 如果 IR 模型已存在且比 ONNX 更新，则跳过转换
-        # 注意：如果之前的 IR 是 FP16 格式，需要删除 ir 目录重新转换
         if ir_xml_path.exists() and ir_bin_path.exists():
             onnx_mtime = os.path.getmtime(onnx_path)
             ir_mtime = os.path.getmtime(ir_xml_path)
@@ -253,11 +252,10 @@ class ModelManager:
             # 使用 OpenVINO Model Optimizer 转换
             ov_model = ov.convert_model(onnx_path)
 
-            # 强制压缩到 FP16，确保所有操作都使用 FP16
-            # 这会移除模型中的 FP32 Cast 节点，解决 GPU 编译错误
-            ov.save_model(ov_model, str(ir_xml_path), compress_to_fp16=True)
+            # Save model without FP16 compression for better GPU compatibility
+            ov.save_model(ov_model, str(ir_xml_path))
 
-            print(f"      ✓ Converted to IR (FP16): {ir_xml_path.name}")
+            print(f"      ✓ Converted to IR: {ir_xml_path.name}")
             return str(ir_xml_path)
 
         except Exception as e:
@@ -306,15 +304,8 @@ class ModelManager:
 
                         # 编译模型（带 fallback 机制）
                         try:
-                            # 为 GPU 设置推理精度提示，避免 FP16→FP32 转换问题
-                            if ov_device == 'GPU':
-                                config = {
-                                    "INFERENCE_PRECISION_HINT": "f16",
-                                    "GPU_DISABLE_WINOGRAD_CONVOLUTION": "YES"
-                                }
-                                compiled_model = self.ov_core.compile_model(model, ov_device, config)
-                            else:
-                                compiled_model = self.ov_core.compile_model(model, ov_device)
+                            # 使用默认配置编译（FP32 模型不需要特殊配置）
+                            compiled_model = self.ov_core.compile_model(model, ov_device)
                             self.compiled_models[model_key] = compiled_model
                             print(f"      ✓ Compiled for {ov_device}")
                         except Exception as compile_error:

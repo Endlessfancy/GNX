@@ -186,10 +186,10 @@ def prepare_inputs_for_openvino(input_data: Dict, stages: List[int]) -> Dict[str
     first_stage = stages[0]
 
     def to_numpy(t):
-        """Convert tensor to numpy array with FP16 precision for Intel AI PC"""
+        """Convert tensor to numpy array with FP32 precision for GPU compatibility"""
         if isinstance(t, torch.Tensor):
-            return t.cpu().numpy().astype(np.float16)  # FP16 for Intel AI PC
-        return np.array(t, dtype=np.float16)
+            return t.cpu().numpy().astype(np.float32)  # FP32 for OpenVINO GPU
+        return np.array(t, dtype=np.float32)
 
     if first_stage == 1:
         # Stage 1-N: 需要 x 和 edge_index

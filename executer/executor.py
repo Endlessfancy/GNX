@@ -173,10 +173,10 @@ class PipelineExecutor:
         print(f"Execution Mode: {'Pipeline Parallel' if use_pipeline_parallelism else 'Sequential'}")
         print(f"{'='*70}\n")
 
-        # 准备输出（使用 FP16 以匹配模型输出精度）
+        # 准备输出（使用 FP32 以匹配 OpenVINO GPU 输出精度）
         total_nodes = self.data_loader.full_data.num_nodes
         hidden_dim = 256  # GraphSAGE默认hidden dimension
-        all_embeddings = torch.zeros(total_nodes, hidden_dim, dtype=torch.float16)
+        all_embeddings = torch.zeros(total_nodes, hidden_dim, dtype=torch.float32)
 
         per_subgraph_times = []
         per_cluster_times = []
