@@ -266,7 +266,7 @@ class ModelManager:
                             # 如果 GPU/NPU 编译失败，fallback 到 CPU
                             if ov_device != 'CPU':
                                 print(f"      WARNING: Failed to compile for {ov_device}, falling back to CPU")
-                                print(f"      Reason: {str(compile_error)[:100]}...")
+                                print(f"      Full error: {str(compile_error)}")  # 显示完整错误
                                 compiled_model = self.ov_core.compile_model(model, 'CPU')
                                 self.compiled_models[model_key] = compiled_model
                                 print(f"      ✓ Compiled for CPU (fallback)")
