@@ -344,6 +344,9 @@ class SimpleModelExporter:
         combined_model = combined_model.half()  # Convert to FP16 for Intel AI PC
         combined_model.eval()
 
+        # NPU 不支持动态 shape，必须使用静态 shape
+        use_dynamic = dynamic and (device != 'NPU')
+
         # Generate dummy inputs based on starting stage (all FP16)
         first_stage = stages[0]
         if first_stage == 1:
@@ -356,7 +359,7 @@ class SimpleModelExporter:
                 'x': {0: 'num_nodes'},
                 'edge_index': {1: 'num_edges'},
                 'output': {0: 'num_nodes'}
-            } if dynamic else None
+            } if use_dynamic else None
         elif first_stage == 5:
             # Stage 5-7: input is (sum_agg, count, x)
             dummy_sum_agg = torch.randn(num_nodes, 256, dtype=torch.float16)  # Output from stage 3
@@ -369,7 +372,7 @@ class SimpleModelExporter:
                 'count': {0: 'num_nodes'},
                 'x': {0: 'num_nodes'},
                 'output': {0: 'num_nodes'}
-            } if dynamic else None
+            } if use_dynamic else None
         elif first_stage == 6:
             # Stage 6-7: input is (mean_agg, x)
             dummy_mean_agg = torch.randn(num_nodes, 256, dtype=torch.float16)  # Output from stage 5
@@ -380,7 +383,7 @@ class SimpleModelExporter:
                 'mean_agg': {0: 'num_nodes'},
                 'x': {0: 'num_nodes'},
                 'output': {0: 'num_nodes'}
-            } if dynamic else None
+            } if use_dynamic else None
         else:
             raise NotImplementedError(f"Export for stages starting from {first_stage} not implemented")
 
@@ -396,7 +399,7 @@ class SimpleModelExporter:
             output_names=['output'],
             dynamic_axes=dynamic_axes,
             opset_version=18,
-            do_constant_folding=False,
+            do_constant_folding=True,  # 启用常量折叠优化
             verbose=False
         )
 

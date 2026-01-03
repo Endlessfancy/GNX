@@ -204,11 +204,11 @@ class ModelManager:
 
         try:
             # 使用 OpenVINO Model Optimizer 转换
-            # ONNX 模型已经是 FP16，直接保存，不需要额外压缩
             ov_model = ov.convert_model(onnx_path)
 
-            # 保存 IR 模型（ONNX 已是 FP16，无需 compress_to_fp16 参数）
-            ov.save_model(ov_model, str(ir_xml_path))
+            # 强制压缩到 FP16，确保所有操作都使用 FP16
+            # 这会移除模型中的 FP32 Cast 节点，解决 GPU 编译错误
+            ov.save_model(ov_model, str(ir_xml_path), compress_to_fp16=True)
 
             print(f"      ✓ Converted to IR (FP16): {ir_xml_path.name}")
             return str(ir_xml_path)
@@ -259,7 +259,15 @@ class ModelManager:
 
                         # 编译模型（带 fallback 机制）
                         try:
-                            compiled_model = self.ov_core.compile_model(model, ov_device)
+                            # 为 GPU 设置推理精度提示，避免 FP16→FP32 转换问题
+                            if ov_device == 'GPU':
+                                config = {
+                                    "INFERENCE_PRECISION_HINT": "f16",
+                                    "GPU_DISABLE_WINOGRAD_CONVOLUTION": "YES"
+                                }
+                                compiled_model = self.ov_core.compile_model(model, ov_device, config)
+                            else:
+                                compiled_model = self.ov_core.compile_model(model, ov_device)
                             self.compiled_models[model_key] = compiled_model
                             print(f"      ✓ Compiled for {ov_device}")
                         except Exception as compile_error:
