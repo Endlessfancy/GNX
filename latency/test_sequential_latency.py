@@ -71,6 +71,8 @@ class SubgraphResult:
     num_edges: int
     stage_results: List[StageResult] = field(default_factory=list)
     total_ms: float = 0.0
+    partition_ms: float = 0.0  # DP partition time
+    merge_ms: float = 0.0  # DP merge time
 
 
 class SequentialProfiler:
@@ -280,8 +282,10 @@ class SequentialProfiler:
                 # Data Parallel - Split, Run each device sequentially, Merge
                 if is_graph_stage:
                     # Graph stage: use HaloPartitioner
+                    partition_start = time.perf_counter()
                     partitioner = HaloPartitioner(num_partitions=len(devices), ratios=ratios)
                     partitions = partitioner.partition(current_x, current_edge_index)
+                    result.partition_ms += (time.perf_counter() - partition_start) * 1000
 
                     device_outputs = []
                     for i, device in enumerate(devices):
@@ -307,8 +311,10 @@ class SequentialProfiler:
                         ))
 
                     # Merge outputs using partitioner's merge_outputs method
+                    merge_start = time.perf_counter()
                     outputs_list = [out.get('output', out.get('x')) for out, _ in device_outputs]
                     current_x = partitioner.merge_outputs(outputs_list, partitions, x.shape[0])
+                    result.merge_ms += (time.perf_counter() - merge_start) * 1000
 
                 else:
                     # Dense stage: simple split by node count
@@ -345,7 +351,9 @@ class SequentialProfiler:
 
                         node_start += n_part
 
+                    merge_start = time.perf_counter()
                     current_x = np.concatenate(merged_parts, axis=0)
+                    result.merge_ms += (time.perf_counter() - merge_start) * 1000
 
             stage_wall_ms = (time.perf_counter() - stage_start) * 1000
             total_time += stage_wall_ms
@@ -445,6 +453,8 @@ class SequentialProfiler:
                 row[f'{prefix}_device_ms'] = sr.device_time_ms
                 row[f'{prefix}_compute_ms'] = sr.compute_time_ms
 
+            row['partition_ms'] = result.partition_ms
+            row['merge_ms'] = result.merge_ms
             row['total_ms'] = result.total_ms
             rows.append(row)
 
@@ -479,6 +489,12 @@ class SequentialProfiler:
                     avg = df[col].mean()
                     std = df[col].std()
                     print(f"    {time_type:8}: avg={avg:7.2f}ms, std={std:5.2f}ms")
+
+        # Partition and Merge statistics (DP overhead)
+        if 'partition_ms' in df.columns and df['partition_ms'].sum() > 0:
+            print(f"\n  DP Overhead:")
+            print(f"    partition: avg={df['partition_ms'].mean():.2f}ms, std={df['partition_ms'].std():.2f}ms")
+            print(f"    merge    : avg={df['merge_ms'].mean():.2f}ms, std={df['merge_ms'].std():.2f}ms")
 
         # Total statistics
         print(f"\n  Total (wall time):")
