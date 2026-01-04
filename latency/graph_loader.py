@@ -45,7 +45,11 @@ class GraphLoader:
                 from torch_geometric.data.data import Data
 
                 # 允许加载PyG Data对象（解决PyTorch 2.6+的weights_only限制）
-                torch.serialization.add_safe_globals([Data])
+                # PyTorch 2.4+ 才有 add_safe_globals，旧版本跳过
+                try:
+                    torch.serialization.add_safe_globals([Data])
+                except AttributeError:
+                    pass  # 旧版PyTorch不需要这个
 
                 dataset = Flickr(root=str(self.cache_dir / 'Flickr'))
                 data = dataset[0]
