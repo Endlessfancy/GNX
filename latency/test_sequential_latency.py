@@ -306,16 +306,9 @@ class SequentialProfiler:
                             device=device
                         ))
 
-                    # Merge outputs (owned nodes only)
-                    merged = np.zeros((x.shape[0], device_outputs[0][0]['output'].shape[1]), dtype=np.float32)
-                    for outputs, part in device_outputs:
-                        out = outputs.get('output', outputs.get('x'))
-                        owned_start = part.owned_start
-                        owned_end = owned_start + part.num_owned
-                        global_start = part.node_range[0]
-                        merged[global_start:global_start + part.num_owned] = out[owned_start:owned_end]
-
-                    current_x = merged
+                    # Merge outputs using partitioner's merge_outputs method
+                    outputs_list = [out.get('output', out.get('x')) for out, _ in device_outputs]
+                    current_x = partitioner.merge_outputs(outputs_list, partitions, x.shape[0])
 
                 else:
                     # Dense stage: simple split by node count
