@@ -1,5 +1,5 @@
 """
-PEP-based Pipeline Latency Testing with Flickr Dataset
+Pipeline Latency Testing with Flickr Dataset
 
 Industrial-grade pipeline benchmark using:
 - Flickr dataset partitioned into subgraphs (batches)
@@ -9,9 +9,9 @@ Industrial-grade pipeline benchmark using:
 - PERF_COUNT precise timing
 
 Usage:
-    python test_pep_latency.py                    # Run with default PEP1
-    python test_pep_latency.py --pep pep2         # Run with PEP2
-    python test_pep_latency.py --export-only      # Only export models
+    python test_pipeline_latency.py                    # Run with default PEP1
+    python test_pipeline_latency.py --pep pep2         # Run with PEP2
+    python test_pipeline_latency.py --export-only      # Only export models
 """
 
 import argparse
