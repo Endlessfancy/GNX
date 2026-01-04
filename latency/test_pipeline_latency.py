@@ -138,16 +138,23 @@ class PEPPipelineTester:
             # Map to available devices
             actual_devices = [self._get_available_device(d) for d in devices]
 
-            # Get model paths
+            # Get model paths (use global max_nodes/max_edges for NPU)
             model_paths = {}
             for device in actual_devices:
                 if self.exporter is not None:
-                    path = self.exporter.get_model_path(stages, device)
+                    if device == 'NPU':
+                        path = self.exporter.get_model_path(
+                            stages, device, self.max_nodes, self.max_edges)
+                    else:
+                        path = self.exporter.get_model_path(stages, device)
                 else:
                     # Try to find pre-exported model
                     stage_str = '_'.join(map(str, stages))
-                    shape_type = "static" if device == "NPU" else "dynamic"
-                    path = self.models_dir / f"stages_{stage_str}_{shape_type}.xml"
+                    if device == "NPU":
+                        # New naming: stages_6_7_NPU_n{nodes}_e{edges}.xml
+                        path = self.models_dir / f"stages_{stage_str}_{device}_n{self.max_nodes}_e{self.max_edges}.xml"
+                    else:
+                        path = self.models_dir / f"stages_{stage_str}_{device}_dynamic.xml"
                     if not path.exists():
                         path = None
                 if path:

@@ -18,6 +18,7 @@ if str(_parent_dir) not in sys.path:
     sys.path.insert(0, str(_parent_dir))
 
 import time
+import re
 import numpy as np
 from typing import Dict, List, Optional, Tuple, Any, Union
 from dataclasses import dataclass
@@ -167,12 +168,42 @@ class StageExecutor:
         self.input_names = [inp.any_name for inp in self.compiled_model.inputs]
         self.output_names = [out.any_name for out in self.compiled_model.outputs]
 
-        # For NPU: get actual static shape from model if not provided
+        # For NPU: parse static shape from filename or detect from model
         if self.device == 'NPU':
-            self._detect_npu_static_shape()
+            self._init_npu_static_shape(model_path)
 
         # For async timing
         self._async_start_ns: Optional[int] = None
+
+    def _parse_static_shape_from_filename(self, model_path: Union[str, Path]) -> Tuple[Optional[int], Optional[int]]:
+        """Parse static shape from NPU model filename.
+
+        Example: stages_6_7_NPU_n98105_e307822.xml -> (98105, 307822)
+
+        Returns:
+            (num_nodes, num_edges) or (None, None) if not found in filename
+        """
+        name = Path(model_path).stem
+        match = re.search(r'_n(\d+)_e(\d+)$', name)
+        if match:
+            return int(match.group(1)), int(match.group(2))
+        return None, None
+
+    def _init_npu_static_shape(self, model_path: Union[str, Path]):
+        """Initialize NPU static shape from filename or model detection.
+
+        Priority:
+        1. Parse from filename (e.g., stages_6_7_NPU_n98105_e307822.xml)
+        2. Fall back to detecting from compiled model
+        """
+        parsed_nodes, parsed_edges = self._parse_static_shape_from_filename(model_path)
+        if parsed_nodes is not None:
+            self.npu_static_nodes = parsed_nodes
+            self.npu_static_edges = parsed_edges
+            print(f"    NPU static shape from filename: n={parsed_nodes}, e={parsed_edges}")
+        else:
+            # Fall back: detect from compiled model
+            self._detect_npu_static_shape()
 
     def _detect_npu_static_shape(self):
         """Detect NPU model's static shape from compiled model.

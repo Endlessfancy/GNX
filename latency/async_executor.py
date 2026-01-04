@@ -394,14 +394,18 @@ if __name__ == "__main__":
     exporter = GNNModelExporter()
     exporter.export_for_pep(PEP1, max_nodes=12000, max_edges=120000)
 
-    # Create model paths mapping
+    # Create model paths mapping (use global max for NPU)
+    max_nodes, max_edges = 12000, 120000
     model_paths = {}
     for block_id, block in enumerate(PEP1):
         devices = block[0]
         stages = block[1]
         model_paths[block_id] = {}
         for device in devices:
-            path = exporter.get_model_path(stages, device)
+            if device == 'NPU':
+                path = exporter.get_model_path(stages, device, max_nodes, max_edges)
+            else:
+                path = exporter.get_model_path(stages, device)
             if path:
                 model_paths[block_id][device] = path
 

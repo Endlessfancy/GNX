@@ -79,10 +79,18 @@ class GNNModelExporter:
         key = self._get_model_key(stages, device)
         return self.output_dir / f"{key}.onnx"
 
-    def _get_ir_path(self, stages: List[int], device: str) -> Path:
-        """Get OpenVINO IR model path (.xml)."""
+    def _get_ir_path(self, stages: List[int], device: str,
+                     max_nodes: int = None, max_edges: int = None) -> Path:
+        """Get OpenVINO IR model path (.xml).
+
+        For NPU: includes static shape in filename (e.g., stages_6_7_NPU_n89518_e307822.xml)
+        For CPU/GPU: uses _dynamic suffix
+        """
         key = self._get_model_key(stages, device)
-        suffix = "_static" if device == "NPU" else "_dynamic"
+        if device == "NPU" and max_nodes is not None and max_edges is not None:
+            suffix = f"_n{max_nodes}_e{max_edges}"
+        else:
+            suffix = "_dynamic"
         return self.output_dir / f"{key}{suffix}.xml"
 
     def export_onnx(self,
@@ -131,6 +139,8 @@ class GNNModelExporter:
                       onnx_path: Path,
                       stages: List[int],
                       device: str,
+                      max_nodes: int = None,
+                      max_edges: int = None,
                       force: bool = False) -> Path:
         """
         Convert ONNX model to OpenVINO IR.
@@ -139,6 +149,8 @@ class GNNModelExporter:
             onnx_path: Path to ONNX model
             stages: Stage indices (for naming)
             device: Target device
+            max_nodes: Max nodes for NPU static shape (included in filename)
+            max_edges: Max edges for NPU static shape (included in filename)
             force: Force re-conversion
 
         Returns:
@@ -147,7 +159,7 @@ class GNNModelExporter:
         if not OPENVINO_AVAILABLE:
             raise RuntimeError("OpenVINO not available for IR conversion")
 
-        ir_path = self._get_ir_path(stages, device)
+        ir_path = self._get_ir_path(stages, device, max_nodes, max_edges)
         bin_path = ir_path.with_suffix('.bin')
 
         # Check if already exists
@@ -196,7 +208,7 @@ class GNNModelExporter:
 
         # 2. Convert to IR
         if OPENVINO_AVAILABLE:
-            ir_path = self.convert_to_ir(onnx_path, stages, device, force)
+            ir_path = self.convert_to_ir(onnx_path, stages, device, max_nodes, max_edges, force)
             key = self._get_model_key(stages, device)
             self.exported_models[key] = str(ir_path)
             return ir_path
@@ -267,13 +279,20 @@ class GNNModelExporter:
 
         return all_exports
 
-    def get_model_path(self, stages: List[int], device: str) -> Optional[Path]:
+    def get_model_path(self, stages: List[int], device: str,
+                       max_nodes: int = None, max_edges: int = None) -> Optional[Path]:
         """
         Get the IR model path for a stage/device configuration.
 
+        Args:
+            stages: List of stage indices
+            device: Target device
+            max_nodes: Max nodes for NPU (required for NPU models)
+            max_edges: Max edges for NPU (required for NPU models)
+
         Returns None if model hasn't been exported.
         """
-        ir_path = self._get_ir_path(stages, device)
+        ir_path = self._get_ir_path(stages, device, max_nodes, max_edges)
         if ir_path.exists():
             return ir_path
         return None

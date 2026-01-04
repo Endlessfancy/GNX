@@ -143,13 +143,20 @@ class SequentialProfiler:
             # For sequential profiling, use first device only (no data parallel)
             device = self._get_available_device(devices[0])
 
-            # Get model path
+            # Get model path (use global max_nodes/max_edges for NPU)
             if self.exporter is not None:
-                model_path = self.exporter.get_model_path(stage_ids, device)
+                if device == 'NPU':
+                    model_path = self.exporter.get_model_path(
+                        stage_ids, device, self.max_nodes, self.max_edges)
+                else:
+                    model_path = self.exporter.get_model_path(stage_ids, device)
             else:
                 stage_str = '_'.join(map(str, stage_ids))
-                shape_type = "static" if device == "NPU" else "dynamic"
-                model_path = self.models_dir / f"stages_{stage_str}_{shape_type}.xml"
+                if device == "NPU":
+                    # New naming: stages_6_7_NPU_n{nodes}_e{edges}.xml
+                    model_path = self.models_dir / f"stages_{stage_str}_{device}_n{self.max_nodes}_e{self.max_edges}.xml"
+                else:
+                    model_path = self.models_dir / f"stages_{stage_str}_{device}_dynamic.xml"
                 if not model_path.exists():
                     model_path = None
 
