@@ -1,0 +1,24 @@
+================================================================================
+Pipeline Execution Gantt Chart
+================================================================================
+
+Total duration: 10500ms
+Time scale: ~150.0ms per character
+
+Block 0 (Thread-7648): 88888888888899999999AAAAAAAAAA BBBBBBCCCCCCCCC DDDDDDDDEEEEEEE FFFFF
+Block 1 (Thread-1280): 8888888888888999999999AAAAAAAAA BBBBBB CCCCCCCCCCDDDDDDDEEEEEEE FFFFF
+
+Time axis:   0.0s  1.0s   2.0s   3.0s  4.0s   5.0s   6.0s  7.0s   8.0s   9.0s  10.0s  11.0s
+
+Legend:
+  Each character represents a time slice of the pipeline execution
+  Numbers/letters indicate which subgraph is being processed
+  Gaps indicate waiting time or idle periods
+  Overlapping execution shows pipeline parallelism
+
+Pipeline Overlap Analysis:
+  Overlapping execution detected: 15 periods
+  Total overlap time: 10351ms (98.6% of total)
+  This demonstrates true pipeline parallelism!
+
+================================================================================

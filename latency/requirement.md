@@ -8,4 +8,3 @@ Model Loading: get_model_path 应该总是去查找这个全局最大尺寸的�
 
 Inference: 运行时，所有 Batch 的数据都必须先 Pad 到这个全局最大尺寸，再送入 NPU。
 
-请确保代码逻辑（特别是 get_model_path 的调用处和 export 处）是使用 self.max_nodes (全局最大值)，而不是循环中的 batch_num_nodes。

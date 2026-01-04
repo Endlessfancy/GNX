@@ -1,11 +1,16 @@
 """
 Simple GPU Test for Individual Stages
 
-Tests if GPU can run each stage (1-4) individually, then fused stages 1-4.
-Based on profiling/profile_stages.py approach.
+Tests if GPU can run each stage (1-4) individually.
+Supports both OpenVINO and ONNX Runtime backends.
+
+Usage:
+    python test_gpu_simple.py              # Test with OpenVINO (default)
+    python test_gpu_simple.py --onnx       # Test with ONNX Runtime
 """
 
 import sys
+import argparse
 import numpy as np
 import torch
 from pathlib import Path
@@ -18,14 +23,19 @@ if str(_parent_dir) not in sys.path:
 if str(_parent_dir / 'profiling') not in sys.path:
     sys.path.insert(0, str(_parent_dir / 'profiling'))
 
+# Check available backends
 try:
     import openvino as ov
     from openvino.runtime import Core
     OPENVINO_AVAILABLE = True
 except ImportError:
     OPENVINO_AVAILABLE = False
-    print("OpenVINO not available")
-    sys.exit(1)
+
+try:
+    import onnxruntime as ort
+    ONNXRUNTIME_AVAILABLE = True
+except ImportError:
+    ONNXRUNTIME_AVAILABLE = False
 
 # Import stage models from profiling
 from profiling.models.Model_sage import (
