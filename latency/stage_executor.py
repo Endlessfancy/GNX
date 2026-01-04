@@ -167,8 +167,42 @@ class StageExecutor:
         self.input_names = [inp.any_name for inp in self.compiled_model.inputs]
         self.output_names = [out.any_name for out in self.compiled_model.outputs]
 
+        # For NPU: get actual static shape from model if not provided
+        if self.device == 'NPU':
+            self._detect_npu_static_shape()
+
         # For async timing
         self._async_start_ns: Optional[int] = None
+
+    def _detect_npu_static_shape(self):
+        """Detect NPU model's static shape from compiled model.
+
+        NPU models have fixed input shapes. This method reads the actual
+        shapes from the compiled model and updates npu_static_nodes/edges
+        to ensure correct padding.
+        """
+        try:
+            for inp in self.compiled_model.inputs:
+                shape = list(inp.get_shape())
+                name = inp.any_name
+
+                if len(shape) == 2:
+                    # edge_index: [2, num_edges] - shape[0] == 2
+                    # x: [num_nodes, feat_dim] - shape[0] >> 2
+                    if shape[0] == 2 or 'edge' in name.lower():
+                        # This is edge_index
+                        model_static_edges = shape[1]
+                        if self.npu_static_edges is None or self.npu_static_edges != model_static_edges:
+                            print(f"    NPU model edge_index shape: {shape} (using {model_static_edges} for padding)")
+                            self.npu_static_edges = model_static_edges
+                    else:
+                        # This is x (node features)
+                        model_static_nodes = shape[0]
+                        if self.npu_static_nodes is None or self.npu_static_nodes != model_static_nodes:
+                            print(f"    NPU model x shape: {shape} (using {model_static_nodes} for padding)")
+                            self.npu_static_nodes = model_static_nodes
+        except Exception as e:
+            print(f"    Warning: Could not detect NPU static shape: {e}")
 
     def run(self, inputs: Dict[str, np.ndarray], batch_id: int) -> Tuple[Dict[str, np.ndarray], ProfilingResult]:
         """
