@@ -509,6 +509,17 @@ class PipelineBenchmark:
                 batch_id = buffer.get_batch_id(stage_id, cycle_id, num_batches)
 
                 if inputs is not None:
+                    # For dense stages (Stage 6-7), combine mean_agg with x_original
+                    if not stage.is_graph_stage and stage_id > 0 and batch_id is not None:
+                        # inputs contains output from previous stage (mean_agg)
+                        # Need to also include x_original from raw batch
+                        mean_agg = inputs.get('output', inputs.get('x'))
+                        x_original = batches[batch_id]['x']
+                        inputs = {
+                            'mean_agg': mean_agg,
+                            'x': x_original
+                        }
+
                     # Execute stage
                     outputs, stats = stage.run(inputs, batch_id)
                     buffer.set_output(stage_id, outputs)
