@@ -1,30 +1,100 @@
+(MIX) PS C:\Private\Research\GNX_final\GNX\latency> python .\test_sequential_latency.py --pep pep2
 ======================================================================
-Cost table saved to: C:\Private\Research\GNX_final\GNX\latency\results\cost_model.csv
+Sequential Profiling for Cost Modeling
+======================================================================
+PEP: pep2
+Subgraphs: 8
+Iterations: 3
+Warmup: 1
+Output: cost_model.csv
+Available devices: ['CPU', 'GPU', 'NPU']
+
+Loading Flickr dataset...
+Loading Flickr dataset...
+  Loaded Flickr dataset:
+  Nodes: 89,250
+  Edges: 899,756
+  Features: 500
+Partitioned into 8 subgraphs:
+  Max nodes per subgraph: 89518
+  Max edges per subgraph: 307822
+Max subgraph size: 89518 nodes, 307822 edges
+
+======================================================================
+Sequential Profiling: PEP2
 ======================================================================
 
-[Cost Table Preview]
- sg_id  iter  num_nodes  num_edges  stage0_CPU_wall_ms  stage0_CPU_device_ms  stage0_CPU_compute_ms  stage0_GPU_wall_ms  stage0_GPU_device_ms  stage0_GPU_compute_ms  stage1_NPU_wall_ms  stage1_NPU_device_ms  stage1_NPU_compute_ms  partition_ms  merge_ms  total_ms
-     0     0      81380     279839            599.7470               565.666                546.324             83.6570                51.793                 35.568            372.6079               235.427                173.614      337.2697   84.7733 1542.8111
-     0     1      81380     279839            550.4975               519.135                501.893             82.9991                54.428                 38.144            352.9791               235.427                173.614      328.1832   77.4826 1448.6886
-     0     2      81380     279839            501.8808               482.515                467.105             84.8087                55.145                 38.985            365.9092               235.427                173.614      871.5767   74.9544 1961.8125
-     1     0      61287     131659            320.2253               410.236                396.177             61.9450                59.548                 42.749            387.4106               235.427                173.614      180.5001   57.0217 1052.8096
-     1     1      61287     131659            332.2713               386.126                372.922             63.3570                61.699                 44.722            373.2044               235.427                173.614      177.2527   59.0125 1054.4315
-     1     2      61287     131659            344.1002               369.103                356.112             64.7744                63.181                 46.102            436.6965               235.427                173.614      184.9236   60.4994 1136.8757
-     2     0      53027     105627            698.8496               413.037                400.119             89.5523                56.974                 41.447            476.3495               235.427                173.614      167.2736   52.1877 1527.3647
-     2     1      53027     105627            709.3427               430.786                417.511             56.9222                54.780                 39.843            431.3299               235.427                173.614      163.7709   61.2465 1473.3601
-     2     2      53027     105627            705.2629               445.168                431.963             57.5338                53.648                 39.052            441.4743               235.427                173.614      153.6785   52.6108 1452.6025
-     3     0      47876      91656            634.3322               434.995                422.293             57.7785                50.256                 36.599            433.7569               235.427                173.614      138.3433   52.6852 1356.1816
-     3     1      47876      91656            580.8889               438.945                426.086             53.1144                48.900                 35.634            438.8391               235.427                173.614      144.8003   54.7294 1315.5567
-     3     2      47876      91656            614.3788               443.885                430.998             60.8635                47.902                 34.926            453.9233               235.427                173.614      133.7013   46.9136 1348.6539
-     4     0      44460      82764            572.2639               446.030                433.398             51.6042                45.581                 33.195            471.4617               235.427                173.614      132.0864   59.0846 1325.6242
-     4     1      44460      82764            574.7122               448.360                435.657             53.0154                44.613                 32.489            439.7109               235.427                173.614      123.3720   46.8843 1274.5905
-     4     2      44460      82764            571.3615               450.103                437.451             54.5047                43.807                 31.904            437.9514               235.427                173.614      132.3341   45.2357 1282.2752
-     5     0      41181      74900            504.0510               448.114                435.598             47.9105                42.135                 30.675            448.1908               235.427                173.614      109.5649   52.0114 1194.8684
-     5     1      41181      74900            516.0808               447.476                435.014             46.8889                41.423                 30.188            438.5819               235.427                173.614      115.9930   46.8934 1202.4743
-     5     2      41181      74900            393.9014               441.933                429.503             43.5735                40.755                 29.721            429.1690               235.427                173.614      113.0015   50.1619 1061.8080
-     6     0      39214      69793            312.9101               426.675                414.148             42.2636                39.694                 28.940            408.9426               235.427                173.614      104.1285   37.8778  936.0708
-     6     1      39214      69793            302.7391               419.467                407.039             49.6016                39.124                 28.526            415.3240               235.427                173.614      113.3245   44.8881  958.9055
-     6     2      39214      69793            227.6624               409.943                397.739             43.5764                38.603                 28.145            413.1493               235.427                173.614      111.5740   39.0149  867.2578
-     7     0      36692      63518            188.4339               391.643                379.895             42.5782                37.520                 27.355            403.9432               235.427                173.614       93.2065   39.5723  802.3615
-     7     1      36692      63518            186.3651               383.003                371.444             42.4777                37.000                 26.978            406.8711               235.427                173.614       98.9649   33.5737  795.5186
-     7     2      36692      63518            192.9496               375.067                363.698             40.8921                36.563                 26.666            403.7396               235.427                173.614       97.5137   37.6660  800.502
+PEP2:
+------------------------------------------------------------
+  Block 0: [CPU] Stages [1,2,3,4]
+  Block 1: [GPU+NPU] Stages [5,6,7] (GPU:70%, NPU:30%)
+------------------------------------------------------------
+
+Exporting models...
+
+============================================================
+Exporting models for PEP configuration
+============================================================
+
+Block 0: stages [1, 2, 3, 4]
+
+Exporting stages [1, 2, 3, 4] for CPU:
+  Exporting CPU model (stages [1, 2, 3, 4]) to C:\Private\Research\GNX_final\GNX\latency\models\stages_1_2_3_4_CPU.onnx
+C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\utils.py:1547: OnnxExporterWarning: Exporting to ONNX opset version 18 is not supported. by 'torch.onnx.export()'. The highest opset version supported is 17. To use a newer opset version, consider 'torch.onnx.dynamo_export()'. Note that dynamo_export() is in preview. Please report errors with dynamo_export() as Github issues to https://github.com/pytorch/pytorch/issues.
+  warnings.warn(
+C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\symbolic_opset9.py:6628: UserWarning: Warning: ONNX export does not support duplicated values in 'index' field, this will cause the ONNX model to be incorrect.
+  warnings.warn(
+  ✓ Model exported successfully (0.01 MB)
+  Converting to IR: stages_1_2_3_4_CPU_dynamic.xml
+  IR saved: stages_1_2_3_4_CPU_dynamic.xml
+
+Block 1: stages [5, 6, 7]
+
+Exporting stages [5, 6, 7] for GPU:
+  Exporting GPU model (stages [5, 6, 7]) to C:\Private\Research\GNX_final\GNX\latency\models\stages_5_6_7_GPU.onnx
+  ✓ Model exported successfully (0.98 MB)
+  Converting to IR: stages_5_6_7_GPU_dynamic.xml
+  IR saved: stages_5_6_7_GPU_dynamic.xml
+
+Exporting stages [5, 6, 7] for NPU:
+  Exporting NPU model (stages [5, 6, 7]) to C:\Private\Research\GNX_final\GNX\latency\models\stages_5_6_7_NPU.onnx
+  ✓ Model exported successfully (0.98 MB)
+  Converting to IR: stages_5_6_7_NPU_n89518_e307822.xml
+  IR saved: stages_5_6_7_NPU_n89518_e307822.xml
+
+============================================================
+Exported 3 models
+============================================================
+
+Creating stage executors...
+  Loading Block0_S1_2_3_4_CPU on CPU (stream 0)...
+    Compiled successfully on CPU
+  Created executor: Block0_S1_2_3_4_CPU
+  Created stage: Block0_S1_2_3_4 with devices ['CPU']
+  Loading Block1_S5_6_7_GPU on GPU (stream 0)...
+    Compiled successfully on GPU
+  Created executor: Block1_S5_6_7_GPU
+  Loading Block1_S5_6_7_NPU on NPU (stream 1)...
+    Compiled successfully on NPU
+    NPU static shape from filename: n=89518, e=307822
+  Created executor: Block1_S5_6_7_NPU
+  Created stage: Block1_S5_6_7 with devices ['GPU', 'NPU']
+
+Profiling 8 subgraphs x 3 iterations
+Warmup: 1 iterations
+Traceback (most recent call last):
+  File "C:\Private\Research\GNX_final\GNX\latency\test_sequential_latency.py", line 577, in <module>
+    main()
+  File "C:\Private\Research\GNX_final\GNX\latency\test_sequential_latency.py", line 547, in main
+    df = profiler.run_profiling(
+  File "C:\Private\Research\GNX_final\GNX\latency\test_sequential_latency.py", line 414, in run_profiling
+    self.profile_subgraph(sg_id, x, edge_index, iter_id=-1)
+  File "C:\Private\Research\GNX_final\GNX\latency\test_sequential_latency.py", line 299, in profile_subgraph
+    outputs, profiling = executors[device].run(inputs, batch_id=sg_id)
+  File "C:\Private\Research\GNX_final\GNX\latency\stage_executor.py", line 265, in run
+    self.request.infer()
+  File "C:\Env\Anaconda\envs\MIX\lib\site-packages\openvino\runtime\ie_api.py", line 132, in infer
+    return OVDict(super().infer(_data_dispatch(
+RuntimeError: Exception from src\inference\src\cpp\infer_request.cpp:223:
+Check 'pshape.compatible(ov::PartialShape(user_tensor->get_shape())) || is_batched_input(port)' failed at src\plugins\intel_gpu\src\plugin\sync_infer_request.cpp:803:
+[GPU] The input tensor size is not equal to model port shape, can't handle input tensor with name: parameter:sum_agg, because model input (shape=[?,500]) and tensor (shape=[81380,501]) are incompatible
