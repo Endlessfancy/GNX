@@ -36,6 +36,7 @@ from latency.profiler import PipelineProfiler
 from latency.flickr_loader import FlickrSubgraphLoader
 from latency.stage_executor import StageExecutor, OPENVINO_AVAILABLE
 from latency.pep_config import ALL_PEPS, PEP1, PEP2, analyze_pep, print_pep
+from latency.graph_partitioner import HaloPartitioner
 
 # Model exporter requires torch_scatter - make it optional
 try:
@@ -132,60 +133,78 @@ class SequentialProfiler:
             return
         self.exporter.export_for_pep(pep, self.max_nodes, self.max_edges, force)
 
+    def _get_model_path(self, stage_ids: List[int], device: str) -> Optional[Path]:
+        """Get model path for a stage/device combination."""
+        if self.exporter is not None:
+            if device == 'NPU':
+                return self.exporter.get_model_path(
+                    stage_ids, device, self.max_nodes, self.max_edges)
+            else:
+                return self.exporter.get_model_path(stage_ids, device)
+        else:
+            stage_str = '_'.join(map(str, stage_ids))
+            if device == "NPU":
+                model_path = self.models_dir / f"stages_{stage_str}_{device}_n{self.max_nodes}_e{self.max_edges}.xml"
+            else:
+                model_path = self.models_dir / f"stages_{stage_str}_{device}_dynamic.xml"
+            return model_path if model_path.exists() else None
+
     def _create_stages(self, pep: List, profiler: PipelineProfiler) -> List[Dict]:
-        """Create stage executors from PEP configuration."""
+        """Create stage executors from PEP configuration.
+
+        For DP blocks: creates multiple executors (one per device)
+        For single-device blocks: creates one executor
+        """
         stages = []
 
         for block_id, block in enumerate(pep):
             devices = block[0]
             stage_ids = block[1]
-
-            # For sequential profiling, use first device only (no data parallel)
-            device = self._get_available_device(devices[0])
-
-            # Get model path (use global max_nodes/max_edges for NPU)
-            if self.exporter is not None:
-                if device == 'NPU':
-                    model_path = self.exporter.get_model_path(
-                        stage_ids, device, self.max_nodes, self.max_edges)
-                else:
-                    model_path = self.exporter.get_model_path(stage_ids, device)
-            else:
-                stage_str = '_'.join(map(str, stage_ids))
-                if device == "NPU":
-                    # New naming: stages_6_7_NPU_n{nodes}_e{edges}.xml
-                    model_path = self.models_dir / f"stages_{stage_str}_{device}_n{self.max_nodes}_e{self.max_edges}.xml"
-                else:
-                    model_path = self.models_dir / f"stages_{stage_str}_{device}_dynamic.xml"
-                if not model_path.exists():
-                    model_path = None
-
-            if model_path is None:
-                print(f"  WARNING: No model found for block {block_id}, skipping")
-                continue
+            ratios = block[2] if len(block) > 2 else [1.0 / len(devices)] * len(devices)
 
             stage_name = f"Block{block_id}_S{'_'.join(map(str, stage_ids))}"
 
-            # Create executor with profiler for precise timing
-            executor = StageExecutor(
-                core=self.core,
-                model_path=model_path,
-                device=device,
-                stage_name=stage_name,
-                profiler=profiler,  # Pass profiler for PERF_COUNT timing
-                npu_static_nodes=self.max_nodes if device == 'NPU' else None,
-                npu_static_edges=self.max_edges if device == 'NPU' else None
-            )
+            # Map to available devices
+            actual_devices = [self._get_available_device(d) for d in devices]
+
+            # Create executors for each device
+            executors = {}
+            for i, device in enumerate(actual_devices):
+                model_path = self._get_model_path(stage_ids, device)
+                if model_path is None:
+                    print(f"  WARNING: No model for {device}, skipping")
+                    continue
+
+                executors[device] = StageExecutor(
+                    core=self.core,
+                    model_path=model_path,
+                    device=device,
+                    stage_name=f"{stage_name}_{device}",
+                    profiler=profiler,
+                    stream_id=i,
+                    npu_static_nodes=self.max_nodes if device == 'NPU' else None,
+                    npu_static_edges=self.max_edges if device == 'NPU' else None
+                )
+                print(f"  Created executor: {stage_name}_{device}")
+
+            if not executors:
+                print(f"  WARNING: No executors for block {block_id}, skipping")
+                continue
+
+            # Determine if this is a graph stage (needs HaloPartitioner)
+            is_graph_stage = any(s <= 5 for s in stage_ids)
 
             stages.append({
                 'id': block_id,
                 'name': stage_name,
-                'executor': executor,
-                'device': device,
-                'stage_ids': stage_ids
+                'executors': executors,  # Dict of device -> executor
+                'devices': list(executors.keys()),
+                'ratios': ratios[:len(executors)],
+                'stage_ids': stage_ids,
+                'is_graph_stage': is_graph_stage
             })
 
-            print(f"  Created stage: {stage_name} on {device}")
+            print(f"  Created stage: {stage_name} with devices {list(executors.keys())}")
 
         return stages
 
@@ -196,6 +215,8 @@ class SequentialProfiler:
                          iter_id: int = 0) -> SubgraphResult:
         """
         Profile single subgraph through all stages sequentially.
+
+        For DP blocks: Split data -> Run each device sequentially -> Merge
 
         Args:
             sg_id: Subgraph ID
@@ -208,7 +229,7 @@ class SequentialProfiler:
             - Stages 6-7 (Dense ops): inputs=(mean_agg, x_original), output=final
 
         Returns:
-            SubgraphResult with timing for each stage
+            SubgraphResult with timing for each stage/device
         """
         result = SubgraphResult(
             sg_id=sg_id,
@@ -219,46 +240,122 @@ class SequentialProfiler:
 
         x_original = x  # Keep original x for Stage 6-7
         current_x = x
+        current_edge_index = edge_index
         total_time = 0.0
 
         for stage in self.stages:
             stage_ids = stage['stage_ids']
             first_stage = stage_ids[0]
+            devices = stage['devices']
+            executors = stage['executors']
+            ratios = stage['ratios']
+            is_graph_stage = stage['is_graph_stage']
 
-            # Determine inputs based on stage type
-            if first_stage <= 5:
-                # Stages 1-5: Graph operations need (x, edge_index)
-                inputs = {
-                    'x': current_x,
-                    'edge_index': edge_index
-                }
+            stage_start = time.perf_counter()
+
+            if len(devices) == 1:
+                # Single device - simple execution
+                device = devices[0]
+                executor = executors[device]
+
+                if first_stage <= 5:
+                    inputs = {'x': current_x, 'edge_index': current_edge_index}
+                else:
+                    inputs = {'mean_agg': current_x, 'x': x_original}
+
+                outputs, profiling = executor.run(inputs, batch_id=sg_id)
+                wall_time_ms = (time.perf_counter() - stage_start) * 1000
+
+                current_x = outputs.get('output', outputs.get('x', current_x))
+
+                result.stage_results.append(StageResult(
+                    stage_id=stage['id'],
+                    stage_name=stage['name'],
+                    wall_time_ms=wall_time_ms,
+                    device_time_ms=profiling.device_time_ms,
+                    compute_time_ms=profiling.compute_time_ms,
+                    device=device
+                ))
             else:
-                # Stages 6-7: Dense operations need (mean_agg, x_original)
-                # mean_agg is the output from Stage 5 (current_x)
-                inputs = {
-                    'mean_agg': current_x,
-                    'x': x_original
-                }
+                # Data Parallel - Split, Run each device sequentially, Merge
+                if is_graph_stage:
+                    # Graph stage: use HaloPartitioner
+                    partitioner = HaloPartitioner(num_partitions=len(devices), ratios=ratios)
+                    partitions = partitioner.partition(current_x, current_edge_index)
 
-            # Synchronous execution for pure latency measurement
-            start = time.perf_counter()
-            outputs, profiling = stage['executor'].run(inputs, batch_id=sg_id)
-            wall_time_ms = (time.perf_counter() - start) * 1000
+                    device_outputs = []
+                    for i, device in enumerate(devices):
+                        part = partitions[i]
+                        inputs = {
+                            'x': part.x_local.astype(np.float32),
+                            'edge_index': part.edge_index_local.astype(np.int64)
+                        }
 
-            # Update current_x for next stage
-            current_x = outputs.get('output', outputs.get('x', current_x))
+                        dev_start = time.perf_counter()
+                        outputs, profiling = executors[device].run(inputs, batch_id=sg_id)
+                        dev_wall_ms = (time.perf_counter() - dev_start) * 1000
 
-            # Record stage timing with PERF_COUNT results
-            stage_result = StageResult(
-                stage_id=stage['id'],
-                stage_name=stage['name'],
-                wall_time_ms=wall_time_ms,
-                device_time_ms=profiling.device_time_ms,
-                compute_time_ms=profiling.compute_time_ms,
-                device=stage['device']
-            )
-            result.stage_results.append(stage_result)
-            total_time += wall_time_ms
+                        device_outputs.append((outputs, part))
+
+                        result.stage_results.append(StageResult(
+                            stage_id=stage['id'],
+                            stage_name=f"{stage['name']}_{device}",
+                            wall_time_ms=dev_wall_ms,
+                            device_time_ms=profiling.device_time_ms,
+                            compute_time_ms=profiling.compute_time_ms,
+                            device=device
+                        ))
+
+                    # Merge outputs (owned nodes only)
+                    merged = np.zeros((x.shape[0], device_outputs[0][0]['output'].shape[1]), dtype=np.float32)
+                    for outputs, part in device_outputs:
+                        out = outputs.get('output', outputs.get('x'))
+                        owned_start = part.owned_start
+                        owned_end = owned_start + part.num_owned
+                        global_start = part.node_range[0]
+                        merged[global_start:global_start + part.num_owned] = out[owned_start:owned_end]
+
+                    current_x = merged
+
+                else:
+                    # Dense stage: simple split by node count
+                    n_total = current_x.shape[0]
+                    merged_parts = []
+                    node_start = 0
+
+                    for i, device in enumerate(devices):
+                        if i == len(devices) - 1:
+                            n_part = n_total - node_start
+                        else:
+                            n_part = int(n_total * ratios[i])
+
+                        # For Stage 6-7: need mean_agg slice and x_original slice
+                        inputs = {
+                            'mean_agg': current_x[node_start:node_start + n_part],
+                            'x': x_original[node_start:node_start + n_part]
+                        }
+
+                        dev_start = time.perf_counter()
+                        outputs, profiling = executors[device].run(inputs, batch_id=sg_id)
+                        dev_wall_ms = (time.perf_counter() - dev_start) * 1000
+
+                        merged_parts.append(outputs.get('output', outputs.get('x')))
+
+                        result.stage_results.append(StageResult(
+                            stage_id=stage['id'],
+                            stage_name=f"{stage['name']}_{device}",
+                            wall_time_ms=dev_wall_ms,
+                            device_time_ms=profiling.device_time_ms,
+                            compute_time_ms=profiling.compute_time_ms,
+                            device=device
+                        ))
+
+                        node_start += n_part
+
+                    current_x = np.concatenate(merged_parts, axis=0)
+
+            stage_wall_ms = (time.perf_counter() - stage_start) * 1000
+            total_time += stage_wall_ms
 
         result.total_ms = total_time
         return result
@@ -332,7 +429,11 @@ class SequentialProfiler:
         return df
 
     def _results_to_dataframe(self, results: List[SubgraphResult]) -> pd.DataFrame:
-        """Convert results to DataFrame cost table."""
+        """Convert results to DataFrame cost table.
+
+        For DP stages, creates separate columns for each device:
+        - stage0_CPU_wall_ms, stage0_GPU_wall_ms, etc.
+        """
         rows = []
 
         for result in results:
@@ -343,12 +444,13 @@ class SequentialProfiler:
                 'num_edges': result.num_edges,
             }
 
-            # Add per-stage times (wall, device, compute)
+            # Add per-stage/device times (wall, device, compute)
             for sr in result.stage_results:
-                row[f'stage{sr.stage_id}_wall_ms'] = sr.wall_time_ms
-                row[f'stage{sr.stage_id}_device_ms'] = sr.device_time_ms
-                row[f'stage{sr.stage_id}_compute_ms'] = sr.compute_time_ms
-                row[f'stage{sr.stage_id}_pu'] = sr.device
+                # Use stage_id + device for column naming
+                prefix = f"stage{sr.stage_id}_{sr.device}"
+                row[f'{prefix}_wall_ms'] = sr.wall_time_ms
+                row[f'{prefix}_device_ms'] = sr.device_time_ms
+                row[f'{prefix}_compute_ms'] = sr.compute_time_ms
 
             row['total_ms'] = result.total_ms
             rows.append(row)
@@ -361,23 +463,25 @@ class SequentialProfiler:
         print("Statistics (PERF_COUNT Profiling Results)")
         print(f"{'='*70}")
 
-        # Find unique stage IDs
-        stage_ids = set()
+        # Find unique stage_device combinations (e.g., stage0_CPU, stage0_GPU, stage1_NPU)
+        stage_devices = set()
         for col in df.columns:
-            if col.startswith('stage') and '_' in col:
-                stage_id = col.split('_')[0].replace('stage', '')
-                if stage_id.isdigit():
-                    stage_ids.add(int(stage_id))
+            if col.startswith('stage') and '_wall_ms' in col:
+                # Extract "stage0_CPU" from "stage0_CPU_wall_ms"
+                prefix = col.replace('_wall_ms', '')
+                stage_devices.add(prefix)
 
-        # Per-stage statistics
-        for stage_id in sorted(stage_ids):
-            device_col = f'stage{stage_id}_pu'
-            device = df[device_col].iloc[0] if device_col in df.columns else 'Unknown'
+        # Per-stage/device statistics
+        for prefix in sorted(stage_devices):
+            # Extract stage_id and device from prefix like "stage0_CPU"
+            parts = prefix.split('_', 1)
+            stage_id = parts[0].replace('stage', '')
+            device = parts[1] if len(parts) > 1 else 'Unknown'
 
-            print(f"\n  Stage {stage_id} ({device}):")
+            print(f"\n  {prefix} ({device}):")
 
             for time_type in ['wall', 'device', 'compute']:
-                col = f'stage{stage_id}_{time_type}_ms'
+                col = f'{prefix}_{time_type}_ms'
                 if col in df.columns:
                     avg = df[col].mean()
                     std = df[col].std()
