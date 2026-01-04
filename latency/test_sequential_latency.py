@@ -56,6 +56,8 @@ class StageResult:
     stage_id: int
     stage_name: str
     wall_time_ms: float
+    device_time_ms: float  # PERF_COUNT device time
+    compute_time_ms: float  # Pure compute time
     device: str
 
 
@@ -110,6 +112,9 @@ class SequentialProfiler:
             self.exporter = None
             print("Warning: Model exporter not available. Use pre-exported models.")
 
+        # Profiler for getting precise timing
+        self.profiler: Optional[PipelineProfiler] = None
+
         # Stage executors (created per PEP)
         self.stages: List[Dict] = []  # [{name, executor, device}, ...]
 
@@ -127,7 +132,7 @@ class SequentialProfiler:
             return
         self.exporter.export_for_pep(pep, self.max_nodes, self.max_edges, force)
 
-    def _create_stages(self, pep: List) -> List[Dict]:
+    def _create_stages(self, pep: List, profiler: PipelineProfiler) -> List[Dict]:
         """Create stage executors from PEP configuration."""
         stages = []
 
@@ -154,13 +159,13 @@ class SequentialProfiler:
 
             stage_name = f"Block{block_id}_S{'_'.join(map(str, stage_ids))}"
 
-            # Create executor
+            # Create executor with profiler for precise timing
             executor = StageExecutor(
                 core=self.core,
                 model_path=model_path,
                 device=device,
                 stage_name=stage_name,
-                profiler=None,  # No profiling trace needed
+                profiler=profiler,  # Pass profiler for PERF_COUNT timing
                 npu_static_nodes=self.max_nodes if device == 'NPU' else None,
                 npu_static_edges=self.max_edges if device == 'NPU' else None
             )
@@ -214,17 +219,19 @@ class SequentialProfiler:
 
             # Synchronous execution for pure latency measurement
             start = time.perf_counter()
-            outputs, _ = stage['executor'].run(inputs, batch_id=sg_id)
+            outputs, profiling = stage['executor'].run(inputs, batch_id=sg_id)
             wall_time_ms = (time.perf_counter() - start) * 1000
 
             # Update x for next stage (edge_index stays the same)
             current_x = outputs.get('output', outputs.get('x', current_x))
 
-            # Record stage timing
+            # Record stage timing with PERF_COUNT results
             stage_result = StageResult(
                 stage_id=stage['id'],
                 stage_name=stage['name'],
                 wall_time_ms=wall_time_ms,
+                device_time_ms=profiling.device_time_ms,
+                compute_time_ms=profiling.compute_time_ms,
                 device=stage['device']
             )
             result.stage_results.append(stage_result)
@@ -259,9 +266,12 @@ class SequentialProfiler:
         print("\nExporting models...")
         self._export_models_for_pep(pep)
 
-        # Create stages
+        # Create profiler for precise timing
+        self.profiler = PipelineProfiler(f"{pep_name}_Sequential")
+
+        # Create stages with profiler
         print("\nCreating stage executors...")
-        self.stages = self._create_stages(pep)
+        self.stages = self._create_stages(pep, self.profiler)
 
         if len(self.stages) == 0:
             print("ERROR: No stages created")
@@ -310,10 +320,12 @@ class SequentialProfiler:
                 'num_edges': result.num_edges,
             }
 
-            # Add per-stage times
+            # Add per-stage times (wall, device, compute)
             for sr in result.stage_results:
-                row[f'stage{sr.stage_id}_ms'] = sr.wall_time_ms
-                row[f'stage{sr.stage_id}_device'] = sr.device
+                row[f'stage{sr.stage_id}_wall_ms'] = sr.wall_time_ms
+                row[f'stage{sr.stage_id}_device_ms'] = sr.device_time_ms
+                row[f'stage{sr.stage_id}_compute_ms'] = sr.compute_time_ms
+                row[f'stage{sr.stage_id}_pu'] = sr.device
 
             row['total_ms'] = result.total_ms
             rows.append(row)
@@ -323,21 +335,34 @@ class SequentialProfiler:
     def print_statistics(self, df: pd.DataFrame):
         """Print statistics from cost table."""
         print(f"\n{'='*70}")
-        print("Statistics")
+        print("Statistics (PERF_COUNT Profiling Results)")
         print(f"{'='*70}")
 
-        # Per-stage statistics
-        stage_cols = [c for c in df.columns if c.endswith('_ms') and c != 'total_ms']
+        # Find unique stage IDs
+        stage_ids = set()
+        for col in df.columns:
+            if col.startswith('stage') and '_' in col:
+                stage_id = col.split('_')[0].replace('stage', '')
+                if stage_id.isdigit():
+                    stage_ids.add(int(stage_id))
 
-        for col in stage_cols:
-            avg = df[col].mean()
-            std = df[col].std()
-            min_val = df[col].min()
-            max_val = df[col].max()
-            print(f"  {col}: avg={avg:.2f}ms, std={std:.2f}ms, min={min_val:.2f}ms, max={max_val:.2f}ms")
+        # Per-stage statistics
+        for stage_id in sorted(stage_ids):
+            device_col = f'stage{stage_id}_pu'
+            device = df[device_col].iloc[0] if device_col in df.columns else 'Unknown'
+
+            print(f"\n  Stage {stage_id} ({device}):")
+
+            for time_type in ['wall', 'device', 'compute']:
+                col = f'stage{stage_id}_{time_type}_ms'
+                if col in df.columns:
+                    avg = df[col].mean()
+                    std = df[col].std()
+                    print(f"    {time_type:8}: avg={avg:7.2f}ms, std={std:5.2f}ms")
 
         # Total statistics
-        print(f"\n  Total: avg={df['total_ms'].mean():.2f}ms, "
+        print(f"\n  Total (wall time):")
+        print(f"    avg={df['total_ms'].mean():.2f}ms, "
               f"std={df['total_ms'].std():.2f}ms, "
               f"min={df['total_ms'].min():.2f}ms, "
               f"max={df['total_ms'].max():.2f}ms")
