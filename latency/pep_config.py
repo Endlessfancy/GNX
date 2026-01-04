@@ -29,7 +29,7 @@ from typing import List, Dict, Any
 
 # PEP1: CPU+GPU data parallel for stages 1-5, NPU for stages 6-7
 PEP1 = [
-    [['CPU', 'GPU'], [1, 2, 3, 4, 5], [0.5, 0.5]],  # Block 0: CPU+GPU 各50%
+    [['CPU', 'GPU'], [1, 2, 3, 4, 5], [0.3, 0.7]],  # Block 0: CPU 30% + GPU 70%
     [['NPU'], [6, 7]]                                # Block 1: NPU 100%
 ]
 
