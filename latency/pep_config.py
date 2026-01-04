@@ -39,6 +39,12 @@ PEP2 = [
     [['GPU', 'NPU'], [5, 6, 7], [0.7, 0.3]]          # Block 1: GPU 70% + NPU 30%
 ]
 
+PEP3 = [
+    [['CPU', 'GPU'], [1, 2, 3, 4], [0.3, 0.7]],  # Block 0: CPU 30% + GPU 70%
+    [['NPU'], [5, 6, 7]]                                # Block 1: NPU 100%
+]
+
+
 # PEP3: All stages on single device (baseline)
 PEP_CPU_ONLY = [
     [['CPU'], [1, 2, 3, 4, 5, 6, 7]]

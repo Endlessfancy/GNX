@@ -1,66 +1,209 @@
 """
 CPU Batch-4096 Baseline Test for GraphSAGE (1 Layer) on Flickr Dataset
+Using OpenVINO IR model for inference.
 
 This script partitions the Flickr dataset into batches of 4096 target nodes,
 finds 1-hop halo nodes (neighbors not in current batch), and runs GraphSAGE
-first layer inference on each batch sequentially. Measures total execution time.
+first layer inference on each batch using OpenVINO. Measures total execution time.
 """
 
 import sys
+import os
 import time
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 from torch_geometric.datasets import Flickr
-from torch_geometric.nn import SAGEConv
 from torch_geometric.utils import k_hop_subgraph
 from pathlib import Path
+
+# OpenVINO imports
+import openvino as ov
+from openvino.runtime import Core
 
 # Add parent directories to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 
-class GraphSAGE(torch.nn.Module):
-    """
-    GraphSAGE model with 1 layer only
-    """
-    def __init__(self, in_channels, hidden_channels):
-        super().__init__()
-        self.conv1 = SAGEConv(in_channels, hidden_channels)
+# ====================================================================
+# GraphSAGE 7-Stage Modules (for ONNX export)
+# ====================================================================
 
-    def forward(self, x, edge_index):
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
-        return x
+class SAGEStage1_Gather(torch.nn.Module):
+    """Stage 1: GATHER - Neighbor feature gathering"""
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor:
+        return x[edge_index[0]]
+
+
+class SAGEStage2_Message(torch.nn.Module):
+    """Stage 2: MESSAGE - Identity for mean aggregator"""
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x_j: torch.Tensor) -> torch.Tensor:
+        return x_j
+
+
+class SAGEStage3_ReduceSum(torch.nn.Module):
+    """Stage 3: REDUCE_SUM - Sum aggregation"""
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, messages: torch.Tensor, edge_index: torch.Tensor, num_nodes: int) -> torch.Tensor:
+        out = torch.zeros(num_nodes, messages.size(1), dtype=messages.dtype, device=messages.device)
+        target_nodes = edge_index[1]
+        out.index_add_(0, target_nodes, messages)
+        return out
+
+
+class SAGEStage4_ReduceCount(torch.nn.Module):
+    """Stage 4: REDUCE_COUNT - Count neighbors"""
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, edge_index: torch.Tensor, num_nodes: int, num_edges: int) -> torch.Tensor:
+        target_nodes = edge_index[1]
+        ones = torch.ones(num_edges, device=edge_index.device)
+        count = torch.zeros(num_nodes, device=edge_index.device)
+        count.index_add_(0, target_nodes, ones)
+        return count
+
+
+class SAGEStage5_Normalize(torch.nn.Module):
+    """Stage 5: NORMALIZE - Compute mean"""
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, sum_agg: torch.Tensor, count: torch.Tensor) -> torch.Tensor:
+        count = torch.clamp(count, min=1)
+        mean_agg = sum_agg / count.unsqueeze(-1)
+        return mean_agg
+
+
+class SAGEStage6_Transform(torch.nn.Module):
+    """Stage 6: TRANSFORM - Linear transformations"""
+    def __init__(self, in_channels: int, out_channels: int):
+        super().__init__()
+        self.lin_l = nn.Linear(in_channels, out_channels, bias=True)
+        self.lin_r = nn.Linear(in_channels, out_channels, bias=False)
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        nn.init.xavier_uniform_(self.lin_l.weight)
+        nn.init.zeros_(self.lin_l.bias)
+        nn.init.xavier_uniform_(self.lin_r.weight)
+
+    def forward(self, mean_agg: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
+        return self.lin_l(mean_agg) + self.lin_r(x)
+
+
+class SAGEStage7_Activate(torch.nn.Module):
+    """Stage 7: ACTIVATE - ReLU activation"""
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return F.relu(x)
+
+
+class GraphSAGEFullModel(nn.Module):
+    """
+    Complete GraphSAGE 1-layer model (stages 1-7) for ONNX export.
+    """
+    def __init__(self, in_channels: int, out_channels: int):
+        super().__init__()
+        self.stage1 = SAGEStage1_Gather()
+        self.stage2 = SAGEStage2_Message()
+        self.stage3 = SAGEStage3_ReduceSum()
+        self.stage4 = SAGEStage4_ReduceCount()
+        self.stage5 = SAGEStage5_Normalize()
+        self.stage6 = SAGEStage6_Transform(in_channels, out_channels)
+        self.stage7 = SAGEStage7_Activate()
+
+    def forward(self, x: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor:
+        num_nodes = x.size(0)
+        num_edges = edge_index.size(1)
+
+        # Stage 1: Gather
+        x_j = self.stage1(x, edge_index)
+
+        # Stage 2: Message (identity)
+        messages = self.stage2(x_j)
+
+        # Stage 3: ReduceSum
+        sum_agg = self.stage3(messages, edge_index, num_nodes)
+
+        # Stage 4: ReduceCount
+        count = self.stage4(edge_index, num_nodes, num_edges)
+
+        # Stage 5: Normalize
+        mean_agg = self.stage5(sum_agg, count)
+
+        # Stage 6: Transform
+        transformed = self.stage6(mean_agg, x)
+
+        # Stage 7: Activate
+        output = self.stage7(transformed)
+
+        return output
+
+
+def export_onnx_model(num_nodes: int, num_edges: int, num_features: int,
+                      out_channels: int = 256, output_path: str = "graphsage_layer1.onnx"):
+    """
+    Export GraphSAGE 1-layer model to ONNX format.
+    """
+    model = GraphSAGEFullModel(num_features, out_channels)
+    model.eval()
+
+    # Dummy inputs
+    dummy_x = torch.randn(num_nodes, num_features)
+    dummy_edge_index = torch.randint(0, num_nodes, (2, num_edges))
+
+    # Export
+    torch.onnx.export(
+        model,
+        (dummy_x, dummy_edge_index),
+        output_path,
+        input_names=['x', 'edge_index'],
+        output_names=['output'],
+        dynamic_axes={
+            'x': {0: 'num_nodes'},
+            'edge_index': {1: 'num_edges'},
+            'output': {0: 'num_nodes'}
+        },
+        opset_version=18,
+        do_constant_folding=True,
+        verbose=False
+    )
+
+    print(f"  ONNX model exported to: {output_path}")
+    return output_path
+
+
+def compile_openvino_model(onnx_path: str, device: str = "CPU"):
+    """
+    Compile ONNX model with OpenVINO.
+    """
+    core = Core()
+    model = core.read_model(onnx_path)
+    compiled_model = core.compile_model(model, device)
+    print(f"  OpenVINO model compiled for {device}")
+    return compiled_model
 
 
 def partition_graph_into_batches(data, batch_size=4096):
     """
     Partition graph nodes into batches with halo nodes.
-
-    For each batch:
-    - Target nodes: batch_size nodes (or remaining nodes for last batch)
-    - Halo nodes: neighbors of target nodes that are NOT in target nodes
-
-    Args:
-        data: PyG Data object
-        batch_size: Number of target nodes per batch (default: 4096)
-
-    Returns:
-        List of dictionaries containing batch information:
-        - target_nodes: tensor of target node indices
-        - halo_nodes: tensor of halo node indices
-        - subgraph_nodes: all nodes in subgraph (target + halo)
-        - subgraph_edge_index: edge index for subgraph
-        - subgraph_x: features for subgraph nodes
-        - target_mask: boolean mask for target nodes in subgraph
     """
     num_nodes = data.num_nodes
     edge_index = data.edge_index
 
-    # Create node order (just sequential for simplicity)
     all_nodes = torch.arange(num_nodes)
-
-    # Split into batches
     batches = []
     num_batches = (num_nodes + batch_size - 1) // batch_size
 
@@ -71,30 +214,27 @@ def partition_graph_into_batches(data, batch_size=4096):
         start_idx = batch_idx * batch_size
         end_idx = min(start_idx + batch_size, num_nodes)
 
-        # Target nodes for this batch
         target_nodes = all_nodes[start_idx:end_idx]
         target_set = set(target_nodes.tolist())
 
-        # Find 1-hop neighbors (since we have 1 GNN layer)
-        # k_hop_subgraph returns (subset, edge_index, mapping, edge_mask)
+        # Find 1-hop neighbors
         subgraph_nodes, subgraph_edge_index, mapping, _ = k_hop_subgraph(
             node_idx=target_nodes,
-            num_hops=1,  # 1 layer needs 1-hop neighbors
+            num_hops=1,
             edge_index=edge_index,
             relabel_nodes=True,
             num_nodes=num_nodes
         )
 
-        # Identify halo nodes (in subgraph but not in target)
+        # Identify halo nodes
         subgraph_set = set(subgraph_nodes.tolist())
         halo_nodes = torch.tensor([n for n in subgraph_set if n not in target_set])
 
-        # Create mask for target nodes in the subgraph
-        # mapping gives the new indices of target nodes in subgraph
+        # Create mask for target nodes
         target_mask = torch.zeros(len(subgraph_nodes), dtype=torch.bool)
         target_mask[mapping] = True
 
-        # Extract features for subgraph
+        # Extract features
         subgraph_x = data.x[subgraph_nodes]
 
         batch_info = {
@@ -105,7 +245,7 @@ def partition_graph_into_batches(data, batch_size=4096):
             'subgraph_edge_index': subgraph_edge_index,
             'subgraph_x': subgraph_x,
             'target_mask': target_mask,
-            'mapping': mapping,  # Maps original target indices to subgraph indices
+            'mapping': mapping,
             'num_target': len(target_nodes),
             'num_halo': len(halo_nodes),
             'num_subgraph_nodes': len(subgraph_nodes),
@@ -133,44 +273,55 @@ def load_flickr_dataset():
     return data
 
 
-def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2):
+def run_openvino_inference(compiled_model, x: np.ndarray, edge_index: np.ndarray) -> np.ndarray:
     """
-    Run GraphSAGE inference on CPU with batch partitioning
+    Run inference with OpenVINO compiled model.
+    """
+    infer_request = compiled_model.create_infer_request()
 
-    Args:
-        batch_size: Number of target nodes per batch
-        num_runs: Number of full inference runs for timing
-        warmup_runs: Number of warmup runs
+    # Set inputs
+    infer_request.set_tensor('x', ov.Tensor(x.astype(np.float32)))
+    infer_request.set_tensor('edge_index', ov.Tensor(edge_index.astype(np.int64)))
 
-    Returns:
-        Dictionary with timing results
+    # Inference
+    infer_request.infer()
+
+    # Get output
+    output = infer_request.get_output_tensor(0).data.copy()
+    return output
+
+
+def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"):
+    """
+    Run GraphSAGE inference with OpenVINO using batch partitioning.
     """
     print("="*80)
-    print(f"CPU Batch-{batch_size} Baseline Test (1 Layer, 1-hop)")
+    print(f"CPU Batch-{batch_size} Baseline Test (1 Layer, 1-hop) - OpenVINO")
     print("="*80)
     print()
 
     # Load data
     data = load_flickr_dataset()
 
-    # Create model (1 layer only)
-    print("\nInitializing GraphSAGE model (1 layer)...")
-    model = GraphSAGE(
-        in_channels=data.num_features,
-        hidden_channels=256
+    # Export ONNX model
+    print("\nExporting ONNX model...")
+    onnx_path = Path(__file__).parent / "graphsage_layer1.onnx"
+    export_onnx_model(
+        num_nodes=10000,  # Use reasonable size for dynamic model
+        num_edges=50000,
+        num_features=data.num_features,
+        out_channels=256,
+        output_path=str(onnx_path)
     )
 
-    # Force CPU
-    device = torch.device('cpu')
-    model = model.to(device)
-    data = data.to(device)
+    # Compile with OpenVINO
+    print(f"\nCompiling OpenVINO model for {device}...")
+    compiled_model = compile_openvino_model(str(onnx_path), device)
 
-    model.eval()
+    # Move data to CPU
+    data = data.to('cpu')
 
-    print(f"  Model parameters: {sum(p.numel() for p in model.parameters()):,}")
-    print(f"  Device: {device}")
-
-    # Partition graph into batches
+    # Partition graph
     batches = partition_graph_into_batches(data, batch_size=batch_size)
     num_batches = len(batches)
 
@@ -187,47 +338,53 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2):
 
     # Warmup runs
     print(f"\nRunning {warmup_runs} warmup iterations...")
-    with torch.no_grad():
-        for warmup_i in range(warmup_runs):
-            for batch in batches:
-                _ = model(batch['subgraph_x'], batch['subgraph_edge_index'])
-            print(f"  Warmup {warmup_i+1}/{warmup_runs} completed")
+    for warmup_i in range(warmup_runs):
+        for batch in batches:
+            x_np = batch['subgraph_x'].numpy()
+            edge_index_np = batch['subgraph_edge_index'].numpy()
+            _ = run_openvino_inference(compiled_model, x_np, edge_index_np)
+        print(f"  Warmup {warmup_i+1}/{warmup_runs} completed")
 
     # Timed runs
     print(f"\nRunning {num_runs} timed iterations...")
     total_times = []
     batch_times_all = []
 
-    with torch.no_grad():
-        for run_i in range(num_runs):
-            batch_times = []
-            total_start = time.time()
+    for run_i in range(num_runs):
+        batch_times = []
+        total_start = time.time()
 
-            # Collect outputs for all target nodes
-            all_outputs = torch.zeros(data.num_nodes, 256, device=device)
+        # Collect outputs for all target nodes
+        all_outputs = np.zeros((data.num_nodes, 256), dtype=np.float32)
 
-            for batch in batches:
-                batch_start = time.time()
+        for batch in batches:
+            batch_start = time.time()
 
-                # Run inference on subgraph
-                output = model(batch['subgraph_x'], batch['subgraph_edge_index'])
+            # Prepare inputs
+            x_np = batch['subgraph_x'].numpy()
+            edge_index_np = batch['subgraph_edge_index'].numpy()
 
-                # Extract only target node outputs
-                target_output = output[batch['target_mask']]
+            # Run inference
+            output = run_openvino_inference(compiled_model, x_np, edge_index_np)
 
-                # Store in full output tensor
-                all_outputs[batch['target_nodes']] = target_output
+            # Extract target node outputs
+            target_mask = batch['target_mask'].numpy()
+            target_output = output[target_mask]
 
-                batch_end = time.time()
-                batch_times.append((batch_end - batch_start) * 1000)
+            # Store in full output tensor
+            target_nodes = batch['target_nodes'].numpy()
+            all_outputs[target_nodes] = target_output
 
-            total_end = time.time()
-            total_elapsed_ms = (total_end - total_start) * 1000
-            total_times.append(total_elapsed_ms)
-            batch_times_all.append(batch_times)
+            batch_end = time.time()
+            batch_times.append((batch_end - batch_start) * 1000)
 
-            print(f"  Run {run_i+1}/{num_runs}: {total_elapsed_ms:.2f}ms "
-                  f"(avg per batch: {sum(batch_times)/len(batch_times):.2f}ms)")
+        total_end = time.time()
+        total_elapsed_ms = (total_end - total_start) * 1000
+        total_times.append(total_elapsed_ms)
+        batch_times_all.append(batch_times)
+
+        print(f"  Run {run_i+1}/{num_runs}: {total_elapsed_ms:.2f}ms "
+              f"(avg per batch: {sum(batch_times)/len(batch_times):.2f}ms)")
 
     # Calculate statistics
     times_tensor = torch.tensor(total_times)
@@ -236,7 +393,7 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2):
     min_time = times_tensor.min().item()
     max_time = times_tensor.max().item()
 
-    # Calculate per-batch statistics
+    # Per-batch statistics
     avg_batch_times = [sum(bt)/len(bt) for bt in batch_times_all]
     mean_batch_time = sum(avg_batch_times) / len(avg_batch_times)
 
@@ -257,7 +414,8 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2):
 
     # Save results
     results = {
-        'device': 'CPU',
+        'device': device,
+        'runtime': 'OpenVINO',
         'batch_size': batch_size,
         'num_batches': num_batches,
         'num_nodes': data.num_nodes,
@@ -292,7 +450,7 @@ def save_results(results, output_file='cpu_batch_4096_results.txt'):
 
     with open(output_path, 'w') as f:
         f.write("="*80 + "\n")
-        f.write(f"CPU Batch-{results['batch_size']} Baseline Results (1 Layer, 1-hop)\n")
+        f.write(f"CPU Batch-{results['batch_size']} Baseline Results (1 Layer, 1-hop) - OpenVINO\n")
         f.write("="*80 + "\n\n")
 
         f.write("Dataset:\n")
@@ -307,7 +465,8 @@ def save_results(results, output_file='cpu_batch_4096_results.txt'):
 
         f.write("Model:\n")
         f.write(f"  Architecture: GraphSAGE (1 layer)\n")
-        f.write(f"  Hidden dim: 256\n\n")
+        f.write(f"  Hidden dim: 256\n")
+        f.write(f"  Runtime: {results['runtime']}\n\n")
 
         f.write("Performance:\n")
         f.write(f"  Device: {results['device']}\n")
@@ -332,12 +491,31 @@ def save_results(results, output_file='cpu_batch_4096_results.txt'):
 
 
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description='CPU Batch-4096 Baseline with OpenVINO')
+    parser.add_argument('--device', type=str, default='CPU',
+                        choices=['CPU', 'GPU', 'NPU'],
+                        help='OpenVINO device (CPU, GPU, or NPU)')
+    parser.add_argument('--batch_size', type=int, default=4096,
+                        help='Batch size (target nodes per batch)')
+    parser.add_argument('--num_runs', type=int, default=10,
+                        help='Number of timed runs')
+    parser.add_argument('--warmup_runs', type=int, default=2,
+                        help='Number of warmup runs')
+    args = parser.parse_args()
+
     # Run batch baseline test
-    results = run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2)
+    results = run_batch_baseline(
+        batch_size=args.batch_size,
+        num_runs=args.num_runs,
+        warmup_runs=args.warmup_runs,
+        device=args.device
+    )
 
     # Save results
     save_results(results)
 
     print("\n" + "="*80)
-    print("CPU Batch-4096 Baseline Test (1 Layer, 1-hop) Completed!")
+    print(f"CPU Batch-{args.batch_size} Baseline Test (1 Layer, 1-hop) - OpenVINO Completed!")
     print("="*80)
