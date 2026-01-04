@@ -205,20 +205,21 @@ class StageExecutor:
         # 5. Extract hardware time from profiling info
         profiling = self._extract_profiling()
 
-        # 6. Log to profiler
-        self.profiler.log_execution(
-            stage_name=self.stage_name,
-            device=self.device,
-            batch_id=batch_id,
-            wall_start_ns=wall_start_ns,
-            wall_end_ns=wall_end_ns,
-            hw_duration_ms=profiling.device_time_ms,
-            stream_id=self.stream_id,
-            extra_args={
-                "compute_time_ms": profiling.compute_time_ms,
-                "io_time_ms": profiling.io_time_ms
-            }
-        )
+        # 6. Log to profiler (if available)
+        if self.profiler is not None:
+            self.profiler.log_execution(
+                stage_name=self.stage_name,
+                device=self.device,
+                batch_id=batch_id,
+                wall_start_ns=wall_start_ns,
+                wall_end_ns=wall_end_ns,
+                hw_duration_ms=profiling.device_time_ms,
+                stream_id=self.stream_id,
+                extra_args={
+                    "compute_time_ms": profiling.compute_time_ms,
+                    "io_time_ms": profiling.io_time_ms
+                }
+            )
 
         # 7. Get outputs
         outputs = self._get_outputs()
@@ -306,20 +307,21 @@ class StageExecutor:
         # Extract profiling info
         profiling = self._extract_profiling()
 
-        # Log to profiler
-        self.profiler.log_execution(
-            stage_name=self.stage_name,
-            device=self.device,
-            batch_id=batch_id,
-            wall_start_ns=wall_start_ns,
-            wall_end_ns=wall_end_ns,
-            hw_duration_ms=profiling.device_time_ms,
-            stream_id=self.stream_id,
-            extra_args={
-                "compute_time_ms": profiling.compute_time_ms,
-                "io_time_ms": profiling.io_time_ms
-            }
-        )
+        # Log to profiler (if available)
+        if self.profiler is not None:
+            self.profiler.log_execution(
+                stage_name=self.stage_name,
+                device=self.device,
+                batch_id=batch_id,
+                wall_start_ns=wall_start_ns,
+                wall_end_ns=wall_end_ns,
+                hw_duration_ms=profiling.device_time_ms,
+                stream_id=self.stream_id,
+                extra_args={
+                    "compute_time_ms": profiling.compute_time_ms,
+                    "io_time_ms": profiling.io_time_ms
+                }
+            )
 
         # Get outputs
         outputs = self._get_outputs()
