@@ -200,8 +200,12 @@ class SequentialProfiler:
         Args:
             sg_id: Subgraph ID
             x: Node features [num_nodes, feat_dim]
-            edge_index: Edge indices [2, num_edges] - STATIC, reused every stage
+            edge_index: Edge indices [2, num_edges]
             iter_id: Iteration ID for this subgraph
+
+        Data flow:
+            - Stages 1-5 (Graph ops): inputs=(x, edge_index), output=mean_agg
+            - Stages 6-7 (Dense ops): inputs=(mean_agg, x_original), output=final
 
         Returns:
             SubgraphResult with timing for each stage
@@ -213,23 +217,35 @@ class SequentialProfiler:
             num_edges=edge_index.shape[1]
         )
 
+        x_original = x  # Keep original x for Stage 6-7
         current_x = x
         total_time = 0.0
 
         for stage in self.stages:
-            # CRITICAL: Re-attach edge_index before every stage
-            # Previous stage output only contains new x, not edge_index
-            inputs = {
-                'x': current_x,
-                'edge_index': edge_index  # Static, re-attached every time
-            }
+            stage_ids = stage['stage_ids']
+            first_stage = stage_ids[0]
+
+            # Determine inputs based on stage type
+            if first_stage <= 5:
+                # Stages 1-5: Graph operations need (x, edge_index)
+                inputs = {
+                    'x': current_x,
+                    'edge_index': edge_index
+                }
+            else:
+                # Stages 6-7: Dense operations need (mean_agg, x_original)
+                # mean_agg is the output from Stage 5 (current_x)
+                inputs = {
+                    'mean_agg': current_x,
+                    'x': x_original
+                }
 
             # Synchronous execution for pure latency measurement
             start = time.perf_counter()
             outputs, profiling = stage['executor'].run(inputs, batch_id=sg_id)
             wall_time_ms = (time.perf_counter() - start) * 1000
 
-            # Update x for next stage (edge_index stays the same)
+            # Update current_x for next stage
             current_x = outputs.get('output', outputs.get('x', current_x))
 
             # Record stage timing with PERF_COUNT results
