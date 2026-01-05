@@ -194,7 +194,9 @@ class SequentialProfiler:
                 continue
 
             # Determine if this is a graph stage (needs HaloPartitioner)
-            is_graph_stage = any(s <= 5 for s in stage_ids)
+            # Graph stages: 1-4 (GATHER, MESSAGE, REDUCE_SUM, REDUCE_COUNT)
+            # Dense stages: 5-7 (NORMALIZE, TRANSFORM, ACTIVATE)
+            is_graph_stage = any(s <= 4 for s in stage_ids)
 
             stages.append({
                 'id': block_id,
