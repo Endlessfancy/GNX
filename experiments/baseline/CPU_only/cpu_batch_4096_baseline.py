@@ -153,9 +153,13 @@ class GraphSAGEFullModel(nn.Module):
 
 
 def export_onnx_model(num_nodes: int, num_edges: int, num_features: int,
-                      out_channels: int = 256, output_path: str = "graphsage_layer1.onnx"):
+                      out_channels: int = 256, output_path: str = "graphsage_layer1.onnx",
+                      static: bool = False):
     """
     Export GraphSAGE 1-layer model to ONNX format.
+
+    Args:
+        static: If True, export with static shape (required for NPU)
     """
     model = GraphSAGEFullModel(num_features, out_channels)
     model.eval()
@@ -164,6 +168,13 @@ def export_onnx_model(num_nodes: int, num_edges: int, num_features: int,
     dummy_x = torch.randn(num_nodes, num_features)
     dummy_edge_index = torch.randint(0, num_nodes, (2, num_edges))
 
+    # Dynamic axes only for non-static export
+    dynamic_axes = None if static else {
+        'x': {0: 'num_nodes'},
+        'edge_index': {1: 'num_edges'},
+        'output': {0: 'num_nodes'}
+    }
+
     # Export
     torch.onnx.export(
         model,
@@ -171,17 +182,14 @@ def export_onnx_model(num_nodes: int, num_edges: int, num_features: int,
         output_path,
         input_names=['x', 'edge_index'],
         output_names=['output'],
-        dynamic_axes={
-            'x': {0: 'num_nodes'},
-            'edge_index': {1: 'num_edges'},
-            'output': {0: 'num_nodes'}
-        },
+        dynamic_axes=dynamic_axes,
         opset_version=18,
         do_constant_folding=True,
         verbose=False
     )
 
-    print(f"  ONNX model exported to: {output_path}")
+    shape_type = "static" if static else "dynamic"
+    print(f"  ONNX model exported ({shape_type} shape): {output_path}")
     return output_path
 
 
@@ -288,6 +296,7 @@ def run_openvino_inference(compiled_model, x: np.ndarray, edge_index: np.ndarray
 
     # Get output
     output = infer_request.get_output_tensor(0).data.copy()
+
     return output
 
 
@@ -296,34 +305,72 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"
     Run GraphSAGE inference with OpenVINO using batch partitioning.
     """
     print("="*80)
-    print(f"CPU Batch-{batch_size} Baseline Test (1 Layer, 1-hop) - OpenVINO")
+    print(f"{device} Batch-{batch_size} Baseline Test (1 Layer, 1-hop) - OpenVINO")
     print("="*80)
     print()
 
     # Load data
     data = load_flickr_dataset()
 
-    # Export ONNX model
-    print("\nExporting ONNX model...")
-    onnx_path = Path(__file__).parent / "graphsage_layer1.onnx"
-    export_onnx_model(
-        num_nodes=10000,  # Use reasonable size for dynamic model
-        num_edges=50000,
-        num_features=data.num_features,
-        out_channels=256,
-        output_path=str(onnx_path)
-    )
-
-    # Compile with OpenVINO
-    print(f"\nCompiling OpenVINO model for {device}...")
-    compiled_model = compile_openvino_model(str(onnx_path), device)
-
     # Move data to CPU
     data = data.to('cpu')
 
-    # Partition graph
+    # Partition graph first
     batches = partition_graph_into_batches(data, batch_size=batch_size)
     num_batches = len(batches)
+
+    is_npu = (device == "NPU")
+
+    # Create model directory
+    model_dir = Path(__file__).parent / "models"
+    model_dir.mkdir(exist_ok=True)
+
+    if is_npu:
+        # NPU: export static shape model for each batch
+        print(f"\nExporting {num_batches} static ONNX models for NPU...")
+        compiled_models = []
+
+        for batch in batches:
+            batch_idx = batch['batch_idx']
+            num_nodes = batch['num_subgraph_nodes']
+            num_edges = batch['num_subgraph_edges']
+
+            onnx_path = model_dir / f"graphsage_npu_batch{batch_idx}_n{num_nodes}_e{num_edges}.onnx"
+
+            # Export static model for this batch
+            export_onnx_model(
+                num_nodes=num_nodes,
+                num_edges=num_edges,
+                num_features=data.num_features,
+                out_channels=256,
+                output_path=str(onnx_path),
+                static=True
+            )
+
+            # Compile with OpenVINO
+            compiled_model = compile_openvino_model(str(onnx_path), device)
+            compiled_models.append(compiled_model)
+
+        print(f"  All {num_batches} models compiled for NPU")
+
+    else:
+        # CPU/GPU: single dynamic shape model
+        print("\nExporting ONNX model (dynamic shape)...")
+        onnx_path = model_dir / f"graphsage_{device.lower()}_dynamic.onnx"
+
+        export_onnx_model(
+            num_nodes=10000,
+            num_edges=50000,
+            num_features=data.num_features,
+            out_channels=256,
+            output_path=str(onnx_path),
+            static=False
+        )
+
+        # Compile with OpenVINO
+        print(f"\nCompiling OpenVINO model for {device}...")
+        compiled_model = compile_openvino_model(str(onnx_path), device)
+        compiled_models = [compiled_model] * num_batches  # Use same model for all batches
 
     # Print partition summary
     total_target = sum(b['num_target'] for b in batches)
@@ -339,10 +386,11 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"
     # Warmup runs
     print(f"\nRunning {warmup_runs} warmup iterations...")
     for warmup_i in range(warmup_runs):
-        for batch in batches:
+        for i, batch in enumerate(batches):
             x_np = batch['subgraph_x'].numpy()
             edge_index_np = batch['subgraph_edge_index'].numpy()
-            _ = run_openvino_inference(compiled_model, x_np, edge_index_np)
+            # Use corresponding model for each batch
+            _ = run_openvino_inference(compiled_models[i], x_np, edge_index_np)
         print(f"  Warmup {warmup_i+1}/{warmup_runs} completed")
 
     # Timed runs
@@ -357,15 +405,15 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"
         # Collect outputs for all target nodes
         all_outputs = np.zeros((data.num_nodes, 256), dtype=np.float32)
 
-        for batch in batches:
+        for i, batch in enumerate(batches):
             batch_start = time.time()
 
             # Prepare inputs
             x_np = batch['subgraph_x'].numpy()
             edge_index_np = batch['subgraph_edge_index'].numpy()
 
-            # Run inference
-            output = run_openvino_inference(compiled_model, x_np, edge_index_np)
+            # Run inference with corresponding model
+            output = run_openvino_inference(compiled_models[i], x_np, edge_index_np)
 
             # Extract target node outputs
             target_mask = batch['target_mask'].numpy()
@@ -514,8 +562,9 @@ if __name__ == "__main__":
     )
 
     # Save results
-    save_results(results)
+    output_file = f"{args.device.lower()}_batch_{args.batch_size}_results.txt"
+    save_results(results, output_file)
 
     print("\n" + "="*80)
-    print(f"CPU Batch-{args.batch_size} Baseline Test (1 Layer, 1-hop) - OpenVINO Completed!")
+    print(f"{args.device} Batch-{args.batch_size} Baseline Test (1 Layer, 1-hop) - OpenVINO Completed!")
     print("="*80)

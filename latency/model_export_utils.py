@@ -221,9 +221,9 @@ class CombinedStagesModel(nn.Module):
         if 5 in self.stage_indices:
             mean_agg = self.stages[self.stage_indices.index(5)](sum_agg, count)
         else:
-            # If ending at stage 4, return concatenated [sum_agg, count] for next block
-            # sum_agg: [num_nodes, feat_dim], count: [num_nodes] → unsqueeze count → [num_nodes, feat_dim+1]
-            return torch.cat([sum_agg, count.unsqueeze(-1)], dim=1)
+            # If ending at stage 4, return sum_agg and count separately
+            # sum_agg: [num_nodes, feat_dim], count: [num_nodes]
+            return sum_agg, count
 
         # Stage 6: Transform
         if 6 in self.stage_indices:
@@ -361,17 +361,31 @@ class SimpleModelExporter:
 
         # Generate dummy inputs based on starting stage (FP32 for GPU compatibility)
         first_stage = stages[0]
+        last_stage = stages[-1]
+
         if first_stage == 1:
             # Stage 1-4, 1-5 or 1-7: input is (x, edge_index)
             dummy_x = torch.randn(num_nodes, num_features)  # FP32
             dummy_edge_index = torch.randint(0, num_nodes, (2, num_edges))  # INT64 stays unchanged
             dummy_inputs = (dummy_x, dummy_edge_index)
             input_names = ['x', 'edge_index']
-            dynamic_axes = {
-                'x': {0: 'num_nodes'},
-                'edge_index': {1: 'num_edges'},
-                'output': {0: 'num_nodes'}
-            } if use_dynamic else None
+
+            # Stages 1-4 输出两个张量: sum_agg 和 count
+            if last_stage == 4:
+                output_names = ['sum_agg', 'count']
+                dynamic_axes = {
+                    'x': {0: 'num_nodes'},
+                    'edge_index': {1: 'num_edges'},
+                    'sum_agg': {0: 'num_nodes'},
+                    'count': {0: 'num_nodes'}
+                } if use_dynamic else None
+            else:
+                output_names = ['output']
+                dynamic_axes = {
+                    'x': {0: 'num_nodes'},
+                    'edge_index': {1: 'num_edges'},
+                    'output': {0: 'num_nodes'}
+                } if use_dynamic else None
         elif first_stage == 5:
             # Stage 5-7: input is (sum_agg, count, x)
             # Note: sum_agg has same dim as x (num_features) since Stage 2 is identity
@@ -380,6 +394,7 @@ class SimpleModelExporter:
             dummy_x = torch.randn(num_nodes, num_features)  # FP32
             dummy_inputs = (dummy_sum_agg, dummy_count, dummy_x)
             input_names = ['sum_agg', 'count', 'x']
+            output_names = ['output']
             dynamic_axes = {
                 'sum_agg': {0: 'num_nodes'},
                 'count': {0: 'num_nodes'},
@@ -393,6 +408,7 @@ class SimpleModelExporter:
             dummy_x = torch.randn(num_nodes, num_features)  # FP32
             dummy_inputs = (dummy_mean_agg, dummy_x)
             input_names = ['mean_agg', 'x']
+            output_names = ['output']
             dynamic_axes = {
                 'mean_agg': {0: 'num_nodes'},
                 'x': {0: 'num_nodes'},
@@ -410,7 +426,7 @@ class SimpleModelExporter:
             dummy_inputs,
             output_path,
             input_names=input_names,
-            output_names=['output'],
+            output_names=output_names,
             dynamic_axes=dynamic_axes,
             opset_version=18,
             do_constant_folding=True,  # 启用常量折叠优化

@@ -245,6 +245,10 @@ class SequentialProfiler:
         current_edge_index = edge_index
         total_time = 0.0
 
+        # Variables for stages 1-4 output (used by stages 5-7)
+        sum_agg = None
+        count = None
+
         for stage in self.stages:
             stage_ids = stage['stage_ids']
             first_stage = stage_ids[0]
@@ -259,16 +263,28 @@ class SequentialProfiler:
                 # Single device - simple execution
                 device = devices[0]
                 executor = executors[device]
+                last_stage = stage_ids[-1]
 
-                if first_stage <= 5:
+                if first_stage <= 4:
+                    # Stages 1-4: input is x, edge_index
                     inputs = {'x': current_x, 'edge_index': current_edge_index}
+                elif first_stage == 5:
+                    # Stages 5-7: input is sum_agg, count, x
+                    inputs = {'sum_agg': sum_agg, 'count': count, 'x': x_original}
                 else:
+                    # Stages 6-7: input is mean_agg, x
                     inputs = {'mean_agg': current_x, 'x': x_original}
 
                 outputs, profiling = executor.run(inputs, batch_id=sg_id)
                 wall_time_ms = (time.perf_counter() - stage_start) * 1000
 
-                current_x = outputs.get('output', outputs.get('x', current_x))
+                # Handle output based on last stage
+                if last_stage == 4:
+                    # Stages 1-4 output sum_agg and count separately
+                    sum_agg = outputs.get('sum_agg')
+                    count = outputs.get('count')
+                else:
+                    current_x = outputs.get('output', outputs.get('x', current_x))
 
                 result.stage_results.append(StageResult(
                     stage_id=stage['id'],
@@ -318,7 +334,14 @@ class SequentialProfiler:
 
                 else:
                     # Dense stage: simple split by node count
-                    n_total = current_x.shape[0]
+                    last_stage = stage_ids[-1]
+
+                    # Determine which tensor to use for size calculation
+                    if first_stage == 5:
+                        n_total = sum_agg.shape[0]
+                    else:
+                        n_total = current_x.shape[0]
+
                     merged_parts = []
                     node_start = 0
 
@@ -328,11 +351,20 @@ class SequentialProfiler:
                         else:
                             n_part = int(n_total * ratios[i])
 
-                        # For Stage 6-7: need mean_agg slice and x_original slice
-                        inputs = {
-                            'mean_agg': current_x[node_start:node_start + n_part],
-                            'x': x_original[node_start:node_start + n_part]
-                        }
+                        # Build inputs based on first_stage
+                        if first_stage == 5:
+                            # Stages 5-7: need sum_agg, count, x slices
+                            inputs = {
+                                'sum_agg': sum_agg[node_start:node_start + n_part],
+                                'count': count[node_start:node_start + n_part],
+                                'x': x_original[node_start:node_start + n_part]
+                            }
+                        else:
+                            # Stages 6-7: need mean_agg slice and x_original slice
+                            inputs = {
+                                'mean_agg': current_x[node_start:node_start + n_part],
+                                'x': x_original[node_start:node_start + n_part]
+                            }
 
                         dev_start = time.perf_counter()
                         outputs, profiling = executors[device].run(inputs, batch_id=sg_id)
