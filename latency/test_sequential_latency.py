@@ -328,8 +328,18 @@ class SequentialProfiler:
 
                     # Merge outputs using partitioner's merge_outputs method
                     merge_start = time.perf_counter()
-                    outputs_list = [out.get('output', out.get('x')) for out, _ in device_outputs]
-                    current_x = partitioner.merge_outputs(outputs_list, partitions, x.shape[0])
+                    last_stage = stage_ids[-1]
+
+                    if last_stage == 4:
+                        # Stages 1-4 输出 sum_agg 和 count，需要分别合并
+                        sum_agg_list = [out.get('sum_agg') for out, _ in device_outputs]
+                        count_list = [out.get('count') for out, _ in device_outputs]
+                        sum_agg = partitioner.merge_outputs(sum_agg_list, partitions, x.shape[0])
+                        count = partitioner.merge_outputs(count_list, partitions, x.shape[0])
+                    else:
+                        outputs_list = [out.get('output', out.get('x')) for out, _ in device_outputs]
+                        current_x = partitioner.merge_outputs(outputs_list, partitions, x.shape[0])
+
                     result.merge_ms += (time.perf_counter() - merge_start) * 1000
 
                 else:
