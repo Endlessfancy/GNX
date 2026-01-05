@@ -73,16 +73,15 @@ Creating stage executors...
 Profiling 8 subgraphs x 3 iterations
 Warmup: 1 iterations
 Traceback (most recent call last):
-  File "C:\Private\Research\GNX_final\GNX\latency\test_sequential_latency.py", line 609, in <module>
+  File "C:\Private\Research\GNX_final\GNX\latency\test_sequential_latency.py", line 619, in <module>
     main()
-  File "C:\Private\Research\GNX_final\GNX\latency\test_sequential_latency.py", line 579, in main
+  File "C:\Private\Research\GNX_final\GNX\latency\test_sequential_latency.py", line 589, in main
     df = profiler.run_profiling(
-  File "C:\Private\Research\GNX_final\GNX\latency\test_sequential_latency.py", line 446, in run_profiling
+  File "C:\Private\Research\GNX_final\GNX\latency\test_sequential_latency.py", line 456, in run_profiling
     self.profile_subgraph(sg_id, x, edge_index, iter_id=-1)
-  File "C:\Private\Research\GNX_final\GNX\latency\test_sequential_latency.py", line 278, in profile_subgraph
-    outputs, profiling = executor.run(inputs, batch_id=sg_id)
-  File "C:\Private\Research\GNX_final\GNX\latency\stage_executor.py", line 255, in run
-    inputs, padding_info = prepare_npu_inputs(
-  File "C:\Private\Research\GNX_final\GNX\latency\npu_utils.py", line 265, in prepare_npu_inputs
-    original_size = inputs[first_key].shape[0]
+  File "C:\Private\Research\GNX_final\GNX\latency\test_sequential_latency.py", line 337, in profile_subgraph
+    sum_agg = partitioner.merge_outputs(sum_agg_list, partitions, x.shape[0])
+  File "C:\Private\Research\GNX_final\GNX\latency\graph_partitioner.py", line 197, in merge_outputs
+    out_dim = outputs[0].shape[1] if len(outputs[0].shape) > 1 else 1
 AttributeError: 'NoneType' object has no attribute 'shape'
+(MIX) PS C:\Private\Research\GNX_final\GNX\latency>

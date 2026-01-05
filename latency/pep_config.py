@@ -39,13 +39,13 @@ PEP2 = [
     [['GPU', 'NPU'], [5, 6, 7], [0.7, 0.3]]          # Block 1: GPU 70% + NPU 30%
 ]
 
+# PEP3: CPU+GPU data parallel for stages 1-4, NPU for stages 5-7
 PEP3 = [
-    [['CPU', 'GPU'], [1, 2, 3, 4], [0.3, 0.7]],  # Block 0: CPU 30% + GPU 70%
-    [['NPU'], [5, 6, 7]]                                # Block 1: NPU 100%
+    [['CPU', 'GPU'], [1, 2, 3, 4], [0.3, 0.7]],      # Block 0: CPU 30% + GPU 70%
+    [['NPU'], [5, 6, 7]]                              # Block 1: NPU 100%
 ]
 
-
-# PEP3: All stages on single device (baseline)
+# Baselines: All stages on single device
 PEP_CPU_ONLY = [
     [['CPU'], [1, 2, 3, 4, 5, 6, 7]]
 ]
@@ -236,6 +236,7 @@ def print_execution_plan(plan: Dict):
 ALL_PEPS = {
     'pep1': PEP1,
     'pep2': PEP2,
+    'pep3': PEP3,
     'cpu_only': PEP_CPU_ONLY,
     'gpu_only': PEP_GPU_ONLY,
     '3block': PEP_3BLOCK,
