@@ -5,6 +5,8 @@ Using OpenVINO IR model for inference.
 This script partitions the Flickr dataset into batches of 4096 target nodes,
 finds 1-hop halo nodes (neighbors not in current batch), and runs GraphSAGE
 first layer inference on each batch using OpenVINO. Measures total execution time.
+
+For NPU: Uses HETERO:NPU,CPU mode for automatic fallback of unsupported operations.
 """
 
 import sys
@@ -56,8 +58,6 @@ class SAGEStage3_ReduceSum(torch.nn.Module):
     def forward(self, messages: torch.Tensor, edge_index: torch.Tensor, num_nodes: int) -> torch.Tensor:
         target_nodes = edge_index[1]
         feat_dim = messages.size(1)
-        # Use scatter_add for ONNX compatibility (avoids index_add_ duplicate issue)
-        # Expand target_nodes to match messages shape
         index_expanded = target_nodes.unsqueeze(1).expand(-1, feat_dim)
         out = torch.zeros(num_nodes, feat_dim, dtype=messages.dtype, device=messages.device)
         out = out.scatter_add(0, index_expanded, messages)
@@ -75,7 +75,7 @@ class SAGEStage4_ReduceCount(torch.nn.Module):
         index_expanded = target_nodes.unsqueeze(1)
         count = torch.zeros(num_nodes, 1, device=edge_index.device)
         count = count.scatter_add(0, index_expanded, ones)
-        return count.squeeze(1)  # Return [num_nodes]
+        return count.squeeze(1)
 
 
 class SAGEStage5_Normalize(torch.nn.Module):
@@ -161,10 +161,7 @@ def export_onnx_model(num_nodes: int, num_edges: int, num_features: int,
                       out_channels: int = 256, output_path: str = "graphsage_layer1.onnx",
                       static: bool = False):
     """
-    Export GraphSAGE 1-layer model to ONNX format.
-
-    Args:
-        static: If True, export with static shape (required for NPU)
+    Export GraphSAGE full model (stages 1-7) to ONNX format.
     """
     model = GraphSAGEFullModel(num_features, out_channels)
     model.eval()
@@ -188,7 +185,7 @@ def export_onnx_model(num_nodes: int, num_edges: int, num_features: int,
         input_names=['x', 'edge_index'],
         output_names=['output'],
         dynamic_axes=dynamic_axes,
-        opset_version=17,  # Use opset 17 for compatibility
+        opset_version=17,
         do_constant_folding=True,
         verbose=False
     )
@@ -201,11 +198,20 @@ def export_onnx_model(num_nodes: int, num_edges: int, num_features: int,
 def compile_openvino_model(onnx_path: str, device: str = "CPU"):
     """
     Compile ONNX model with OpenVINO.
+    For NPU: automatically uses HETERO:NPU,CPU for fallback.
     """
     core = Core()
     model = core.read_model(onnx_path)
-    compiled_model = core.compile_model(model, device)
-    print(f"  OpenVINO model compiled for {device}")
+
+    if device == "NPU":
+        # NPU: use HETERO plugin for automatic CPU fallback
+        target_device = "HETERO:NPU,CPU"
+        print(f"  Using HETERO mode: {target_device}")
+    else:
+        target_device = device
+
+    compiled_model = core.compile_model(model, target_device)
+    print(f"  OpenVINO model compiled for {target_device}")
     return compiled_model
 
 
@@ -308,9 +314,12 @@ def run_openvino_inference(compiled_model, x: np.ndarray, edge_index: np.ndarray
 def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"):
     """
     Run GraphSAGE inference with OpenVINO using batch partitioning.
+    For NPU: automatically uses HETERO:NPU,CPU for fallback.
     """
     print("="*80)
     print(f"{device} Batch-{batch_size} Baseline Test (1 Layer, 1-hop) - OpenVINO")
+    if device == "NPU":
+        print("  (Using HETERO:NPU,CPU for automatic fallback)")
     print("="*80)
     print()
 
@@ -352,11 +361,11 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"
                 static=True
             )
 
-            # Compile with OpenVINO
+            # Compile with OpenVINO (HETERO:NPU,CPU)
             compiled_model = compile_openvino_model(str(onnx_path), device)
             compiled_models.append(compiled_model)
 
-        print(f"  All {num_batches} models compiled for NPU")
+        print(f"  All {num_batches} models compiled")
 
     else:
         # CPU/GPU: single dynamic shape model
@@ -375,7 +384,7 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"
         # Compile with OpenVINO
         print(f"\nCompiling OpenVINO model for {device}...")
         compiled_model = compile_openvino_model(str(onnx_path), device)
-        compiled_models = [compiled_model] * num_batches  # Use same model for all batches
+        compiled_models = [compiled_model] * num_batches
 
     # Print partition summary
     total_target = sum(b['num_target'] for b in batches)
@@ -394,7 +403,6 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"
         for i, batch in enumerate(batches):
             x_np = batch['subgraph_x'].numpy()
             edge_index_np = batch['subgraph_edge_index'].numpy()
-            # Use corresponding model for each batch
             _ = run_openvino_inference(compiled_models[i], x_np, edge_index_np)
         print(f"  Warmup {warmup_i+1}/{warmup_runs} completed")
 
@@ -417,7 +425,7 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"
             x_np = batch['subgraph_x'].numpy()
             edge_index_np = batch['subgraph_edge_index'].numpy()
 
-            # Run inference with corresponding model
+            # Run inference
             output = run_openvino_inference(compiled_models[i], x_np, edge_index_np)
 
             # Extract target node outputs
@@ -503,7 +511,7 @@ def save_results(results, output_file='cpu_batch_4096_results.txt'):
 
     with open(output_path, 'w') as f:
         f.write("="*80 + "\n")
-        f.write(f"CPU Batch-{results['batch_size']} Baseline Results (1 Layer, 1-hop) - OpenVINO\n")
+        f.write(f"{results['device']} Batch-{results['batch_size']} Baseline Results (1 Layer, 1-hop) - OpenVINO\n")
         f.write("="*80 + "\n\n")
 
         f.write("Dataset:\n")
@@ -546,7 +554,7 @@ def save_results(results, output_file='cpu_batch_4096_results.txt'):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description='CPU Batch-4096 Baseline with OpenVINO')
+    parser = argparse.ArgumentParser(description='Batch-4096 Baseline with OpenVINO')
     parser.add_argument('--device', type=str, default='CPU',
                         choices=['CPU', 'GPU', 'NPU'],
                         help='OpenVINO device (CPU, GPU, or NPU)')
@@ -571,5 +579,5 @@ if __name__ == "__main__":
     save_results(results, output_file)
 
     print("\n" + "="*80)
-    print(f"{args.device} Batch-{args.batch_size} Baseline Test (1 Layer, 1-hop) - OpenVINO Completed!")
+    print(f"{args.device} Batch-{args.batch_size} Baseline Test Completed!")
     print("="*80)

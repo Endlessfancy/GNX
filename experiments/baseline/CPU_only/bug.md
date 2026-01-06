@@ -34,56 +34,69 @@ Partitioning 89,250 nodes into batches of 4096...
   Batch 22/22: target=3,234, halo=10,535, total=13,769, edges=96,832
 
 Exporting 22 static ONNX models for NPU...
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\utils.py:1547: OnnxExporterWarning: Exporting to ONNX opset version 18 is not supported. by 'torch.onnx.export()'. The highest opset version supported is 17. To use a newer opset version, consider 'torch.onnx.dynamo_export()'. Note that dynamo_export() is in preview. Please report errors with dynamo_export() as Github issues to https://github.com/pytorch/pytorch/issues.
-  warnings.warn(
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\symbolic_opset9.py:6628: UserWarning: Warning: ONNX export does not support duplicated values in 'index' field, this will cause the ONNX model to be incorrect.
-  warnings.warn(
-Traceback (most recent call last):
-  File "C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py", line 557, in <module>
-    results = run_batch_baseline(
-  File "C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py", line 341, in run_batch_baseline
-    export_onnx_model(
-  File "C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py", line 179, in export_onnx_model
-    torch.onnx.export(
-  File "C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\utils.py", line 516, in export
-    _export(
-  File "C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\utils.py", line 1612, in _export
-    graph, params_dict, torch_out = _model_to_graph(
-  File "C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\utils.py", line 1138, in _model_to_graph
-    graph = _optimize_graph(
-  File "C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\utils.py", line 677, in _optimize_graph
-    graph = _C._jit_pass_onnx(graph, operator_export_type)
-  File "C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\utils.py", line 1956, in _run_symbolic_function
-    return symbolic_fn(graph_context, *inputs, **attrs)
-  File "C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\symbolic_opset9.py", line 6668, in index_add
-    raise errors.SymbolicValueError(
-torch.onnx.errors.SymbolicValueError: ONNX export does not support exporting 'index_add_()' function with duplicated values in 'index' parameter yet.  [Caused by the value '32 defined in (%32 : Float(64759, 500, strides=[500, 1], requires_grad=0, device=cpu) = onnx::Constant[value=<Tensor>](), scope: __main__.GraphSAGEFullModel::/__main__.SAGEStage3_ReduceSum::stage3 # C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py:57:0
-)' (type 'Tensor') in the TorchScript graph. The containing node has kind 'onnx::Constant'.]
-    (node defined in C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py(57): forward
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\nn\modules\module.py(1522): _slow_forward
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\nn\modules\module.py(1541): _call_impl
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\nn\modules\module.py(1532): _wrapped_call_impl
-C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py(138): forward
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\nn\modules\module.py(1522): _slow_forward
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\nn\modules\module.py(1541): _call_impl
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\nn\modules\module.py(1532): _wrapped_call_impl
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\jit\_trace.py(129): wrapper
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\jit\_trace.py(138): forward
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\nn\modules\module.py(1541): _call_impl
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\nn\modules\module.py(1532): _wrapped_call_impl
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\jit\_trace.py(1310): _get_trace_graph
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\utils.py(914): _trace_and_get_graph_from_model
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\utils.py(1010): _create_jit_graph
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\utils.py(1134): _model_to_graph
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\utils.py(1612): _export
-C:\Env\Anaconda\envs\MIX\lib\site-packages\torch\onnx\utils.py(516): export
-C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py(179): export_onnx_model
-C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py(341): run_batch_baseline
-C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py(557): <module>
-)
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch0_n64759_e618876.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch1_n47966_e426540.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch2_n39375_e332844.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch3_n33931_e277624.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch4_n31768_e255618.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch5_n28781_e228462.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch6_n27423_e214524.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch7_n26274_e204478.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch8_n24784_e191408.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch9_n24165_e185456.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch10_n22908_e174022.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch11_n22685_e172422.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch12_n21551_e161304.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch13_n21062_e157548.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch14_n20117_e150008.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch15_n20003_e150044.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch16_n19575_e145752.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch17_n19061_e142904.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch18_n18555_e137708.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch19_n18048_e134254.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch20_n17561_e130658.onnx
+  OpenVINO model compiled for NPU
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch21_n13769_e96832.onnx
+  OpenVINO model compiled for NPU
+  All 22 models compiled for NPU
 
-    Inputs:
-        Empty
-    Outputs:
-        #0: 32 defined in (%32 : Float(64759, 500, strides=[500, 1], requires_grad=0, device=cpu) = onnx::Constant[value=<Tensor>](), scope: __main__.GraphSAGEFullModel::/__main__.SAGEStage3_ReduceSum::stage3 # C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py:57:0
-    )  (type 'Tensor')
+Partition Summary:
+  Total batches: 22
+  Total target nodes: 89,250
+  Total halo nodes (with duplicates): 494,871
+  Total subgraph nodes (with duplicates): 584,121
+  Expansion ratio: 6.54x
+
+Running 2 warmup iterations...
+Traceback (most recent call last):
+  File "C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py", line 562, in <module>
+    results = run_batch_baseline(
+  File "C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py", line 398, in run_batch_baseline
+    _ = run_openvino_inference(compiled_models[i], x_np, edge_index_np)
+  File "C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py", line 300, in run_openvino_inference
+    infer_request.infer()
+  File "C:\Env\Anaconda\envs\MIX\lib\site-packages\openvino\runtime\ie_api.py", line 132, in infer
+    return OVDict(super().infer(_data_dispatch(
+RuntimeError: Exception from src\inference\src\cpp\infer_request.cpp:223:
+Exception from src\plugins\intel_npu\src\utils\src\zero\zero_wrappers.cpp:93:
+L0 pfnAppendGraphExecute result: ZE_RESULT_ERROR_INVALID_NATIVE_BINARY, code 0x7800000f - native binary is not supported by the device . elf_parsing_t exception caught: BufferInfo already exists at requested index
