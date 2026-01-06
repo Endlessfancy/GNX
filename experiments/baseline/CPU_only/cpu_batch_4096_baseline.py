@@ -162,7 +162,16 @@ def export_onnx_model(num_nodes: int, num_edges: int, num_features: int,
                       static: bool = False):
     """
     Export GraphSAGE full model (stages 1-7) to ONNX format.
+    Skips export if model already exists.
     """
+    # Check if model already exists
+    if os.path.exists(output_path):
+        file_size = os.path.getsize(output_path)
+        if file_size > 1000:  # Valid model should be > 1KB
+            shape_type = "static" if static else "dynamic"
+            print(f"  ONNX model exists ({shape_type} shape): {output_path}")
+            return output_path
+
     model = GraphSAGEFullModel(num_features, out_channels)
     model.eval()
 
