@@ -1,0 +1,63 @@
+================================================================================
+CPU Batch-4096 Baseline Results (1 Layer, 1-hop) - OpenVINO
+================================================================================
+
+Dataset:
+  Name: Flickr
+  Nodes: 89,250
+  Edges: 899,756
+  Features: 500
+
+Batch Configuration:
+  Batch size (target nodes): 4096
+  Number of batches: 22
+
+Model:
+  Architecture: GraphSAGE (1 layer)
+  Hidden dim: 256
+  Runtime: OpenVINO
+
+Performance:
+  Device: CPU
+  Number of runs: 10
+  Mean total time: 11636.13 ms
+  Std time: 4460.24 ms
+  Min time: 8282.55 ms
+  Max time: 23024.53 ms
+  Mean per-batch time: 528.69 ms
+
+Individual Run Times (ms):
+  Run 1: 10125.11
+  Run 2: 8750.02
+  Run 3: 11378.29
+  Run 4: 12790.18
+  Run 5: 10367.29
+  Run 6: 8624.85
+  Run 7: 8282.55
+  Run 8: 8736.12
+  Run 9: 23024.53
+  Run 10: 14282.41
+
+Batch Details:
+  Batch 1: target=4096, halo=60663, total=64759, edges=618876
+  Batch 2: target=4096, halo=43870, total=47966, edges=426540
+  Batch 3: target=4096, halo=35279, total=39375, edges=332844
+  Batch 4: target=4096, halo=29835, total=33931, edges=277624
+  Batch 5: target=4096, halo=27672, total=31768, edges=255618
+  Batch 6: target=4096, halo=24685, total=28781, edges=228462
+  Batch 7: target=4096, halo=23327, total=27423, edges=214524
+  Batch 8: target=4096, halo=22178, total=26274, edges=204478
+  Batch 9: target=4096, halo=20688, total=24784, edges=191408
+  Batch 10: target=4096, halo=20069, total=24165, edges=185456
+  Batch 11: target=4096, halo=18812, total=22908, edges=174022
+  Batch 12: target=4096, halo=18589, total=22685, edges=172422
+  Batch 13: target=4096, halo=17455, total=21551, edges=161304
+  Batch 14: target=4096, halo=16966, total=21062, edges=157548
+  Batch 15: target=4096, halo=16021, total=20117, edges=150008
+  Batch 16: target=4096, halo=15907, total=20003, edges=150044
+  Batch 17: target=4096, halo=15479, total=19575, edges=145752
+  Batch 18: target=4096, halo=14965, total=19061, edges=142904
+  Batch 19: target=4096, halo=14459, total=18555, edges=137708
+  Batch 20: target=4096, halo=13952, total=18048, edges=134254
+  Batch 21: target=4096, halo=13465, total=17561, edges=130658
+  Batch 22: target=3234, halo=10535, total=13769, edges=96832

@@ -49,28 +49,33 @@ class SAGEStage2_Message(torch.nn.Module):
 
 
 class SAGEStage3_ReduceSum(torch.nn.Module):
-    """Stage 3: REDUCE_SUM - Sum aggregation"""
+    """Stage 3: REDUCE_SUM - Sum aggregation using scatter_add for ONNX compatibility"""
     def __init__(self):
         super().__init__()
 
     def forward(self, messages: torch.Tensor, edge_index: torch.Tensor, num_nodes: int) -> torch.Tensor:
-        out = torch.zeros(num_nodes, messages.size(1), dtype=messages.dtype, device=messages.device)
         target_nodes = edge_index[1]
-        out.index_add_(0, target_nodes, messages)
+        feat_dim = messages.size(1)
+        # Use scatter_add for ONNX compatibility (avoids index_add_ duplicate issue)
+        # Expand target_nodes to match messages shape
+        index_expanded = target_nodes.unsqueeze(1).expand(-1, feat_dim)
+        out = torch.zeros(num_nodes, feat_dim, dtype=messages.dtype, device=messages.device)
+        out = out.scatter_add(0, index_expanded, messages)
         return out
 
 
 class SAGEStage4_ReduceCount(torch.nn.Module):
-    """Stage 4: REDUCE_COUNT - Count neighbors"""
+    """Stage 4: REDUCE_COUNT - Count neighbors using scatter_add for ONNX compatibility"""
     def __init__(self):
         super().__init__()
 
     def forward(self, edge_index: torch.Tensor, num_nodes: int, num_edges: int) -> torch.Tensor:
         target_nodes = edge_index[1]
-        ones = torch.ones(num_edges, device=edge_index.device)
-        count = torch.zeros(num_nodes, device=edge_index.device)
-        count.index_add_(0, target_nodes, ones)
-        return count
+        ones = torch.ones(num_edges, 1, device=edge_index.device)
+        index_expanded = target_nodes.unsqueeze(1)
+        count = torch.zeros(num_nodes, 1, device=edge_index.device)
+        count = count.scatter_add(0, index_expanded, ones)
+        return count.squeeze(1)  # Return [num_nodes]
 
 
 class SAGEStage5_Normalize(torch.nn.Module):
@@ -183,7 +188,7 @@ def export_onnx_model(num_nodes: int, num_edges: int, num_features: int,
         input_names=['x', 'edge_index'],
         output_names=['output'],
         dynamic_axes=dynamic_axes,
-        opset_version=18,
+        opset_version=17,  # Use opset 17 for compatibility
         do_constant_folding=True,
         verbose=False
     )
