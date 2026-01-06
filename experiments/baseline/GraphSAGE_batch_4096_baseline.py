@@ -18,6 +18,7 @@ import torch.nn.functional as F
 import numpy as np
 from torch_geometric.datasets import Flickr
 from torch_geometric.utils import k_hop_subgraph
+from torch_geometric.nn import SAGEConv
 from pathlib import Path
 
 # OpenVINO imports
@@ -29,139 +30,24 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 
 # ====================================================================
-# GraphSAGE 7-Stage Modules (for ONNX export)
+# GraphSAGE 1-Layer Model using PyG's SAGEConv
 # ====================================================================
 
-class SAGEStage1_Gather(torch.nn.Module):
-    """Stage 1: GATHER - Neighbor feature gathering"""
-    def __init__(self):
-        super().__init__()
-
-    def forward(self, x: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor:
-        return x[edge_index[0]]
-
-
-class SAGEStage2_Message(torch.nn.Module):
-    """Stage 2: MESSAGE - Identity for mean aggregator"""
-    def __init__(self):
-        super().__init__()
-
-    def forward(self, x_j: torch.Tensor) -> torch.Tensor:
-        return x_j
-
-
-class SAGEStage3_ReduceSum(torch.nn.Module):
-    """Stage 3: REDUCE_SUM - Sum aggregation using scatter_add for ONNX compatibility"""
-    def __init__(self):
-        super().__init__()
-
-    def forward(self, messages: torch.Tensor, edge_index: torch.Tensor, num_nodes: int) -> torch.Tensor:
-        target_nodes = edge_index[1]
-        feat_dim = messages.size(1)
-        index_expanded = target_nodes.unsqueeze(1).expand(-1, feat_dim)
-        out = torch.zeros(num_nodes, feat_dim, dtype=messages.dtype, device=messages.device)
-        out = out.scatter_add(0, index_expanded, messages)
-        return out
-
-
-class SAGEStage4_ReduceCount(torch.nn.Module):
-    """Stage 4: REDUCE_COUNT - Count neighbors using scatter_add for ONNX compatibility"""
-    def __init__(self):
-        super().__init__()
-
-    def forward(self, edge_index: torch.Tensor, num_nodes: int, num_edges: int) -> torch.Tensor:
-        target_nodes = edge_index[1]
-        ones = torch.ones(num_edges, 1, device=edge_index.device)
-        index_expanded = target_nodes.unsqueeze(1)
-        count = torch.zeros(num_nodes, 1, device=edge_index.device)
-        count = count.scatter_add(0, index_expanded, ones)
-        return count.squeeze(1)
-
-
-class SAGEStage5_Normalize(torch.nn.Module):
-    """Stage 5: NORMALIZE - Compute mean"""
-    def __init__(self):
-        super().__init__()
-
-    def forward(self, sum_agg: torch.Tensor, count: torch.Tensor) -> torch.Tensor:
-        count = torch.clamp(count, min=1)
-        mean_agg = sum_agg / count.unsqueeze(-1)
-        return mean_agg
-
-
-class SAGEStage6_Transform(torch.nn.Module):
-    """Stage 6: TRANSFORM - Linear transformations"""
+class GraphSAGE1Layer(nn.Module):
+    """Single layer GraphSAGE using PyG's SAGEConv"""
     def __init__(self, in_channels: int, out_channels: int):
         super().__init__()
-        self.lin_l = nn.Linear(in_channels, out_channels, bias=True)
-        self.lin_r = nn.Linear(in_channels, out_channels, bias=False)
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        nn.init.xavier_uniform_(self.lin_l.weight)
-        nn.init.zeros_(self.lin_l.bias)
-        nn.init.xavier_uniform_(self.lin_r.weight)
-
-    def forward(self, mean_agg: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
-        return self.lin_l(mean_agg) + self.lin_r(x)
-
-
-class SAGEStage7_Activate(torch.nn.Module):
-    """Stage 7: ACTIVATE - ReLU activation"""
-    def __init__(self):
-        super().__init__()
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return F.relu(x)
-
-
-class GraphSAGEFullModel(nn.Module):
-    """
-    Complete GraphSAGE 1-layer model (stages 1-7) for ONNX export.
-    """
-    def __init__(self, in_channels: int, out_channels: int):
-        super().__init__()
-        self.stage1 = SAGEStage1_Gather()
-        self.stage2 = SAGEStage2_Message()
-        self.stage3 = SAGEStage3_ReduceSum()
-        self.stage4 = SAGEStage4_ReduceCount()
-        self.stage5 = SAGEStage5_Normalize()
-        self.stage6 = SAGEStage6_Transform(in_channels, out_channels)
-        self.stage7 = SAGEStage7_Activate()
+        self.conv = SAGEConv(in_channels, out_channels)
 
     def forward(self, x: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor:
-        num_nodes = x.size(0)
-        num_edges = edge_index.size(1)
-
-        # Stage 1: Gather
-        x_j = self.stage1(x, edge_index)
-
-        # Stage 2: Message (identity)
-        messages = self.stage2(x_j)
-
-        # Stage 3: ReduceSum
-        sum_agg = self.stage3(messages, edge_index, num_nodes)
-
-        # Stage 4: ReduceCount
-        count = self.stage4(edge_index, num_nodes, num_edges)
-
-        # Stage 5: Normalize
-        mean_agg = self.stage5(sum_agg, count)
-
-        # Stage 6: Transform
-        transformed = self.stage6(mean_agg, x)
-
-        # Stage 7: Activate
-        output = self.stage7(transformed)
-
-        return output
+        return self.conv(x, edge_index)
 
 
 def export_onnx_model(num_nodes: int, num_edges: int, num_features: int,
                       out_channels: int = 256, output_path: str = "graphsage_layer1.onnx",
                       static: bool = False):
     """
-    Export GraphSAGE full model (stages 1-7) to ONNX format.
+    Export GraphSAGE 1-layer model (using PyG's SAGEConv) to ONNX format.
     Skips export if model already exists.
     """
     # Check if model already exists
@@ -172,7 +58,7 @@ def export_onnx_model(num_nodes: int, num_edges: int, num_features: int,
             print(f"  ONNX model exists ({shape_type} shape): {output_path}")
             return output_path
 
-    model = GraphSAGEFullModel(num_features, out_channels)
+    model = GraphSAGE1Layer(num_features, out_channels)
     model.eval()
 
     # Dummy inputs
