@@ -348,10 +348,14 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"
     model_dir = Path(__file__).parent / "models"
     model_dir.mkdir(exist_ok=True)
 
+    # Initialize variables for both modes
+    onnx_paths = []  # For NPU: store paths for lazy compile
+    compiled_models_cache = {}  # For NPU: cache compiled models
+    compiled_models = []  # For CPU/GPU: pre-compiled model list
+
     if is_npu:
-        # NPU: export static shape model for each batch
+        # NPU: export static shape model for each batch (lazy compile later)
         print(f"\nExporting {num_batches} static ONNX models for NPU...")
-        compiled_models = []
 
         for batch in batches:
             batch_idx = batch['batch_idx']
@@ -360,7 +364,7 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"
 
             onnx_path = model_dir / f"graphsage_npu_batch{batch_idx}_n{num_nodes}_e{num_edges}.onnx"
 
-            # Export static model for this batch
+            # Export static model for this batch (skip if exists)
             export_onnx_model(
                 num_nodes=num_nodes,
                 num_edges=num_edges,
@@ -369,12 +373,9 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"
                 output_path=str(onnx_path),
                 static=True
             )
+            onnx_paths.append(str(onnx_path))
 
-            # Compile with OpenVINO (HETERO:NPU,CPU)
-            compiled_model = compile_openvino_model(str(onnx_path), device)
-            compiled_models.append(compiled_model)
-
-        print(f"  All {num_batches} models compiled")
+        print(f"  All {num_batches} ONNX models ready (will compile lazily during inference)")
 
     else:
         # CPU/GPU: single dynamic shape model
@@ -406,14 +407,41 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"
     print(f"  Total subgraph nodes (with duplicates): {total_subgraph:,}")
     print(f"  Expansion ratio: {total_subgraph / total_target:.2f}x")
 
-    # Warmup runs
-    print(f"\nRunning {warmup_runs} warmup iterations...")
-    for warmup_i in range(warmup_runs):
+    # Helper function to get compiled model
+    def get_compiled_model(batch_idx):
+        """Get compiled model for batch"""
+        if is_npu:
+            return compiled_models_cache[batch_idx]
+        else:
+            return compiled_models[batch_idx]
+
+    # Warmup: For NPU, compile each model then warmup immediately
+    if is_npu:
+        print(f"\nCompiling and warming up {num_batches} models (compile → warmup each)...")
         for i, batch in enumerate(batches):
             x_np = batch['subgraph_x'].numpy()
             edge_index_np = batch['subgraph_edge_index'].numpy()
-            _ = run_openvino_inference(compiled_models[i], x_np, edge_index_np)
-        print(f"  Warmup {warmup_i+1}/{warmup_runs} completed")
+
+            # Compile this model
+            print(f"  Batch {i+1}/{num_batches}: compiling...", end=" ", flush=True)
+            compiled_models_cache[i] = compile_openvino_model(onnx_paths[i], device)
+            print("done, warming up...", end=" ", flush=True)
+
+            # Warmup this model
+            for _ in range(warmup_runs):
+                _ = run_openvino_inference(compiled_models_cache[i], x_np, edge_index_np)
+            print(f"done ({warmup_runs} warmup runs)")
+        print(f"  All {num_batches} models compiled and warmed up")
+    else:
+        # CPU/GPU: single model, standard warmup
+        print(f"\nRunning {warmup_runs} warmup iterations...")
+        for warmup_i in range(warmup_runs):
+            for i, batch in enumerate(batches):
+                x_np = batch['subgraph_x'].numpy()
+                edge_index_np = batch['subgraph_edge_index'].numpy()
+                compiled_model = get_compiled_model(i)
+                _ = run_openvino_inference(compiled_model, x_np, edge_index_np)
+            print(f"  Warmup {warmup_i+1}/{warmup_runs} completed")
 
     # Timed runs
     print(f"\nRunning {num_runs} timed iterations...")
@@ -435,7 +463,8 @@ def run_batch_baseline(batch_size=4096, num_runs=10, warmup_runs=2, device="CPU"
             edge_index_np = batch['subgraph_edge_index'].numpy()
 
             # Run inference
-            output = run_openvino_inference(compiled_models[i], x_np, edge_index_np)
+            compiled_model = get_compiled_model(i)
+            output = run_openvino_inference(compiled_model, x_np, edge_index_np)
 
             # Extract target node outputs
             target_mask = batch['target_mask'].numpy()
