@@ -16,17 +16,18 @@ CALL "C:\Env\Anaconda\Scripts\activate.bat" MIX
 echo.
 echo Environment activated. Running profiling...
 echo.
-echo This will take approximately 4-6 hours to complete.
+echo This will take approximately 17-20 hours to complete.
 echo The script will:
-echo   1. Export 14 dynamic models (CPU/GPU) + 90 static models (NPU, skip Stage 3/4)
-echo   2. Measure 342 latencies (18 sizes x 3 PUs x 7 stages, NPU skip Stage 3/4)
+echo   1. Export 14 dynamic models (CPU/GPU) + 275 static models (NPU, skip Stage 3/4)
+echo   2. Measure 1045 latencies (55 sizes x 3 PUs x 7 stages, NPU skip Stage 3/4)
 echo   3. Estimate bandwidth and separate compute time
 echo   4. Generate lookup_table.json and bandwidth_table.json
 echo.
-echo Test cases: 1k-100k nodes (18 combinations)
-echo   - Small:  1k, 5k nodes
-echo   - Medium: 10k, 20k nodes
-echo   - Large:  50k, 100k nodes (covers actual subgraph sizes)
+echo Test cases: 1k-150k nodes (55 combinations)
+echo   - Small:  1k, 5k, 10k nodes
+echo   - Medium: 20k, 30k, 40k, 50k, 60k nodes
+echo   - Large:  80k, 100k, 150k nodes (covers actual subgraph sizes)
+echo   - Edge ratios: 2x, 3x, 5x, 7x, 10x per node size
 echo.
 
 REM Run profiling with all steps

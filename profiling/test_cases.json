@@ -1,38 +1,87 @@
 {
-  "description": "Profiling test cases for GNN stages (扩展版：1k-100k nodes, 18个组合)",
+  "description": "Profiling test cases for GNN stages (完整版：1k-150k nodes, 55个组合)",
   "config": {
-    "node_sizes": [1000, 5000, 10000, 20000, 50000, 100000],
-    "edge_sizes": [1000, 5000, 10000, 50000, 100000, 200000, 500000, 1000000],
+    "node_sizes": [1000, 5000, 10000, 20000, 30000, 40000, 50000, 60000, 80000, 100000, 150000],
+    "edge_ratios": [2, 3, 5, 7, 10],
     "feature_dim": 500,
     "num_warmup": 10,
     "num_iterations": 50
   },
   "test_cases": [
-    {"nodes": 1000, "edges": 1000},
+    {"nodes": 1000, "edges": 2000},
+    {"nodes": 1000, "edges": 3000},
     {"nodes": 1000, "edges": 5000},
+    {"nodes": 1000, "edges": 7000},
     {"nodes": 1000, "edges": 10000},
-    {"nodes": 5000, "edges": 5000},
+
     {"nodes": 5000, "edges": 10000},
+    {"nodes": 5000, "edges": 15000},
+    {"nodes": 5000, "edges": 25000},
+    {"nodes": 5000, "edges": 35000},
     {"nodes": 5000, "edges": 50000},
-    {"nodes": 10000, "edges": 10000},
+
+    {"nodes": 10000, "edges": 20000},
+    {"nodes": 10000, "edges": 30000},
     {"nodes": 10000, "edges": 50000},
+    {"nodes": 10000, "edges": 70000},
     {"nodes": 10000, "edges": 100000},
-    {"nodes": 20000, "edges": 50000},
+
+    {"nodes": 20000, "edges": 40000},
+    {"nodes": 20000, "edges": 60000},
     {"nodes": 20000, "edges": 100000},
+    {"nodes": 20000, "edges": 140000},
     {"nodes": 20000, "edges": 200000},
+
+    {"nodes": 30000, "edges": 60000},
+    {"nodes": 30000, "edges": 90000},
+    {"nodes": 30000, "edges": 150000},
+    {"nodes": 30000, "edges": 210000},
+    {"nodes": 30000, "edges": 300000},
+
+    {"nodes": 40000, "edges": 80000},
+    {"nodes": 40000, "edges": 120000},
+    {"nodes": 40000, "edges": 200000},
+    {"nodes": 40000, "edges": 280000},
+    {"nodes": 40000, "edges": 400000},
+
     {"nodes": 50000, "edges": 100000},
-    {"nodes": 50000, "edges": 200000},
+    {"nodes": 50000, "edges": 150000},
+    {"nodes": 50000, "edges": 250000},
+    {"nodes": 50000, "edges": 350000},
     {"nodes": 50000, "edges": 500000},
+
+    {"nodes": 60000, "edges": 120000},
+    {"nodes": 60000, "edges": 180000},
+    {"nodes": 60000, "edges": 300000},
+    {"nodes": 60000, "edges": 420000},
+    {"nodes": 60000, "edges": 600000},
+
+    {"nodes": 80000, "edges": 160000},
+    {"nodes": 80000, "edges": 240000},
+    {"nodes": 80000, "edges": 400000},
+    {"nodes": 80000, "edges": 560000},
+    {"nodes": 80000, "edges": 800000},
+
     {"nodes": 100000, "edges": 200000},
+    {"nodes": 100000, "edges": 300000},
     {"nodes": 100000, "edges": 500000},
-    {"nodes": 100000, "edges": 1000000}
+    {"nodes": 100000, "edges": 700000},
+    {"nodes": 100000, "edges": 1000000},
+
+    {"nodes": 150000, "edges": 300000},
+    {"nodes": 150000, "edges": 450000},
+    {"nodes": 150000, "edges": 750000},
+    {"nodes": 150000, "edges": 1050000},
+    {"nodes": 150000, "edges": 1500000}
   ],
   "comments": {
-    "total_cases": 18,
-    "npu_models": "5 stages × 18 sizes = 90 models (跳过 Stage 3/4)",
+    "total_cases": 55,
+    "node_sizes": "11 levels: 1k, 5k, 10k, 20k, 30k, 40k, 50k, 60k, 80k, 100k, 150k",
+    "edge_ratios": "5 ratios per node size: 2x, 3x, 5x, 7x, 10x",
+    "npu_models": "5 stages × 55 sizes = 275 models (跳过 Stage 3/4)",
     "cpu_gpu_models": "7 stages × 2 PUs = 14 models (dynamic)",
-    "total_measurements": "18 × 2 × 7 + 18 × 1 × 5 = 342 tests",
-    "estimated_time": "4-6 hours",
-    "note": "覆盖实际 subgraph 范围 (37k-81k nodes)"
+    "total_measurements": "55 × 2 × 7 + 55 × 1 × 5 = 1045 tests",
+    "estimated_time": "17-20 hours",
+    "note": "覆盖实际 subgraph 范围 (37k-81k nodes)，扩展到 150k"
   }
 }
