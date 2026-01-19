@@ -747,15 +747,15 @@ def generate_report(lookup_table, bandwidth_table, test_cases):
         npu_times = [v['compute_time_ms'] for k, v in lookup_table.items()
                     if k.endswith(f",NPU,{stage_id}")]
 
+        line = f"Stage {stage_id}:"
         if cpu_times and gpu_times:
             gpu_speedup = np.mean(cpu_times) / np.mean(gpu_times)
-            report.append(f"Stage {stage_id}: GPU speedup = {gpu_speedup:.2f}x", end='')
-
+            line += f" GPU speedup = {gpu_speedup:.2f}x"
         if cpu_times and npu_times:
             npu_speedup = np.mean(cpu_times) / np.mean(npu_times)
-            report.append(f", NPU speedup = {npu_speedup:.2f}x")
-        else:
-            report.append("")
+            line += f", NPU speedup = {npu_speedup:.2f}x"
+        if cpu_times and (gpu_times or npu_times):
+            report.append(line)
 
     report.append("")
     report.append("=" * 80)
