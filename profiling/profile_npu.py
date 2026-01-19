@@ -1,0 +1,213 @@
+#!/usr/bin/env python3
+"""
+NPU Single Test Script - Tests one (nodes, stage) combination with all edges
+
+Usage:
+    python profile_npu.py --nodes 1000 --stage 1
+    python profile_npu.py --nodes 1000 --stage 1 --edges 2000,5000,10000
+
+Exit codes:
+    0 - All tests passed
+    1 - Some tests failed (partial success)
+    2 - Device lost / fatal error (NPU in bad state)
+"""
+
+import argparse
+import json
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+import torch
+
+# Paths
+SCRIPT_DIR = Path(__file__).parent
+MODELS_DIR = SCRIPT_DIR / "exported_models"
+RESULTS_DIR = SCRIPT_DIR / "results"
+CHECKPOINT_DIR = RESULTS_DIR
+
+# Test cases from config
+def load_test_cases():
+    config_path = SCRIPT_DIR / "test_cases.json"
+    with open(config_path, 'r') as f:
+        return json.load(f)
+
+def get_edges_for_nodes(test_cases, nodes):
+    """Get all edge counts for a given node count"""
+    edges = []
+    for case in test_cases['test_cases']:
+        if case['nodes'] == nodes:
+            edges.append(case['edges'])
+    return sorted(edges)
+
+def generate_dummy_input(stage_id, num_nodes, num_edges, feature_dim=500):
+    """Generate dummy input for a stage"""
+    torch.manual_seed(42)
+
+    if stage_id == 1:
+        x = torch.randn(num_nodes, feature_dim)
+        edge_index = torch.randint(0, num_nodes, (2, num_edges))
+        return (x, edge_index)
+    elif stage_id == 2:
+        x_j = torch.randn(num_edges, feature_dim)
+        return (x_j,)
+    elif stage_id == 5:
+        sum_agg = torch.randn(num_nodes, feature_dim)
+        count = torch.randint(1, 100, (num_nodes,)).float()
+        return (sum_agg, count)
+    elif stage_id == 6:
+        mean_agg = torch.randn(num_nodes, feature_dim)
+        x = torch.randn(num_nodes, feature_dim)
+        return (mean_agg, x)
+    elif stage_id == 7:
+        out = torch.randn(num_nodes, feature_dim)
+        return (out,)
+    else:
+        raise ValueError(f"Stage {stage_id} not supported for NPU")
+
+def measure_latency_npu(ir_path, dummy_input, num_warmup=10, num_iterations=50):
+    """Measure NPU latency, returns result dict with 'failed' flag if error"""
+    try:
+        import openvino.runtime as ov
+
+        core = ov.Core()
+        model = core.read_model(str(ir_path))
+        compiled_model = core.compile_model(model, 'NPU')
+
+        # Prepare inputs
+        if isinstance(dummy_input, tuple):
+            inputs = [t.numpy() if isinstance(t, torch.Tensor) else np.array(t)
+                     for t in dummy_input]
+        else:
+            inputs = [dummy_input.numpy() if isinstance(dummy_input, torch.Tensor)
+                     else np.array(dummy_input)]
+
+        # Warmup
+        for _ in range(num_warmup):
+            _ = compiled_model(inputs)
+
+        # Measure
+        latencies = []
+        for _ in range(num_iterations):
+            start = time.perf_counter()
+            _ = compiled_model(inputs)
+            latencies.append((time.perf_counter() - start) * 1000)
+
+        return {
+            'mean': np.mean(latencies),
+            'std': np.std(latencies),
+            'min': np.min(latencies),
+            'max': np.max(latencies),
+            'failed': False
+        }
+
+    except Exception as e:
+        error_msg = str(e)
+        is_device_lost = 'DEVICE_LOST' in error_msg
+        is_oom = 'OUT_OF_HOST_MEMORY' in error_msg or 'OUT_OF_DEVICE_MEMORY' in error_msg
+
+        return {
+            'mean': -1,
+            'std': -1,
+            'min': -1,
+            'max': -1,
+            'failed': True,
+            'error': error_msg,
+            'device_lost': is_device_lost,
+            'oom': is_oom
+        }
+
+def main():
+    parser = argparse.ArgumentParser(description='NPU Single Test')
+    parser.add_argument('--nodes', type=int, required=True, help='Number of nodes')
+    parser.add_argument('--stage', type=int, required=True, choices=[1, 2, 5, 6, 7],
+                       help='Stage ID (3, 4 not supported on NPU)')
+    parser.add_argument('--edges', type=str, default=None,
+                       help='Comma-separated edge counts (default: all from config)')
+    parser.add_argument('--warmup', type=int, default=10, help='Warmup iterations')
+    parser.add_argument('--iterations', type=int, default=50, help='Measurement iterations')
+    parser.add_argument('--feature-dim', type=int, default=500, help='Feature dimension')
+
+    args = parser.parse_args()
+
+    # Load config
+    config = load_test_cases()
+
+    # Get edges to test
+    if args.edges:
+        edges_list = [int(e.strip()) for e in args.edges.split(',')]
+    else:
+        edges_list = get_edges_for_nodes(config, args.nodes)
+
+    if not edges_list:
+        print(f"ERROR: No edges found for nodes={args.nodes}")
+        sys.exit(1)
+
+    print(f"=" * 60)
+    print(f"NPU Test: Stage {args.stage}, Nodes={args.nodes}")
+    print(f"Edges to test: {edges_list}")
+    print(f"=" * 60)
+
+    # Results storage
+    results = {}
+    failed_count = 0
+    device_lost = False
+
+    for edges in edges_list:
+        ir_path = MODELS_DIR / f"stage{args.stage}_npu_n{args.nodes}_e{edges}.xml"
+
+        if not ir_path.exists():
+            print(f"  [{args.nodes}n, {edges}e] IR not found, skipping")
+            continue
+
+        print(f"  [{args.nodes}n, {edges}e] Testing... ", end='', flush=True)
+
+        dummy_input = generate_dummy_input(args.stage, args.nodes, edges, args.feature_dim)
+        result = measure_latency_npu(ir_path, dummy_input, args.warmup, args.iterations)
+
+        key = f"{args.nodes},{edges},NPU,{args.stage}"
+
+        if result['failed']:
+            failed_count += 1
+            print(f"FAILED")
+
+            if result.get('device_lost'):
+                print(f"    !! DEVICE_LOST detected - NPU in bad state")
+                device_lost = True
+                # Record the failure and stop
+                results[key] = result
+                break
+            elif result.get('oom'):
+                print(f"    !! OUT_OF_MEMORY - skipping remaining tests for this stage")
+                results[key] = result
+                break
+            else:
+                print(f"    Error: {result.get('error', 'Unknown')[:80]}")
+                results[key] = result
+        else:
+            print(f"{result['mean']:.2f}ms +/- {result['std']:.2f}")
+            results[key] = result
+
+    # Save checkpoint
+    CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
+    checkpoint_file = CHECKPOINT_DIR / f"npu_stage{args.stage}_n{args.nodes}.json"
+
+    with open(checkpoint_file, 'w') as f:
+        json.dump(results, f, indent=2)
+
+    print(f"\n{'=' * 60}")
+    print(f"Results: {len(results) - failed_count} passed, {failed_count} failed")
+    print(f"Saved to: {checkpoint_file}")
+    print(f"{'=' * 60}")
+
+    # Exit codes
+    if device_lost:
+        sys.exit(2)  # Fatal error
+    elif failed_count > 0:
+        sys.exit(1)  # Partial failure
+    else:
+        sys.exit(0)  # All passed
+
+if __name__ == '__main__':
+    main()

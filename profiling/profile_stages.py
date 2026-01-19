@@ -457,10 +457,17 @@ def measure_latency_openvino(ir_path, pu, dummy_input, num_warmup=10, num_iterat
         }
 
     except Exception as e:
-        print(f"    ⚠ OpenVINO measurement failed: {e}, using PyTorch")
-        # Fallback to PyTorch
-        model_torch = get_stage_model(int(ir_path.stem.split('_')[0].replace('stage', '')))
-        return measure_latency_pytorch(model_torch, dummy_input, num_warmup, num_iterations)
+        error_msg = str(e)
+        print(f"    ⚠ OpenVINO measurement failed: {error_msg}")
+        # Return failed result instead of fallback
+        return {
+            'mean': -1,
+            'std': -1,
+            'min': -1,
+            'max': -1,
+            'failed': True,
+            'error': error_msg
+        }
 
 def measure_all_latencies(test_cases, config, pu_list=None):
     """
@@ -772,14 +779,55 @@ def generate_report(lookup_table, bandwidth_table, test_cases):
 # Main Function
 # ============================================================================
 
+def merge_npu_checkpoints():
+    """Merge all NPU checkpoint files from individual (nodes, stage) tests"""
+    print("\n" + "=" * 70)
+    print("=== Merging NPU Checkpoints ===")
+    print("=" * 70)
+
+    merged = {}
+    checkpoint_files = list(RESULTS_DIR.glob("npu_stage*_n*.json"))
+
+    if not checkpoint_files:
+        print("⚠ No NPU checkpoint files found")
+        return None
+
+    for ckpt_file in sorted(checkpoint_files):
+        print(f"  Loading: {ckpt_file.name}")
+        with open(ckpt_file, 'r') as f:
+            data = json.load(f)
+            # Convert string keys to tuple keys for consistency
+            for key, value in data.items():
+                parts = key.split(',')
+                nodes, edges, pu, stage = int(parts[0]), int(parts[1]), parts[2], int(parts[3])
+                # Only include successful measurements
+                if not value.get('failed', False):
+                    merged[(nodes, edges, pu, stage)] = value
+                else:
+                    print(f"    Skipping failed: {key}")
+
+    print(f"\n✓ Merged {len(merged)} successful NPU measurements from {len(checkpoint_files)} files")
+
+    # Save merged checkpoint
+    save_checkpoint(merged, 'npu')
+    return merged
+
 def main():
     parser = argparse.ArgumentParser(description='GNX Stage Profiling Script')
-    parser.add_argument('--all', action='store_true', help='Run all steps')
-    parser.add_argument('--export', action='store_true', help='Export models only')
-    parser.add_argument('--measure', action='store_true', help='Measure latencies only')
+    parser.add_argument('--all', action='store_true', help='Export all + measure CPU/GPU (NPU via profile_npu.py)')
+    parser.add_argument('--export', action='store_true', help='Export all models (CPU/GPU dynamic + NPU static)')
+    parser.add_argument('--export-cpugpu', action='store_true', help='Export CPU/GPU dynamic models only')
+    parser.add_argument('--export-npu', action='store_true', help='Export NPU static models only')
+    parser.add_argument('--measure', action='store_true', help='Measure CPU/GPU latencies only')
+    parser.add_argument('--measure-cpugpu', action='store_true', help='Measure CPU/GPU latencies only (alias)')
+    parser.add_argument('--merge-npu', action='store_true', help='Merge NPU results from profile_npu.py outputs')
     parser.add_argument('--analyze', action='store_true', help='Analyze and generate results only')
 
     args = parser.parse_args()
+
+    # Handle aliases
+    if args.measure_cpugpu:
+        args.measure = True
 
     # Load configuration
     config = load_config()
@@ -789,87 +837,95 @@ def main():
     print("GNX Stage Profiling - Incremental Pipeline")
     print("=" * 70)
     print(f"Test cases: {len(test_cases)}")
-    print(f"Expected CPU/GPU measurements: {7 * 2 * len(test_cases)}")
-    print(f"Expected NPU measurements: {7 * 1 * len(test_cases)}")
-    print(f"Total measurements: {7 * 3 * len(test_cases)}")
+    print(f"Node sizes: {sorted(set(c['nodes'] for c in test_cases))}")
     print()
-    print("Execution order:")
-    print("  Phase 1: CPU/GPU (export → measure → save checkpoint)")
-    print("  Phase 2: NPU (export → measure → merge results)")
+    print("Workflow:")
+    print("  1. python profile_stages.py --export          # Export all models")
+    print("  2. python profile_stages.py --measure         # Measure CPU/GPU")
+    print("  3. run_profiling.bat                          # Run NPU tests (isolated)")
+    print("  4. python profile_stages.py --merge-npu       # Merge NPU results")
+    print("  5. python profile_stages.py --analyze         # Generate final report")
     print()
 
     # ========================================================================
-    # PHASE 1: CPU/GPU (Dynamic Models)
+    # Handle --export-cpugpu (CPU/GPU dynamic models only)
     # ========================================================================
-
-    if args.all or args.export or args.measure:
+    if args.export_cpugpu:
         print("\n" + "=" * 70)
-        print("PHASE 1: CPU/GPU Processing")
+        print("Exporting CPU/GPU Dynamic Models Only")
+        print("=" * 70)
+        export_dynamic_models()
+        print("\n✓ CPU/GPU dynamic models exported!")
+        return
+
+    # ========================================================================
+    # Handle --export-npu (NPU static models only)
+    # ========================================================================
+    if args.export_npu:
+        print("\n" + "=" * 70)
+        print("Exporting NPU Static Models Only")
+        print("=" * 70)
+        export_npu_static_models(test_cases)
+        print("\n✓ NPU static models exported!")
+        return
+
+    # ========================================================================
+    # Handle --merge-npu (Merge NPU checkpoint files)
+    # ========================================================================
+    if args.merge_npu:
+        npu_results = merge_npu_checkpoints()
+        if npu_results:
+            print(f"\n✓ NPU results merged into checkpoint_npu.json")
+            print(f"  Total successful measurements: {len(npu_results)}")
+        return
+
+    # ========================================================================
+    # Handle --export (Export all models)
+    # ========================================================================
+    if args.export or args.all:
+        print("\n" + "=" * 70)
+        print("PHASE 1: Exporting All Models")
         print("=" * 70)
 
-        # Check if CPU/GPU checkpoint exists (skip if already done)
-        cpugpu_checkpoint = load_checkpoint('cpugpu')
+        print("\n[1/2] Exporting CPU/GPU dynamic models...")
+        export_dynamic_models()
 
-        if cpugpu_checkpoint is not None and not (args.export or args.measure):
-            print("✓ CPU/GPU data already exists, skipping to Phase 2")
-            cpugpu_results = cpugpu_checkpoint
-        else:
-            # Step 1.1: Export CPU/GPU dynamic models
-            if args.all or args.export:
-                print("\n[Step 1/6] Exporting CPU/GPU dynamic models...")
-                export_dynamic_models()
+        print("\n[2/2] Exporting NPU static models...")
+        export_npu_static_models(test_cases)
 
-            # Step 1.2: Measure CPU/GPU latencies
-            if args.all or args.measure:
-                print("\n[Step 2/6] Measuring CPU/GPU latencies...")
-                cpugpu_results = measure_all_latencies(test_cases, config, pu_list=['CPU', 'GPU'])
+        print("\n✓ All models exported!")
 
-                # Step 1.3: Save CPU/GPU checkpoint
-                print("\n[Step 3/6] Saving CPU/GPU checkpoint...")
-                save_checkpoint(cpugpu_results, 'cpugpu')
-
-                print("\n✓ Phase 1 completed! CPU/GPU data saved.")
-                print("  If NPU fails later, you still have CPU/GPU results.")
+        if args.export and not args.all:
+            return
 
     # ========================================================================
-    # PHASE 2: NPU (Static Models)
+    # Handle --measure (Measure CPU/GPU only - NPU via profile_npu.py)
     # ========================================================================
-
-    if args.all or args.export or args.measure:
+    if args.measure or args.all:
         print("\n" + "=" * 70)
-        print("PHASE 2: NPU Processing")
+        print("PHASE 2: Measuring CPU/GPU Latencies")
         print("=" * 70)
+        print("Note: NPU measurements should be done via profile_npu.py for isolation")
 
-        # Check if NPU checkpoint exists
-        npu_checkpoint = load_checkpoint('npu')
+        cpugpu_results = measure_all_latencies(test_cases, config, pu_list=['CPU', 'GPU'])
+        save_checkpoint(cpugpu_results, 'cpugpu')
 
-        if npu_checkpoint is not None and not (args.export or args.measure):
-            print("✓ NPU data already exists, merging with CPU/GPU")
-            npu_results = npu_checkpoint
-        else:
-            # Step 2.1: Export NPU static models
-            if args.all or args.export:
-                print("\n[Step 4/6] Exporting NPU static models...")
-                export_npu_static_models(test_cases)
+        print("\n✓ CPU/GPU measurements completed and saved!")
+        print(f"  Total: {len(cpugpu_results)} entries")
+        print("\nNext steps:")
+        print("  1. Run NPU tests: run_profiling.bat (or manually via profile_npu.py)")
+        print("  2. Merge NPU results: python profile_stages.py --merge-npu")
+        print("  3. Generate report: python profile_stages.py --analyze")
 
-            # Step 2.2: Measure NPU latencies
-            if args.all or args.measure:
-                print("\n[Step 5/6] Measuring NPU latencies...")
-                npu_results = measure_all_latencies(test_cases, config, pu_list=['NPU'])
-
-                # Step 2.3: Save NPU checkpoint
-                print("\n[Step 6/6] Saving NPU checkpoint...")
-                save_checkpoint(npu_results, 'npu')
-
-                print("\n✓ Phase 2 completed! NPU data saved.")
+        if args.measure and not args.all:
+            return
 
     # ========================================================================
-    # PHASE 3: Merge and Analyze
+    # Handle --analyze (Generate final results)
     # ========================================================================
-
-    if args.all or args.analyze:
+    if args.analyze or args.all:
         print("\n" + "=" * 70)
-        print("PHASE 3: Merging and Analyzing")
+        print("PHASE 3: Analyzing Results")
         print("=" * 70)
 
         # Load all checkpoints
@@ -877,7 +933,8 @@ def main():
         npu_data = load_checkpoint('npu')
 
         if cpugpu_data is None:
-            print("⚠ CPU/GPU checkpoint not found. Run with --all or --measure first.")
+            print("ERROR: CPU/GPU checkpoint not found.")
+            print("  Run: python profile_stages.py --measure")
             return
 
         # Merge results
@@ -886,7 +943,9 @@ def main():
             all_results.update(npu_data)
             print(f"✓ Merged: {len(cpugpu_data)} CPU/GPU + {len(npu_data)} NPU = {len(all_results)} total")
         else:
-            print(f"⚠ NPU data not found, using CPU/GPU only ({len(all_results)} entries)")
+            print(f"WARNING: NPU data not found, using CPU/GPU only ({len(all_results)} entries)")
+            print("  Run NPU tests: run_profiling.bat")
+            print("  Then merge: python profile_stages.py --merge-npu")
 
         # Estimate bandwidth and compute time
         bandwidth_table, lookup_table = estimate_bandwidth_and_compute_time(
@@ -897,17 +956,21 @@ def main():
         save_results(all_results, lookup_table, bandwidth_table)
         generate_report(lookup_table, bandwidth_table, test_cases)
 
-    print("\n" + "=" * 70)
-    print("✓ Profiling completed successfully!")
-    print("=" * 70)
-    print(f"\nResults saved in: {RESULTS_DIR}")
-    print(f"  - lookup_table.json      (计算时间)")
-    print(f"  - bandwidth_table.json   (PU间带宽)")
-    print(f"  - profiling_report.txt   (统计报告)")
-    print(f"\nCheckpoints:")
-    print(f"  - checkpoint_cpugpu.json (CPU/GPU数据)")
-    print(f"  - checkpoint_npu.json    (NPU数据)")
-    print(f"\n💡 即使NPU失败，您仍然有CPU/GPU的完整数据可用！")
+    # Final summary (only if something was done)
+    if args.all or args.export or args.measure or args.analyze or args.merge_npu:
+        print("\n" + "=" * 70)
+        print("Profiling Session Complete")
+        print("=" * 70)
+        print(f"\nResults in: {RESULTS_DIR}")
+        print(f"  - lookup_table.json      (compute times)")
+        print(f"  - bandwidth_table.json   (bandwidth estimates)")
+        print(f"  - profiling_report.txt   (summary report)")
+        print(f"\nCheckpoints:")
+        print(f"  - checkpoint_cpugpu.json (CPU/GPU data)")
+        print(f"  - checkpoint_npu.json    (NPU data)")
+    else:
+        # No flags provided, show help
+        parser.print_help()
 
 if __name__ == '__main__':
     main()
