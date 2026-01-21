@@ -1,0 +1,295 @@
+import os
+import time
+import torch
+import torch.nn.functional as F
+from torch_geometric.nn import SAGEConv
+from torch_geometric.datasets import Flickr
+from torch_geometric.loader import NeighborLoader
+from torch_geometric.nn import MessagePassing
+from torch_scatter import scatter_add
+from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import Adj, Size, SparseTensor
+
+# Optional imports for ONNX export and OpenVINO
+try:
+    import torch.onnx
+    import pandas as pd
+    import subprocess
+    from openvino.runtime import Core
+    from openvino.runtime import Tensor
+    OPENVINO_AVAILABLE = True
+except ImportError:
+    OPENVINO_AVAILABLE = False
+
+# Define the SAGE model
+class sage_full_10(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels, num_layers=2):
+        super().__init__()
+        self.num_layers = num_layers
+        self.convs = torch.nn.ModuleList()
+        feature_sizes = [in_channels] + [hidden_channels] * (num_layers)
+        self.feature_sizes = feature_sizes
+        for idx in range(num_layers):
+            self.convs.append(SAGEConv(feature_sizes[idx], feature_sizes[idx + 1]))
+
+    def forward(self, x, edge_index):
+        for i in range(10):
+            for conv in self.convs:
+                x = conv(x, edge_index)
+                x = x.relu()
+        return x
+    
+class sage_propagate_10(MessagePassing):
+    def __init__(self, in_channels, out_channels, aggr="mean"):
+        super().__init__(aggr=aggr)
+
+    def forward(self, x: torch.Tensor, edge_index: Adj, size: Size = None) -> torch.Tensor:
+        return self.propagate(edge_index, x=x, size=size)
+
+    def message(self, x_j: torch.Tensor) -> torch.Tensor:
+        return x_j
+
+    def message_and_aggregate(self, adj_t: Adj, x: torch.Tensor) -> torch.Tensor:
+        return spmm(adj_t, x, reduce=self.aggr)
+
+class sage_linear_10(torch.nn.Module):
+    def __init__(self, in_channels: int, out_channels: int, bias_l=True, bias_r=False):
+        super().__init__()
+        self.lin_l = Linear(in_channels, out_channels, bias=bias_l)  # For neighbor features
+        self.lin_r = Linear(in_channels, out_channels, bias=bias_r)  # For root node features
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        self.lin_l.reset_parameters()
+        self.lin_r.reset_parameters()
+
+    def forward(self, message: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
+        for i in range(10):
+            # Apply linear transformation to aggregated neighbor features
+            out = self.lin_l(message)
+
+            # # Add the transformed root node (self-node) features
+            out += self.lin_r(x)
+
+        return out
+
+
+# ====================================================================
+# 7-Stage Decomposition of GraphSAGE
+# ====================================================================
+
+class SAGEStage1_Gather(torch.nn.Module):
+    """
+    Stage 1: GATHER - Neighbor feature gathering
+    Input: x [num_nodes, feat_dim], edge_index [2, num_edges]
+    Output: x_j [num_edges, feat_dim] - features of source nodes for each edge
+    """
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor:
+        # Extract source node features for each edge
+        # edge_index[0] contains source node indices
+        return x[edge_index[0]]
+
+
+class SAGEStage2_Message(torch.nn.Module):
+    """
+    Stage 2: MESSAGE - Message computation (identity for basic SAGE)
+    Input: x_j [num_edges, feat_dim]
+    Output: messages [num_edges, feat_dim]
+    """
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x_j: torch.Tensor) -> torch.Tensor:
+        # For basic GraphSAGE, message function is identity
+        return x_j
+
+
+class SAGEStage3_ReduceSum(torch.nn.Module):
+    """
+    Stage 3: REDUCE_SUM - Sum aggregation
+    Input: messages [num_edges, feat_dim], edge_index [2, num_edges], num_nodes
+    Output: sum_agg [num_nodes, feat_dim]
+
+    Note: num_nodes_static parameter added for NPU compatibility.
+    When exporting for NPU, set num_nodes_static in __init__ to avoid dynamic shapes.
+    """
+    def __init__(self, num_nodes_static=None):
+        super().__init__()
+        self.num_nodes_static = num_nodes_static  # For NPU static compilation
+
+    def forward(self, messages: torch.Tensor, edge_index: torch.Tensor, num_nodes: int = None) -> torch.Tensor:
+        # Use static num_nodes if provided (NPU mode), otherwise use forward parameter
+        actual_num_nodes = self.num_nodes_static if self.num_nodes_static is not None else num_nodes
+
+        # Initialize output tensor
+        out = torch.zeros(actual_num_nodes, messages.size(1), dtype=messages.dtype, device=messages.device)
+
+        # Aggregate messages to target nodes using index_add_
+        # edge_index[1] contains target node indices
+        target_nodes = edge_index[1]
+        out.index_add_(0, target_nodes, messages)
+
+        return out
+
+
+class SAGEStage4_ReduceCount(torch.nn.Module):
+    """
+    Stage 4: REDUCE_COUNT - Count neighbors
+    Input: edge_index [2, num_edges], num_nodes
+    Output: count [num_nodes]
+    """
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, edge_index: torch.Tensor, num_nodes: int, num_edges: int) -> torch.Tensor:
+        # Count number of neighbors for each node
+        target_nodes = edge_index[1]
+        ones = torch.ones(num_edges, dtype=torch.float32, device=edge_index.device)
+        count = torch.zeros(num_nodes, dtype=torch.float32, device=edge_index.device)
+        count = scatter_add(ones, target_nodes, dim=0, out=count)
+        return count
+
+
+class SAGEStage5_Normalize(torch.nn.Module):
+    """
+    Stage 5: NORMALIZE - Compute mean by dividing sum by count
+    Input: sum_agg [num_nodes, feat_dim], count [num_nodes]
+    Output: mean_agg [num_nodes, feat_dim]
+    """
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, sum_agg: torch.Tensor, count: torch.Tensor) -> torch.Tensor:
+        # Avoid division by zero for isolated nodes
+        count = torch.clamp(count, min=1)
+        # Normalize: divide sum by count
+        mean_agg = sum_agg / count.unsqueeze(-1)
+        return mean_agg
+
+
+class SAGEStage6_Transform(torch.nn.Module):
+    """
+    Stage 6: TRANSFORM - Linear transformations
+    Input: mean_agg [num_nodes, in_dim], x [num_nodes, in_dim]
+    Output: out [num_nodes, out_dim]
+    Combines: lin_l(mean_agg) + lin_r(x)
+    """
+    def __init__(self, in_channels: int, out_channels: int, bias_l=True, bias_r=False):
+        super().__init__()
+        self.lin_l = Linear(in_channels, out_channels, bias=bias_l)  # For neighbor features
+        self.lin_r = Linear(in_channels, out_channels, bias=bias_r)  # For root node features
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        self.lin_l.reset_parameters()
+        self.lin_r.reset_parameters()
+
+    def forward(self, mean_agg: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
+        # Transform aggregated neighbor features
+        out = self.lin_l(mean_agg)
+        # Add transformed self-node features
+        out = out + self.lin_r(x)
+        return out
+
+
+class SAGEStage7_Activate(torch.nn.Module):
+    """
+    Stage 7: ACTIVATE - ReLU activation
+    Input: out [num_nodes, out_dim]
+    Output: activated [num_nodes, out_dim]
+    """
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return F.relu(x)
+
+
+# ====================================================================
+# Fused Blocks for PEP3 Profiling
+# ====================================================================
+
+class FusedBlock0(torch.nn.Module):
+    """
+    Fused Block 0: GATHER + REDUCE (Aggregation phase of GraphSAGE)
+    For CPU/GPU execution in PEP3.
+
+    This fuses the aggregation phase:
+      - GATHER: Collect neighbor features via edge_index
+      - REDUCE_SUM: Sum neighbor features to target nodes
+      - REDUCE_COUNT: Count neighbors for mean calculation
+
+    Note: Stage 2 (MESSAGE) is identity in basic GraphSAGE, so it's omitted.
+          See PyG SAGEConv.message(): return x_j
+
+    Input: x [num_nodes, feat_dim], edge_index [2, num_edges]
+    Output: sum_agg [num_nodes, feat_dim], count [num_nodes]
+
+    Note: Uses scatter_add which is NOT supported on NPU.
+    """
+    def __init__(self, num_nodes_static=None):
+        super().__init__()
+        self.num_nodes_static = num_nodes_static
+
+    def forward(self, x: torch.Tensor, edge_index: torch.Tensor) -> tuple:
+        num_nodes = self.num_nodes_static if self.num_nodes_static else x.size(0)
+        num_edges = edge_index.size(1)
+
+        # GATHER: Get source (neighbor) node features for each edge
+        # In PyG: x_j = x[edge_index[0]]
+        x_j = x[edge_index[0]]
+
+        # (MESSAGE is identity for basic GraphSAGE - omitted)
+
+        # REDUCE_SUM: Aggregate neighbor features to target nodes
+        target_nodes = edge_index[1]
+        sum_agg = torch.zeros(num_nodes, x_j.size(1), dtype=x_j.dtype, device=x_j.device)
+        sum_agg.index_add_(0, target_nodes, x_j)
+
+        # REDUCE_COUNT: Count number of neighbors for each node
+        ones = torch.ones(num_edges, dtype=torch.float32, device=edge_index.device)
+        count = torch.zeros(num_nodes, dtype=torch.float32, device=edge_index.device)
+        count = scatter_add(ones, target_nodes, dim=0, out=count)
+
+        return sum_agg, count
+
+
+class FusedBlock1(torch.nn.Module):
+    """
+    Fused Block 1: NORMALIZE + TRANSFORM + ACTIVATE (Update phase of GraphSAGE)
+    For NPU execution in PEP3.
+
+    This fuses the update phase:
+      - NORMALIZE: Compute mean aggregation (sum_agg / count)
+      - TRANSFORM: Linear combination of neighbor and self features
+                   out = lin_l(mean_agg) + lin_r(x)
+                   (equivalent to PyG SAGEConv: lin_l(out) + lin_r(x))
+      - ACTIVATE: ReLU activation
+
+    Input: sum_agg [num_nodes, feat_dim], count [num_nodes], x [num_nodes, feat_dim]
+    Output: activated [num_nodes, out_dim]
+
+    Note: All operations are NPU-compatible (no scatter operations).
+    """
+    def __init__(self, in_channels: int, out_channels: int, bias_l=True, bias_r=False):
+        super().__init__()
+        # Linear layers matching PyG SAGEConv
+        self.lin_l = torch.nn.Linear(in_channels, out_channels, bias=bias_l)  # For aggregated neighbors
+        self.lin_r = torch.nn.Linear(in_channels, out_channels, bias=bias_r)  # For self (root) node
+
+    def forward(self, sum_agg: torch.Tensor, count: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
+        # NORMALIZE: Compute mean aggregation (sum / count)
+        count_clamped = torch.clamp(count, min=1.0)
+        mean_agg = sum_agg / count_clamped.unsqueeze(-1)
+
+        # TRANSFORM: Linear combination (matches PyG SAGEConv)
+        # out = lin_l(aggregated_neighbors) + lin_r(self_features)
+        out = self.lin_l(mean_agg) + self.lin_r(x)
+
+        # ACTIVATE: ReLU
+        activated = F.relu(out)
+
+        return activated
