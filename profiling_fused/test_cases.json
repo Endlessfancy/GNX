@@ -4,8 +4,8 @@
     "node_sizes": [5000, 10000, 20000, 50000, 80000, 100000],
     "edge_ratios": [10, 25, 40, 50, 60, 75, 100],
     "feature_dim": 500,
-    "num_warmup": 10,
-    "num_iterations": 50
+    "num_warmup": 3,
+    "num_iterations": 10
   },
   "test_cases": [
     {"nodes": 5000, "edges": 50000, "ratio": 10, "scenario": "Flickr sparse"},
