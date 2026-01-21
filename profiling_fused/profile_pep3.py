@@ -301,6 +301,43 @@ def measure_block0(test_cases, config):
     return results
 
 
+def measure_block0_gpu(test_cases, config):
+    """Measure Block 0: GPU only for FusedBlock0 (stages 1-4)"""
+    print("\n" + "=" * 70)
+    print("Measuring Block 0: GPU Only (FusedBlock0: Stages 1-4)")
+    print("=" * 70)
+
+    num_warmup = config['config']['num_warmup']
+    num_iterations = config['config']['num_iterations']
+    results = {}
+
+    device = 'GPU'
+    print(f"\n--- {device} ---")
+    ir_path = MODELS_DIR / f"block0_fused_{device.lower()}.xml"
+
+    if not ir_path.exists():
+        print(f"IR not found: {ir_path}")
+        return results
+
+    for case in test_cases:
+        nodes, edges = case['nodes'], case['edges']
+        print(f"  [{nodes}n, {edges}e]... ", end='', flush=True)
+
+        dummy_input = generate_block0_input(nodes, edges)
+        result = measure_latency_openvino(ir_path, device, dummy_input,
+                                          num_warmup, num_iterations)
+
+        key = f"{nodes},{edges},{device},block0"
+        results[key] = result
+
+        if result['failed']:
+            print(f"FAILED: {result.get('error', '')[:50]}")
+        else:
+            print(f"{result['mean']:.2f}ms")
+
+    return results
+
+
 def measure_block1_npu(test_cases, config):
     """Measure Block 1: NPU for FusedBlock1 (stages 5-7) with incremental saving"""
     print("\n" + "=" * 70)
@@ -496,6 +533,7 @@ def main():
     parser.add_argument('--export-npu', action='store_true', help='Export NPU models only')
     parser.add_argument('--measure', action='store_true', help='Measure all latencies')
     parser.add_argument('--measure-cpugpu', action='store_true', help='Measure CPU/GPU only')
+    parser.add_argument('--measure-gpu', action='store_true', help='Measure GPU only (skip CPU)')
     parser.add_argument('--measure-npu', action='store_true', help='Measure NPU only')
     parser.add_argument('--analyze', action='store_true', help='Generate summary from existing results')
     parser.add_argument('--all', action='store_true', help='Full workflow')
@@ -531,6 +569,10 @@ def main():
         block0_results = measure_block0(test_cases, config)
         save_results(block0_results, 'block0_cpugpu.json')
 
+    if args.measure_gpu:
+        block0_results = measure_block0_gpu(test_cases, config)
+        save_results(block0_results, 'block0_gpu.json')
+
     if args.measure or args.measure_npu or args.all:
         block1_results = measure_block1_npu(test_cases, config)
         # Already saved incrementally, but save final version
@@ -558,7 +600,7 @@ def main():
             generate_summary(block0_results, block1_results, test_cases)
 
     if not any([args.export, args.export_cpugpu, args.export_npu,
-                args.measure, args.measure_cpugpu, args.measure_npu,
+                args.measure, args.measure_cpugpu, args.measure_gpu, args.measure_npu,
                 args.analyze, args.all]):
         parser.print_help()
 
