@@ -1,0 +1,167 @@
+#!/usr/bin/env python3
+"""
+NPU Isolated Testing - Test one node size at a time
+
+This script tests NPU FusedBlock1 for a SINGLE node size with all its edge ratios.
+Run this in a subprocess to isolate NPU failures.
+
+Usage:
+    python profile_npu_isolated.py --nodes 5000
+    python profile_npu_isolated.py --nodes 50000
+"""
+
+import argparse
+import json
+import sys
+import time
+from pathlib import Path
+import numpy as np
+
+import torch
+
+SCRIPT_DIR = Path(__file__).parent
+MODELS_DIR = SCRIPT_DIR / 'exported_models'
+RESULTS_DIR = SCRIPT_DIR / 'results'
+TEST_CASES_FILE = SCRIPT_DIR / 'test_cases.json'
+FEATURE_DIM = 500
+
+
+def load_config():
+    with open(TEST_CASES_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+
+def generate_block1_input(num_nodes, num_edges, feature_dim=FEATURE_DIM):
+    torch.manual_seed(42)
+    sum_agg = torch.randn(num_nodes, feature_dim)
+    count = torch.rand(num_nodes) * 10 + 1.0
+    x = torch.randn(num_nodes, feature_dim)
+    return (sum_agg, count, x)
+
+
+def measure_latency_openvino(ir_path, device, dummy_input, num_warmup=10, num_iterations=50):
+    try:
+        import openvino.runtime as ov
+
+        core = ov.Core()
+        model = core.read_model(str(ir_path))
+        compiled_model = core.compile_model(model, device)
+
+        if isinstance(dummy_input, tuple):
+            inputs = [t.numpy() if isinstance(t, torch.Tensor) else np.array(t)
+                     for t in dummy_input]
+        else:
+            inputs = [dummy_input.numpy()]
+
+        # Warmup
+        for _ in range(num_warmup):
+            _ = compiled_model(inputs)
+
+        # Measure
+        latencies = []
+        for _ in range(num_iterations):
+            start = time.perf_counter()
+            _ = compiled_model(inputs)
+            latencies.append((time.perf_counter() - start) * 1000)
+
+        return {
+            'mean': float(np.mean(latencies)),
+            'std': float(np.std(latencies)),
+            'min': float(np.min(latencies)),
+            'max': float(np.max(latencies)),
+            'failed': False
+        }
+
+    except Exception as e:
+        return {
+            'mean': -1, 'std': -1, 'min': -1, 'max': -1,
+            'failed': True, 'error': str(e)
+        }
+
+
+def test_single_node_size(target_nodes: int):
+    """Test all edge ratios for a single node size"""
+    config = load_config()
+    test_cases = config['test_cases']
+    num_warmup = config['config']['num_warmup']
+    num_iterations = config['config']['num_iterations']
+
+    # Filter test cases for this node size
+    cases_for_node = [c for c in test_cases if c['nodes'] == target_nodes]
+
+    if not cases_for_node:
+        print(f"No test cases found for nodes={target_nodes}")
+        return {}
+
+    print(f"=" * 60)
+    print(f"NPU Testing: {target_nodes} nodes ({len(cases_for_node)} edge ratios)")
+    print(f"=" * 60)
+
+    results = {}
+    success_count = 0
+    fail_count = 0
+
+    for case in cases_for_node:
+        nodes, edges = case['nodes'], case['edges']
+        ratio = case.get('ratio', edges // nodes)
+        key = f"{nodes},{edges},NPU,block1"
+
+        ir_path = MODELS_DIR / f"block1_fused_npu_n{nodes}_e{edges}.xml"
+
+        if not ir_path.exists():
+            print(f"  ratio={ratio:>3} ({edges:>8} edges): IR not found")
+            results[key] = {'failed': True, 'error': 'IR not found'}
+            fail_count += 1
+            continue
+
+        print(f"  ratio={ratio:>3} ({edges:>8} edges)... ", end='', flush=True)
+
+        dummy_input = generate_block1_input(nodes, edges)
+        result = measure_latency_openvino(ir_path, 'NPU', dummy_input,
+                                          num_warmup, num_iterations)
+
+        results[key] = result
+
+        if result['failed']:
+            print(f"FAILED: {result.get('error', '')[:40]}")
+            fail_count += 1
+            # Don't break - try to continue with remaining ratios
+            # But likely all subsequent will fail too
+        else:
+            print(f"{result['mean']:.2f}ms")
+            success_count += 1
+
+    print(f"\nNode {target_nodes}: {success_count} success, {fail_count} failed")
+    return results
+
+
+def main():
+    parser = argparse.ArgumentParser(description='NPU Isolated Testing')
+    parser.add_argument('--nodes', type=int, required=True,
+                       help='Node size to test (e.g., 5000, 10000, 50000)')
+
+    args = parser.parse_args()
+
+    results = test_single_node_size(args.nodes)
+
+    # Save results for this node size
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    output_file = RESULTS_DIR / f'npu_n{args.nodes}.json'
+
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(results, f, indent=2)
+
+    print(f"\nResults saved to: {output_file}")
+
+    # Return exit code based on results
+    failed_count = sum(1 for r in results.values() if r.get('failed', False))
+    if failed_count == len(results):
+        sys.exit(2)  # All failed
+    elif failed_count > 0:
+        sys.exit(1)  # Some failed
+    else:
+        sys.exit(0)  # All success
+
+
+if __name__ == '__main__':
+    main()

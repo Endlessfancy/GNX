@@ -1,27 +1,24 @@
 @echo off
 REM ========================================================================
-REM PEP3 NPU Only Profiling - Fused Block 1
+REM PEP3 NPU Only Profiling - Process Isolation Mode
 REM ========================================================================
 REM
-REM This script tests FUSED Block 1 (Stages 5-7) on NPU
+REM This script tests FUSED Block 1 (Stages 5-7) on NPU with PROCESS ISOLATION
 REM   - FusedBlock1: NORMALIZE + TRANSFORM + ACTIVATE
 REM
-REM Run this AFTER CPU/GPU tests are complete and saved.
-REM
-REM WARNING: NPU may fail at large sizes. This script will:
-REM   - Save results incrementally (every 5 tests)
-REM   - Continue even if some tests fail
-REM   - Support resume from previous runs
+REM IMPORTANT: Each node size runs in a SEPARATE Python process!
+REM   - If NPU crashes at 50k nodes, 80k/100k tests can still run
+REM   - This helps find the NPU memory boundary
 REM
 REM Test Configuration:
-REM   - Node sizes: 5k, 10k, 20k, 50k, 80k, 100k
-REM   - Edge ratios: 10, 25, 40, 50, 60, 75, 100
+REM   - Node sizes: 5k, 10k, 20k, 50k, 80k, 100k (6 groups)
+REM   - Edge ratios: 10, 25, 40, 50, 60, 75, 100 (7 per group)
 REM   - Total: 42 static NPU models
 
 setlocal EnableDelayedExpansion
 
 echo ========================================================================
-echo PEP3 NPU Profiling - Fused Block 1 (Stages 5-7)
+echo PEP3 NPU Profiling - Fused Block 1 (Process Isolation Mode)
 echo ========================================================================
 echo.
 
@@ -32,20 +29,18 @@ CALL "C:\Env\Anaconda\Scripts\activate.bat" MIX
 echo.
 echo Fused Block 1: NORMALIZE + TRANSFORM + ACTIVATE
 echo.
-echo WARNING: NPU tests may fail at large data sizes
-echo Results will be saved incrementally to prevent data loss.
-echo Supports resume from previous runs (skips successful tests).
+echo PROCESS ISOLATION: Each node size runs in a separate Python process
+echo   - If NPU crashes at one size, next size starts fresh
+echo   - Helps find NPU memory boundaries
 echo.
-echo Test Configuration:
-echo   Node sizes: 5k, 10k, 20k, 50k, 80k, 100k
-echo   Edge ratios: 10, 25, 40, 50, 60, 75, 100
-echo   Total: 42 static NPU models
+echo Node sizes: 5k, 10k, 20k, 50k, 80k, 100k (6 groups)
+echo Edge ratios: 10, 25, 40, 50, 60, 75, 100 (7 per group)
 echo.
 
-REM Check if any NPU models exist (check smallest size first)
+REM Check if NPU models exist
 if not exist "exported_models\block1_fused_npu_n5000_e50000.xml" (
     echo NPU fused models not found! Exporting...
-    echo This will create 42 static models (may take 5-10 minutes)
+    echo This will create 42 static models...
     echo.
     python profile_pep3.py --export-npu
     if errorlevel 1 (
@@ -55,40 +50,111 @@ if not exist "exported_models\block1_fused_npu_n5000_e50000.xml" (
     )
 )
 
-REM Measure NPU only
+REM Create results directory
+if not exist "results" mkdir results
+
 echo.
-echo Starting NPU measurement...
-echo Estimated time: ~2-4 hours
-echo Results are saved every 5 tests - safe to interrupt if needed.
+echo Starting NPU measurements with process isolation...
 echo.
 
-python profile_pep3.py --measure-npu
+REM Test each node size in a separate process
+set "ALL_SUCCESS=1"
 
-if errorlevel 1 (
-    echo.
-    echo ========================================================================
-    echo WARNING: NPU measurement encountered errors
-    echo ========================================================================
-    echo.
-    echo Some NPU tests may have failed (likely at larger sizes).
-    echo Partial results have been saved to: profiling_fused\results\block1_npu.json
-    echo.
-    echo You can re-run this script to retry failed tests.
-    echo.
+echo [1/6] Testing 5000 nodes...
+python profile_npu_isolated.py --nodes 5000
+if errorlevel 2 (
+    echo   ^> All tests FAILED for 5k nodes
+    set "ALL_SUCCESS=0"
+) else if errorlevel 1 (
+    echo   ^> Some tests failed for 5k nodes
+    set "ALL_SUCCESS=0"
 ) else (
-    echo.
-    echo ========================================================================
-    echo NPU Profiling Complete!
-    echo ========================================================================
-    echo.
-    echo Results saved to: profiling_fused\results\block1_npu.json
-    echo.
+    echo   ^> All tests PASSED for 5k nodes
 )
+echo.
 
+echo [2/6] Testing 10000 nodes...
+python profile_npu_isolated.py --nodes 10000
+if errorlevel 2 (
+    echo   ^> All tests FAILED for 10k nodes
+    set "ALL_SUCCESS=0"
+) else if errorlevel 1 (
+    echo   ^> Some tests failed for 10k nodes
+    set "ALL_SUCCESS=0"
+) else (
+    echo   ^> All tests PASSED for 10k nodes
+)
+echo.
+
+echo [3/6] Testing 20000 nodes...
+python profile_npu_isolated.py --nodes 20000
+if errorlevel 2 (
+    echo   ^> All tests FAILED for 20k nodes
+    set "ALL_SUCCESS=0"
+) else if errorlevel 1 (
+    echo   ^> Some tests failed for 20k nodes
+    set "ALL_SUCCESS=0"
+) else (
+    echo   ^> All tests PASSED for 20k nodes
+)
+echo.
+
+echo [4/6] Testing 50000 nodes...
+python profile_npu_isolated.py --nodes 50000
+if errorlevel 2 (
+    echo   ^> All tests FAILED for 50k nodes
+    set "ALL_SUCCESS=0"
+) else if errorlevel 1 (
+    echo   ^> Some tests failed for 50k nodes
+    set "ALL_SUCCESS=0"
+) else (
+    echo   ^> All tests PASSED for 50k nodes
+)
+echo.
+
+echo [5/6] Testing 80000 nodes...
+python profile_npu_isolated.py --nodes 80000
+if errorlevel 2 (
+    echo   ^> All tests FAILED for 80k nodes
+    set "ALL_SUCCESS=0"
+) else if errorlevel 1 (
+    echo   ^> Some tests failed for 80k nodes
+    set "ALL_SUCCESS=0"
+) else (
+    echo   ^> All tests PASSED for 80k nodes
+)
+echo.
+
+echo [6/6] Testing 100000 nodes...
+python profile_npu_isolated.py --nodes 100000
+if errorlevel 2 (
+    echo   ^> All tests FAILED for 100k nodes
+    set "ALL_SUCCESS=0"
+) else if errorlevel 1 (
+    echo   ^> Some tests failed for 100k nodes
+    set "ALL_SUCCESS=0"
+) else (
+    echo   ^> All tests PASSED for 100k nodes
+)
+echo.
+
+REM Merge all results
+echo ========================================================================
+echo Merging results from all node sizes...
+echo ========================================================================
+python merge_npu_results.py
+
+echo.
+echo ========================================================================
+echo NPU Profiling Complete!
+echo ========================================================================
+echo.
+echo Individual results: results\npu_n*.json
+echo Merged results: results\block1_npu.json
 echo.
 echo Next steps:
 echo   1. Run analysis: python profile_pep3.py --analyze
-echo   2. Check results: profiling_fused\results\pep3_latency.csv
+echo   2. Check CSV: results\pep3_latency.csv
 echo.
 
 pause
