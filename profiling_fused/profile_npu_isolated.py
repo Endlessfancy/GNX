@@ -2,8 +2,11 @@
 """
 NPU Isolated Testing - Test one node size at a time
 
-This script tests NPU FusedBlock1 for a SINGLE node size with all its edge ratios.
+This script tests NPU FusedBlock1 for a SINGLE node size.
 Run this in a subprocess to isolate NPU failures.
+
+Note: Block 1 (stages 5-7) computation is edge-independent.
+      We only need one test per node size.
 
 Usage:
     python profile_npu_isolated.py --nodes 5000
@@ -31,7 +34,8 @@ def load_config():
         return json.load(f)
 
 
-def generate_block1_input(num_nodes, num_edges, feature_dim=FEATURE_DIM):
+def generate_block1_input(num_nodes, feature_dim=FEATURE_DIM):
+    """Generate input for FusedBlock1 (edge-independent)"""
     torch.manual_seed(42)
     sum_agg = torch.randn(num_nodes, feature_dim)
     count = torch.rand(num_nodes) * 10 + 1.0
@@ -80,59 +84,34 @@ def measure_latency_openvino(ir_path, device, dummy_input, num_warmup=10, num_it
 
 
 def test_single_node_size(target_nodes: int):
-    """Test all edge ratios for a single node size"""
+    """Test a single node size (Block 1 is edge-independent)"""
     config = load_config()
-    test_cases = config['test_cases']
     num_warmup = config['config']['num_warmup']
     num_iterations = config['config']['num_iterations']
 
-    # Filter test cases for this node size
-    cases_for_node = [c for c in test_cases if c['nodes'] == target_nodes]
-
-    if not cases_for_node:
-        print(f"No test cases found for nodes={target_nodes}")
-        return {}
-
     print(f"=" * 60)
-    print(f"NPU Testing: {target_nodes} nodes ({len(cases_for_node)} edge ratios)")
+    print(f"NPU Testing: {target_nodes} nodes (edge-independent)")
     print(f"=" * 60)
 
-    results = {}
-    success_count = 0
-    fail_count = 0
+    key = f"{target_nodes},NPU,block1"
+    ir_path = MODELS_DIR / f"block1_fused_npu_n{target_nodes}.xml"
 
-    for case in cases_for_node:
-        nodes, edges = case['nodes'], case['edges']
-        ratio = case.get('ratio', edges // nodes)
-        key = f"{nodes},{edges},NPU,block1"
+    if not ir_path.exists():
+        print(f"  IR not found: {ir_path}")
+        return {key: {'failed': True, 'error': 'IR not found'}}
 
-        ir_path = MODELS_DIR / f"block1_fused_npu_n{nodes}_e{edges}.xml"
+    print(f"  Testing... ", end='', flush=True)
 
-        if not ir_path.exists():
-            print(f"  ratio={ratio:>3} ({edges:>8} edges): IR not found")
-            results[key] = {'failed': True, 'error': 'IR not found'}
-            fail_count += 1
-            continue
+    dummy_input = generate_block1_input(target_nodes)
+    result = measure_latency_openvino(ir_path, 'NPU', dummy_input,
+                                      num_warmup, num_iterations)
 
-        print(f"  ratio={ratio:>3} ({edges:>8} edges)... ", end='', flush=True)
+    if result['failed']:
+        print(f"FAILED: {result.get('error', '')[:40]}")
+    else:
+        print(f"{result['mean']:.2f}ms")
 
-        dummy_input = generate_block1_input(nodes, edges)
-        result = measure_latency_openvino(ir_path, 'NPU', dummy_input,
-                                          num_warmup, num_iterations)
-
-        results[key] = result
-
-        if result['failed']:
-            print(f"FAILED: {result.get('error', '')[:40]}")
-            fail_count += 1
-            # Don't break - try to continue with remaining ratios
-            # But likely all subsequent will fail too
-        else:
-            print(f"{result['mean']:.2f}ms")
-            success_count += 1
-
-    print(f"\nNode {target_nodes}: {success_count} success, {fail_count} failed")
-    return results
+    return {key: result}
 
 
 def main():
@@ -154,13 +133,11 @@ def main():
     print(f"\nResults saved to: {output_file}")
 
     # Return exit code based on results
-    failed_count = sum(1 for r in results.values() if r.get('failed', False))
-    if failed_count == len(results):
-        sys.exit(2)  # All failed
-    elif failed_count > 0:
-        sys.exit(1)  # Some failed
+    key = f"{args.nodes},NPU,block1"
+    if results.get(key, {}).get('failed', True):
+        sys.exit(1)  # Failed
     else:
-        sys.exit(0)  # All success
+        sys.exit(0)  # Success
 
 
 if __name__ == '__main__':

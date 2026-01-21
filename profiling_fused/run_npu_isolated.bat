@@ -32,8 +32,8 @@ echo Node sizes to test: 5k, 10k, 20k, 50k, 80k, 100k
 echo Edge ratios per node: 10, 25, 40, 50, 60, 75, 100
 echo.
 
-REM Check if NPU models exist
-if not exist "exported_models\block1_fused_npu_n5000_e50000.xml" (
+REM Check if NPU models exist (new format: no edge in filename)
+if not exist "exported_models\block1_fused_npu_n5000.xml" (
     echo NPU models not found! Please run: python profile_pep3.py --export-npu
     pause
     exit /b 1

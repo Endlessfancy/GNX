@@ -80,7 +80,7 @@ echo.
 REM ========================================================================
 REM Step 2: Export NPU models
 REM ========================================================================
-echo [Step 3/5] Exporting NPU fused models (42 static models)...
+echo [Step 3/5] Exporting NPU fused models (6 static models - edge independent)...
 python profile_pep3.py --export-npu
 if errorlevel 1 (
     echo ERROR: Failed to export NPU models

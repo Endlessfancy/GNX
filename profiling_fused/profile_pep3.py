@@ -79,8 +79,12 @@ def generate_block0_input(num_nodes, num_edges, feature_dim=FEATURE_DIM):
     return (x, edge_index)
 
 
-def generate_block1_input(num_nodes, num_edges, feature_dim=FEATURE_DIM):
-    """Generate input for FusedBlock1 (stages 5-7)"""
+def generate_block1_input(num_nodes, feature_dim=FEATURE_DIM):
+    """Generate input for FusedBlock1 (stages 5-7)
+
+    Note: Block 1 computation only depends on num_nodes, not edges.
+    The edge information is only used in Block 0 (aggregation phase).
+    """
     torch.manual_seed(42)
     sum_agg = torch.randn(num_nodes, feature_dim)
     count = torch.rand(num_nodes) * 10 + 1.0  # Random counts > 1
@@ -147,30 +151,37 @@ def export_cpugpu_models():
 
 
 def export_npu_models(test_cases):
-    """Export NPU static models for FusedBlock1"""
+    """Export NPU static models for FusedBlock1
+
+    Note: Block 1 (stages 5-7) computation only depends on num_nodes.
+    We only need one model per node size, not per node×edge combination.
+    """
     print("\n" + "=" * 70)
     print("Exporting NPU Static Models (FusedBlock1: Stages 5-7)")
     print("=" * 70)
-    print(f"Total: {len(test_cases)} static models (one per test case)")
+
+    # Extract unique node sizes
+    node_sizes = sorted(set(c['nodes'] for c in test_cases))
+    print(f"Total: {len(node_sizes)} static models (one per node size)")
+    print(f"Node sizes: {node_sizes}")
 
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
     success_count = 0
     fail_count = 0
 
-    for idx, case in enumerate(test_cases):
-        nodes, edges = case['nodes'], case['edges']
-        print(f"[{idx+1}/{len(test_cases)}] NPU n{nodes}_e{edges}", end=' ')
+    for idx, nodes in enumerate(node_sizes):
+        print(f"[{idx+1}/{len(node_sizes)}] NPU n{nodes}", end=' ')
 
         # Create model
         model = FusedBlock1(FEATURE_DIM, FEATURE_DIM)
         model.eval()
 
-        # Generate dummy input
-        dummy_input = generate_block1_input(nodes, edges)
+        # Generate dummy input (only depends on nodes, not edges)
+        dummy_input = generate_block1_input(nodes)
 
         # Export ONNX (static shapes - no dynamic_axes)
-        onnx_path = MODELS_DIR / f"block1_fused_npu_n{nodes}_e{edges}.onnx"
+        onnx_path = MODELS_DIR / f"block1_fused_npu_n{nodes}.onnx"
 
         try:
             with torch.no_grad():
@@ -189,7 +200,7 @@ def export_npu_models(test_cases):
             continue
 
         # Convert to NPU IR
-        npu_ir = MODELS_DIR / f"block1_fused_npu_n{nodes}_e{edges}.xml"
+        npu_ir = MODELS_DIR / f"block1_fused_npu_n{nodes}.xml"
         success = convert_to_ir(onnx_path, npu_ir)
 
         if success:
@@ -339,14 +350,21 @@ def measure_block0_gpu(test_cases, config):
 
 
 def measure_block1_npu(test_cases, config):
-    """Measure Block 1: NPU for FusedBlock1 (stages 5-7) with incremental saving"""
+    """Measure Block 1: NPU for FusedBlock1 (stages 5-7)
+
+    Note: Block 1 computation only depends on num_nodes.
+    We only measure once per node size, not per node×edge combination.
+    """
     print("\n" + "=" * 70)
     print("Measuring Block 1: NPU (FusedBlock1: Stages 5-7)")
     print("=" * 70)
-    print("Results will be saved incrementally.")
 
     num_warmup = config['config']['num_warmup']
     num_iterations = config['config']['num_iterations']
+
+    # Extract unique node sizes
+    node_sizes = sorted(set(c['nodes'] for c in test_cases))
+    print(f"Testing {len(node_sizes)} node sizes (Block 1 is edge-independent)")
 
     # Load existing results if any (for resume capability)
     results_file = RESULTS_DIR / 'block1_npu.json'
@@ -363,27 +381,26 @@ def measure_block1_npu(test_cases, config):
     failed_count = 0
     success_count = 0
 
-    for idx, case in enumerate(test_cases):
-        nodes, edges = case['nodes'], case['edges']
-        key = f"{nodes},{edges},NPU,block1"
+    for idx, nodes in enumerate(node_sizes):
+        key = f"{nodes},NPU,block1"
 
         # Skip if already measured successfully
         if key in results and not results[key].get('failed', True):
-            print(f"  [{nodes}n, {edges}e] (cached) {results[key]['mean']:.2f}ms")
+            print(f"  [{nodes}n] (cached) {results[key]['mean']:.2f}ms")
             success_count += 1
             continue
 
-        ir_path = MODELS_DIR / f"block1_fused_npu_n{nodes}_e{edges}.xml"
+        ir_path = MODELS_DIR / f"block1_fused_npu_n{nodes}.xml"
 
         if not ir_path.exists():
-            print(f"  [{nodes}n, {edges}e] IR not found")
+            print(f"  [{nodes}n] IR not found: {ir_path}")
             results[key] = {'failed': True, 'error': 'IR not found'}
             failed_count += 1
             continue
 
-        print(f"  [{nodes}n, {edges}e]... ", end='', flush=True)
+        print(f"  [{nodes}n]... ", end='', flush=True)
 
-        dummy_input = generate_block1_input(nodes, edges)
+        dummy_input = generate_block1_input(nodes)
         result = measure_latency_openvino(ir_path, 'NPU', dummy_input,
                                           num_warmup, num_iterations)
 
@@ -395,12 +412,6 @@ def measure_block1_npu(test_cases, config):
         else:
             print(f"{result['mean']:.2f}ms")
             success_count += 1
-
-        # Save results incrementally (every 5 tests)
-        if (idx + 1) % 5 == 0:
-            RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-            with open(results_file, 'w', encoding='utf-8') as f:
-                json.dump(results, f, indent=2)
 
     # Final save
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -427,7 +438,11 @@ def save_results(results, filename):
 
 
 def generate_csv(block0_results, block1_results, test_cases):
-    """Generate CSV summary for pipeline analysis"""
+    """Generate CSV summary for pipeline analysis
+
+    Note: Block 1 (NPU) results are keyed by node size only, as the
+    computation is independent of edge count.
+    """
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
     csv_lines = []
@@ -439,10 +454,11 @@ def generate_csv(block0_results, block1_results, test_cases):
         ratio = case.get('ratio', edges // nodes)
         scenario = case.get('scenario', '')
 
-        # Block 0 results
+        # Block 0 results (keyed by nodes,edges)
         cpu_key = f"{nodes},{edges},CPU,block0"
         gpu_key = f"{nodes},{edges},GPU,block0"
-        npu_key = f"{nodes},{edges},NPU,block1"
+        # Block 1 NPU results (keyed by nodes only - edge independent)
+        npu_key = f"{nodes},NPU,block1"
 
         cpu_ms = block0_results.get(cpu_key, {}).get('mean', -1) if not block0_results.get(cpu_key, {}).get('failed', True) else -1
         gpu_ms = block0_results.get(gpu_key, {}).get('mean', -1) if not block0_results.get(gpu_key, {}).get('failed', True) else -1
@@ -510,7 +526,8 @@ def generate_summary(block0_results, block1_results, test_cases):
 
         cpu_key = f"{nodes},{edges},CPU,block0"
         gpu_key = f"{nodes},{edges},GPU,block0"
-        npu_key = f"{nodes},{edges},NPU,block1"
+        # NPU key is node-only (edge independent)
+        npu_key = f"{nodes},NPU,block1"
 
         cpu_ms = block0_results.get(cpu_key, {}).get('mean', 0)
         gpu_ms = block0_results.get(gpu_key, {}).get('mean', 0)

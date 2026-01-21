@@ -10,6 +10,9 @@ This script combines results from:
 
 Into:
   results/block1_npu.json
+
+Note: Block 1 (stages 5-7) is edge-independent, so we only have
+      one result per node size (6 total), not per node×edge combination.
 """
 
 import json
@@ -36,14 +39,37 @@ def merge_results():
             with open(result_file, 'r') as f:
                 node_results = json.load(f)
 
-            success = sum(1 for r in node_results.values() if not r.get('failed', True))
-            failed = sum(1 for r in node_results.values() if r.get('failed', True))
+            # New format: key is "{nodes},NPU,block1"
+            key = f"{nodes},NPU,block1"
 
-            print(f"  n{nodes}: {success} success, {failed} failed")
+            if key in node_results:
+                result = node_results[key]
+                merged[key] = result
 
-            merged.update(node_results)
-            total_success += success
-            total_failed += failed
+                if result.get('failed', True):
+                    print(f"  n{nodes}: FAILED - {result.get('error', 'unknown')[:30]}")
+                    total_failed += 1
+                else:
+                    print(f"  n{nodes}: {result['mean']:.2f}ms")
+                    total_success += 1
+            else:
+                # Try old format for backward compatibility
+                old_results = [v for k, v in node_results.items() if k.startswith(f"{nodes},")]
+                if old_results:
+                    # Use first successful result
+                    for r in old_results:
+                        if not r.get('failed', True):
+                            merged[key] = r
+                            print(f"  n{nodes}: {r['mean']:.2f}ms (migrated)")
+                            total_success += 1
+                            break
+                    else:
+                        merged[key] = old_results[0]
+                        print(f"  n{nodes}: FAILED (migrated)")
+                        total_failed += 1
+                else:
+                    print(f"  n{nodes}: No valid data found")
+                    total_failed += 1
         else:
             print(f"  n{nodes}: NOT FOUND (skipped)")
 
@@ -57,39 +83,19 @@ def merge_results():
 
     print(f"\nMerged results saved to: {output_file}")
 
-    # Generate boundary summary
+    # Generate summary
     print("\n" + "=" * 50)
-    print("NPU Boundary Analysis")
+    print("NPU Latency Summary (by node size)")
     print("=" * 50)
 
     for nodes in NODE_SIZES:
-        # Find results for this node size
-        node_results = {k: v for k, v in merged.items() if k.startswith(f"{nodes},")}
+        key = f"{nodes},NPU,block1"
+        result = merged.get(key, {})
 
-        if not node_results:
-            print(f"  {nodes:>6} nodes: No data")
-            continue
-
-        # Sort by edge count
-        sorted_results = sorted(node_results.items(), key=lambda x: int(x[0].split(',')[1]))
-
-        success_edges = []
-        failed_edges = []
-
-        for key, result in sorted_results:
-            edges = int(key.split(',')[1])
-            if result.get('failed', True):
-                failed_edges.append(edges)
-            else:
-                success_edges.append(edges)
-
-        if success_edges and failed_edges:
-            boundary = max(success_edges)
-            print(f"  {nodes:>6} nodes: OK up to {boundary:>8} edges, FAIL at {min(failed_edges):>8}+ edges")
-        elif success_edges:
-            print(f"  {nodes:>6} nodes: All OK (max tested: {max(success_edges)} edges)")
+        if result.get('failed', True):
+            print(f"  {nodes:>6} nodes: FAILED")
         else:
-            print(f"  {nodes:>6} nodes: All FAILED")
+            print(f"  {nodes:>6} nodes: {result['mean']:>8.2f}ms (std={result.get('std', 0):.2f})")
 
     return merged
 
