@@ -42,6 +42,16 @@ def generate_input(num_nodes, num_edges, feature_dim=FEATURE_DIM):
     return (x, edge_index)
 
 
+def remove_outliers_iqr(data, k=1.5):
+    """Remove outliers using IQR method"""
+    q1 = np.percentile(data, 25)
+    q3 = np.percentile(data, 75)
+    iqr = q3 - q1
+    lower_bound = q1 - k * iqr
+    upper_bound = q3 + k * iqr
+    return [x for x in data if lower_bound <= x <= upper_bound]
+
+
 def measure_latency_openvino(ir_path, device, dummy_input, num_warmup=10, num_iterations=50):
     """Measure latency using OpenVINO async API for more accurate timing"""
     try:
@@ -86,17 +96,27 @@ def measure_latency_openvino(ir_path, device, dummy_input, num_warmup=10, num_it
             infer_request.wait()
             latencies.append((time.perf_counter() - start) * 1000)
 
+        # Remove outliers using IQR method
+        latencies_clean = remove_outliers_iqr(latencies)
+
+        # Fallback to original if too many removed
+        if len(latencies_clean) < len(latencies) * 0.5:
+            latencies_clean = latencies
+
         return {
-            'mean': float(np.mean(latencies)),
-            'std': float(np.std(latencies)),
-            'min': float(np.min(latencies)),
-            'max': float(np.max(latencies)),
+            'mean': float(np.mean(latencies_clean)),
+            'median': float(np.median(latencies_clean)),
+            'std': float(np.std(latencies_clean)),
+            'min': float(np.min(latencies_clean)),
+            'max': float(np.max(latencies_clean)),
+            'raw_mean': float(np.mean(latencies)),
+            'outliers_removed': len(latencies) - len(latencies_clean),
             'failed': False
         }
 
     except Exception as e:
         return {
-            'mean': -1, 'std': -1, 'min': -1, 'max': -1,
+            'mean': -1, 'median': -1, 'std': -1, 'min': -1, 'max': -1,
             'failed': True, 'error': str(e)
         }
 
