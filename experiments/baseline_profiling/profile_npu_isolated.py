@@ -42,7 +42,7 @@ def generate_input(num_nodes, num_edges, feature_dim=FEATURE_DIM):
     return (x, edge_index)
 
 
-def measure_latency_openvino(ir_path, device, dummy_input, num_warmup=3, num_iterations=10):
+def measure_latency_openvino(ir_path, device, dummy_input, num_warmup=10, num_iterations=50):
     """Measure latency using OpenVINO async API for more accurate timing"""
     try:
         import openvino.runtime as ov

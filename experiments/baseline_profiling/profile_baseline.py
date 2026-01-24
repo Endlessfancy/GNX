@@ -222,7 +222,7 @@ def convert_to_ir(onnx_path, ir_path):
 # Latency Measurement Functions
 # ============================================================================
 
-def measure_latency_openvino(ir_path, device, dummy_input, num_warmup=3, num_iterations=10):
+def measure_latency_openvino(ir_path, device, dummy_input, num_warmup=10, num_iterations=50):
     """Measure latency using OpenVINO async API for more accurate timing"""
     try:
         import openvino.runtime as ov

@@ -56,7 +56,7 @@ def get_output_data(result):
     return np.array(output)
 
 
-def measure_sync(compiled_model, inputs, num_warmup=3, num_iterations=10):
+def measure_sync(compiled_model, inputs, num_warmup=10, num_iterations=50):
     """Synchronous inference: compiled_model(inputs)"""
     # Warmup
     for _ in range(num_warmup):
@@ -80,7 +80,7 @@ def measure_sync(compiled_model, inputs, num_warmup=3, num_iterations=10):
     }
 
 
-def measure_async(compiled_model, inputs, num_warmup=3, num_iterations=10):
+def measure_async(compiled_model, inputs, num_warmup=10, num_iterations=50):
     """Asynchronous inference: start_async() + wait()"""
     import openvino.runtime as ov
 
@@ -113,7 +113,7 @@ def measure_async(compiled_model, inputs, num_warmup=3, num_iterations=10):
     }
 
 
-def measure_async_compute_only(compiled_model, inputs, num_warmup=3, num_iterations=10):
+def measure_async_compute_only(compiled_model, inputs, num_warmup=10, num_iterations=50):
     """Async: Measure only start_async + wait (no output access)"""
     import openvino.runtime as ov
 
