@@ -2,13 +2,16 @@
 REM GPU Latency Verification Script
 REM Compares different measurement methods to verify GPU profiling accuracy
 
+setlocal EnableDelayedExpansion
+
 echo ============================================================
 echo GPU Latency Verification
 echo ============================================================
 echo.
 
-REM Activate conda environment if needed
-REM call conda activate your_env_name
+REM Activate conda environment
+echo Activating MIX environment...
+CALL "C:\Env\Anaconda\Scripts\activate.bat" MIX
 
 cd /d "%~dp0"
 
