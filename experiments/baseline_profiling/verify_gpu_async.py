@@ -98,15 +98,12 @@ def measure_async(compiled_model, inputs, num_warmup=5, num_iterations=20):
     # Create infer request
     infer_request = compiled_model.create_infer_request()
 
-    # Get input tensor info
-    input_tensors = []
-    for i, inp in enumerate(compiled_model.inputs):
-        tensor = ov.Tensor(inputs[i])
-        input_tensors.append(tensor)
+    # Set inputs by index
+    for i in range(len(inputs)):
+        infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
 
     # Warmup
     for _ in range(num_warmup):
-        infer_request.set_input_tensors(input_tensors)
         infer_request.start_async()
         infer_request.wait()
         output = infer_request.get_output_tensor().data
@@ -115,8 +112,6 @@ def measure_async(compiled_model, inputs, num_warmup=5, num_iterations=20):
     # Measure
     latencies = []
     for _ in range(num_iterations):
-        infer_request.set_input_tensors(input_tensors)
-
         start = time.perf_counter()
         infer_request.start_async()
         infer_request.wait()
@@ -142,24 +137,18 @@ def measure_async_only_compute(compiled_model, inputs, num_warmup=5, num_iterati
     # Create infer request
     infer_request = compiled_model.create_infer_request()
 
-    # Get input tensor info
-    input_tensors = []
-    for i, inp in enumerate(compiled_model.inputs):
-        tensor = ov.Tensor(inputs[i])
-        input_tensors.append(tensor)
+    # Set inputs once (reused for all iterations)
+    for i in range(len(inputs)):
+        infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
 
     # Warmup
     for _ in range(num_warmup):
-        infer_request.set_input_tensors(input_tensors)
         infer_request.start_async()
         infer_request.wait()
 
-    # Measure - only compute time (no input setup in timing)
+    # Measure - only compute time (inputs already set)
     latencies = []
     for _ in range(num_iterations):
-        # Set inputs outside timing
-        infer_request.set_input_tensors(input_tensors)
-
         start = time.perf_counter()
         infer_request.start_async()
         infer_request.wait()
@@ -185,8 +174,8 @@ def measure_async_with_output(compiled_model, inputs, num_warmup=5, num_iteratio
 
     # Warmup
     for _ in range(num_warmup):
-        input_tensors = [ov.Tensor(inputs[i]) for i in range(len(inputs))]
-        infer_request.set_input_tensors(input_tensors)
+        for i in range(len(inputs)):
+            infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
         infer_request.start_async()
         infer_request.wait()
         output = infer_request.get_output_tensor().data
@@ -197,9 +186,9 @@ def measure_async_with_output(compiled_model, inputs, num_warmup=5, num_iteratio
     for _ in range(num_iterations):
         start = time.perf_counter()
 
-        # Create tensors, set inputs, run, get output
-        input_tensors = [ov.Tensor(inputs[i]) for i in range(len(inputs))]
-        infer_request.set_input_tensors(input_tensors)
+        # Set inputs, run, get output
+        for i in range(len(inputs)):
+            infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
         infer_request.start_async()
         infer_request.wait()
         output = infer_request.get_output_tensor().data
