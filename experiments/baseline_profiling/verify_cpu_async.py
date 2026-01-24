@@ -25,12 +25,14 @@ RESULTS_DIR = SCRIPT_DIR / 'results'
 FEATURE_DIM = 500
 MODEL_NAMES = ['graphsage', 'gcn', 'gat']
 
-# Smaller test cases for CPU (faster)
+# Test cases matching GPU verification
 VERIFY_CASES = [
-    {'nodes': 1000, 'edges': 10000},
-    {'nodes': 2000, 'edges': 20000},
     {'nodes': 5000, 'edges': 50000},
     {'nodes': 10000, 'edges': 100000},
+    {'nodes': 20000, 'edges': 200000},
+    {'nodes': 50000, 'edges': 500000},
+    {'nodes': 80000, 'edges': 800000},
+    {'nodes': 100000, 'edges': 1000000},
 ]
 
 

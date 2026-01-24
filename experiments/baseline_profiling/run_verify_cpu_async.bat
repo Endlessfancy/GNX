@@ -16,7 +16,7 @@ CALL "C:\Env\Anaconda\Scripts\activate.bat" MIX
 cd /d "%~dp0"
 
 echo Running CPU async verification test...
-echo (Using smaller test cases for faster results)
+echo (Using same test cases as GPU: 5k-100k nodes)
 echo.
 
 python verify_cpu_async.py
