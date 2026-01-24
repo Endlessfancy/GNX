@@ -5,9 +5,9 @@ Test CPU thread configuration impact on OpenVINO inference
 Run on your Intel AI PC to test different CPU configurations.
 
 Usage:
-    python test_cpu_threads.py
+    python test_cpu_threads.py --all
+    python test_cpu_threads.py --all --nodes 50000 --edges 500000
     python test_cpu_threads.py --threads 8
-    python test_cpu_threads.py --throughput
 """
 
 import argparse
@@ -40,7 +40,7 @@ def get_cpu_info():
     print()
 
 
-def test_single_config(num_threads=None, throughput_mode=False):
+def test_single_config(num_threads=None, throughput_mode=False, num_nodes=10000, num_edges=100000):
     """Test a single CPU configuration"""
     import openvino.runtime as ov
 
@@ -53,6 +53,7 @@ def test_single_config(num_threads=None, throughput_mode=False):
         return None
 
     print(f"Model: {ir_path.name}")
+    print(f"Data: {num_nodes} nodes, {num_edges} edges")
 
     core = ov.Core()
 
@@ -76,7 +77,6 @@ def test_single_config(num_threads=None, throughput_mode=False):
 
     # Generate test input
     torch.manual_seed(42)
-    num_nodes, num_edges = 10000, 100000
     x = torch.randn(num_nodes, 500).numpy()
     edge_index = torch.randint(0, num_nodes, (2, num_edges)).numpy()
 
@@ -119,6 +119,10 @@ def main():
                        help="Use throughput mode instead of latency mode")
     parser.add_argument("--all", action="store_true",
                        help="Test all common configurations")
+    parser.add_argument("--nodes", type=int, default=10000,
+                       help="Number of nodes (default: 10000)")
+    parser.add_argument("--edges", type=int, default=100000,
+                       help="Number of edges (default: 100000)")
     args = parser.parse_args()
 
     get_cpu_info()
@@ -137,7 +141,7 @@ def main():
         results = []
         for threads, throughput, name in configs:
             print("=" * 60)
-            result = test_single_config(threads, throughput)
+            result = test_single_config(threads, throughput, args.nodes, args.edges)
             if result:
                 results.append((name, result))
             print()
@@ -152,7 +156,7 @@ def main():
                 speedup = baseline / ms
                 print(f"  {name:<20} {ms:>8.2f} ms  ({speedup:.2f}x)")
     else:
-        test_single_config(args.threads, args.throughput)
+        test_single_config(args.threads, args.throughput, args.nodes, args.edges)
 
 
 if __name__ == "__main__":
