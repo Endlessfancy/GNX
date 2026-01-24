@@ -12,9 +12,9 @@ echo ============================================================
 echo.
 
 REM Check if model exists
-if not exist "%~dp0..\executer\models\c1_b0_CPU_stages_1_2_3_4.onnx" (
-    echo ERROR: Model not found: executer\models\c1_b0_CPU_stages_1_2_3_4.onnx
-    echo Please run the model export first.
+if not exist "%~dp0exported_models\block0_fused_cpu.xml" (
+    echo ERROR: Model not found: exported_models\block0_fused_cpu.xml
+    echo Please run model export first: python profile_pep3.py --export
     pause
     exit /b 1
 )

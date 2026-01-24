@@ -1,0 +1,128 @@
+[
+  {
+    "dataset": "flickr",
+    "model": "graphsage",
+    "device": "CPU",
+    "optimal_k": 18,
+    "optimal_total_time_ms": 1151.3163499218515
+  },
+  {
+    "dataset": "flickr",
+    "model": "graphsage",
+    "device": "GPU",
+    "optimal_k": 20,
+    "optimal_total_time_ms": 136.37537407559392
+  },
+  {
+    "dataset": "flickr",
+    "model": "gcn",
+    "device": "CPU",
+    "optimal_k": 20,
+    "optimal_total_time_ms": 614.2827451811248
+  },
+  {
+    "dataset": "flickr",
+    "model": "gcn",
+    "device": "GPU",
+    "optimal_k": 20,
+    "optimal_total_time_ms": 142.0427396228738
+  },
+  {
+    "dataset": "flickr",
+    "model": "gat",
+    "device": "CPU",
+    "optimal_k": 13,
+    "optimal_total_time_ms": 923.626192485398
+  },
+  {
+    "dataset": "flickr",
+    "model": "gat",
+    "device": "GPU",
+    "optimal_k": 20,
+    "optimal_total_time_ms": 153.1604097965101
+  },
+  {
+    "dataset": "reddit2",
+    "model": "graphsage",
+    "device": "CPU",
+    "optimal_k": 6,
+    "optimal_total_time_ms": 45118.34165531128
+  },
+  {
+    "dataset": "reddit2",
+    "model": "graphsage",
+    "device": "GPU",
+    "optimal_k": 20,
+    "optimal_total_time_ms": 4434.217895934141
+  },
+  {
+    "dataset": "reddit2",
+    "model": "gcn",
+    "device": "CPU",
+    "optimal_k": 20,
+    "optimal_total_time_ms": 25548.529495018513
+  },
+  {
+    "dataset": "reddit2",
+    "model": "gcn",
+    "device": "GPU",
+    "optimal_k": 20,
+    "optimal_total_time_ms": 4502.953394182935
+  },
+  {
+    "dataset": "reddit2",
+    "model": "gat",
+    "device": "CPU",
+    "optimal_k": 7,
+    "optimal_total_time_ms": 31243.714804394716
+  },
+  {
+    "dataset": "reddit2",
+    "model": "gat",
+    "device": "GPU",
+    "optimal_k": 20,
+    "optimal_total_time_ms": 5130.700776207471
+  },
+  {
+    "dataset": "ogbn_products",
+    "model": "graphsage",
+    "device": "CPU",
+    "optimal_k": 31,
+    "optimal_total_time_ms": 251273.83158202164
+  },
+  {
+    "dataset": "ogbn_products",
+    "model": "graphsage",
+    "device": "GPU",
+    "optimal_k": 6,
+    "optimal_total_time_ms": 27735.846769286785
+  },
+  {
+    "dataset": "ogbn_products",
+    "model": "gcn",
+    "device": "CPU",
+    "optimal_k": 17,
+    "optimal_total_time_ms": 168297.88951316802
+  },
+  {
+    "dataset": "ogbn_products",
+    "model": "gcn",
+    "device": "GPU",
+    "optimal_k": 23,
+    "optimal_total_time_ms": 26882.778866724188
+  },
+  {
+    "dataset": "ogbn_products",
+    "model": "gat",
+    "device": "CPU",
+    "optimal_k": 34,
+    "optimal_total_time_ms": 172992.74097508565
+  },
+  {
+    "dataset": "ogbn_products",
+    "model": "gat",
+    "device": "GPU",
+    "optimal_k": 23,
+    "optimal_total_time_ms": 31097.563500304263
+  }
+]

@@ -1,0 +1,53 @@
+{
+  "dataset": "reddit2",
+  "model": "gat",
+  "device": "CPU",
+  "optimal_k": 7,
+  "optimal_total_time_ms": 31243.714804394716,
+  "optimal_avg_time_ms": 4463.387829199245,
+  "optimal_throughput_per_sec": 0.03200643733501692,
+  "subgraphs": [
+    {
+      "id": 0,
+      "nodes": 82564,
+      "edges": 3116138,
+      "time_ms": 5079.281344520829
+    },
+    {
+      "id": 1,
+      "nodes": 68459,
+      "edges": 2069448,
+      "time_ms": 3406.5075784828064
+    },
+    {
+      "id": 2,
+      "nodes": 72987,
+      "edges": 2978622,
+      "time_ms": 4614.178624316948
+    },
+    {
+      "id": 3,
+      "nodes": 93968,
+      "edges": 3896074,
+      "time_ms": 5922.171600935017
+    },
+    {
+      "id": 4,
+      "nodes": 141569,
+      "edges": 3260868,
+      "time_ms": 5035.309956940464
+    },
+    {
+      "id": 5,
+      "nodes": 71761,
+      "edges": 2585668,
+      "time_ms": 3834.6650306816537
+    },
+    {
+      "id": 6,
+      "nodes": 88366,
+      "edges": 2263332,
+      "time_ms": 3351.600668517
+    }
+  ]
+}

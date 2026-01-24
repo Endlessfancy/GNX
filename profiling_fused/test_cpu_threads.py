@@ -43,19 +43,16 @@ def get_cpu_info():
 def test_single_config(num_threads=None, throughput_mode=False):
     """Test a single CPU configuration"""
     import openvino.runtime as ov
-    from openvino.tools import mo
 
-    # Find model
-    onnx_path = GNX_ROOT / "executer/models/c1_b0_CPU_stages_1_2_3_4.onnx"
-    if not onnx_path.exists():
-        # Try alternative path
-        onnx_path = GNX_ROOT / "compiler/output/models/CPU_stages_1_2_3_4_5_6_7.onnx"
+    # Find model - OpenVINO IR format (.xml + .bin)
+    ir_path = SCRIPT_DIR / "exported_models" / "block0_fused_cpu.xml"
 
-    if not onnx_path.exists():
-        print(f"No ONNX model found!")
+    if not ir_path.exists():
+        print(f"Model not found: {ir_path}")
+        print("Please run model export first (profile_pep3.py --export)")
         return None
 
-    print(f"Model: {onnx_path.name}")
+    print(f"Model: {ir_path.name}")
 
     core = ov.Core()
 
@@ -72,9 +69,9 @@ def test_single_config(num_threads=None, throughput_mode=False):
     actual_threads = core.get_property("CPU", "INFERENCE_NUM_THREADS")
     print(f"Config: {config_name} (actual threads: {actual_threads})")
 
-    # Convert model
+    # Load OpenVINO IR model
     print("Loading model...")
-    model = mo.convert_model(str(onnx_path))
+    model = core.read_model(str(ir_path))
     compiled_model = core.compile_model(model, "CPU")
 
     # Generate test input

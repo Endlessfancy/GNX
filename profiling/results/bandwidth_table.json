@@ -1,23 +1,21 @@
 {
-  "intra_device": {
-    "CPU": 50.0,
-    "GPU": 300.0,
-    "NPU": 100.0
-  },
-  "inter_device": {
-    "CPU_GPU": 15.0,
-    "CPU_NPU": 30.0,
-    "GPU_CPU": 15.0,
-    "GPU_NPU": 10.0,
-    "NPU_CPU": 30.0,
-    "NPU_GPU": 10.0
-  },
-  "device_switch_overhead_ms": {
-    "CPU_GPU": 0.5,
-    "CPU_NPU": 0.2,
-    "GPU_CPU": 0.5,
-    "GPU_NPU": 1.0,
-    "NPU_CPU": 0.2,
-    "NPU_GPU": 1.0
-  }
+  "CPU_stage1": 2457.9788913575535,
+  "GPU_stage1": 2678.3439704339585,
+  "NPU_stage1": 154668.88744607416,
+  "CPU_stage2": 6377.495316882102,
+  "GPU_stage2": 4167.317941272128,
+  "NPU_stage2": Infinity,
+  "CPU_stage3": 1102.2760200204114,
+  "GPU_stage3": 3773.696756723411,
+  "CPU_stage4": 1181.909320910675,
+  "GPU_stage4": 5953.505714758259,
+  "CPU_stage5": 5322.794353094184,
+  "GPU_stage5": 2979.2361170370823,
+  "NPU_stage5": 34298.32497472129,
+  "CPU_stage6": 1540.0034197638197,
+  "GPU_stage6": 3939.652570372315,
+  "NPU_stage6": 2898.7762147312496,
+  "CPU_stage7": 5599.086987347681,
+  "GPU_stage7": 3760.5642662875325,
+  "NPU_stage7": 34269.48135819317
 }

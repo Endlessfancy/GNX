@@ -1,0 +1,1799 @@
+{
+  "graphsage,5000,50000,CPU": {
+    "mean": 254.22706998651847,
+    "std": 59.041999144364375,
+    "min": 175.48769991844893,
+    "max": 353.81120000965893,
+    "failed": false
+  },
+  "graphsage,5000,125000,CPU": {
+    "mean": 733.7497299886309,
+    "std": 109.3334408308658,
+    "min": 450.7061999756843,
+    "max": 879.6852000523359,
+    "failed": false
+  },
+  "graphsage,5000,200000,CPU": {
+    "mean": 643.6382099986076,
+    "std": 268.94079614157647,
+    "min": 348.9033000078052,
+    "max": 1110.3766999440268,
+    "failed": false
+  },
+  "graphsage,5000,250000,CPU": {
+    "mean": 295.92374998610467,
+    "std": 51.54233037688691,
+    "min": 249.86640003044158,
+    "max": 444.6012999396771,
+    "failed": false
+  },
+  "graphsage,5000,300000,CPU": {
+    "mean": 386.6859699948691,
+    "std": 45.76016697368386,
+    "min": 322.2767999395728,
+    "max": 469.1200000233948,
+    "failed": false
+  },
+  "graphsage,5000,375000,CPU": {
+    "mean": 497.67991000553593,
+    "std": 46.65775562317739,
+    "min": 440.4433999443427,
+    "max": 597.4019999848679,
+    "failed": false
+  },
+  "graphsage,5000,500000,CPU": {
+    "mean": 564.0825300011784,
+    "std": 42.78445347872388,
+    "min": 510.37349994294345,
+    "max": 625.7934999885038,
+    "failed": false
+  },
+  "graphsage,10000,100000,CPU": {
+    "mean": 138.51862001465634,
+    "std": 11.574619673656318,
+    "min": 112.32930002734065,
+    "max": 152.43649994954467,
+    "failed": false
+  },
+  "graphsage,10000,250000,CPU": {
+    "mean": 670.2588999993168,
+    "std": 165.54128772941874,
+    "min": 348.38440001476556,
+    "max": 842.3694999655709,
+    "failed": false
+  },
+  "graphsage,10000,400000,CPU": {
+    "mean": 1837.732690013945,
+    "std": 757.1850602834464,
+    "min": 980.9055000077933,
+    "max": 3026.845799991861,
+    "failed": false
+  },
+  "graphsage,10000,500000,CPU": {
+    "mean": 714.0851299627684,
+    "std": 57.71231999516092,
+    "min": 603.3580000512302,
+    "max": 810.8826999086887,
+    "failed": false
+  },
+  "graphsage,10000,600000,CPU": {
+    "mean": 809.513229993172,
+    "std": 56.10096469307732,
+    "min": 700.7447999203578,
+    "max": 895.411100005731,
+    "failed": false
+  },
+  "graphsage,10000,750000,CPU": {
+    "mean": 1116.8364299694076,
+    "std": 364.76272500826707,
+    "min": 855.5879999184981,
+    "max": 1872.8457998950034,
+    "failed": false
+  },
+  "graphsage,10000,1000000,CPU": {
+    "mean": 2124.048899987247,
+    "std": 617.0224566541216,
+    "min": 1167.2417999943718,
+    "max": 2799.248099909164,
+    "failed": false
+  },
+  "graphsage,20000,200000,CPU": {
+    "mean": 398.7738600000739,
+    "std": 63.990060356203806,
+    "min": 317.4920999445021,
+    "max": 515.2265999931842,
+    "failed": false
+  },
+  "graphsage,20000,500000,CPU": {
+    "mean": 837.122489977628,
+    "std": 62.013585360554174,
+    "min": 699.3601999711245,
+    "max": 915.3287999797612,
+    "failed": false
+  },
+  "graphsage,20000,800000,CPU": {
+    "mean": 3614.759910001885,
+    "std": 2529.1322757956427,
+    "min": 1104.5942000346258,
+    "max": 7098.595399991609,
+    "failed": false
+  },
+  "graphsage,20000,1000000,CPU": {
+    "mean": 1440.8760899910703,
+    "std": 29.291768895526662,
+    "min": 1392.1313000610098,
+    "max": 1479.197800043039,
+    "failed": false
+  },
+  "graphsage,20000,1200000,CPU": {
+    "mean": 4165.9885999630205,
+    "std": 3851.085271386992,
+    "min": 1538.1373999407515,
+    "max": 10485.804199939594,
+    "failed": false
+  },
+  "graphsage,20000,1500000,CPU": {
+    "mean": 2306.842569995206,
+    "std": 899.2890867426373,
+    "min": 1777.959999977611,
+    "max": 4495.887299999595,
+    "failed": false
+  },
+  "graphsage,20000,2000000,CPU": {
+    "mean": 2808.20983001031,
+    "std": 903.3752303247577,
+    "min": 2318.551800097339,
+    "max": 5499.235600000247,
+    "failed": false
+  },
+  "graphsage,50000,500000,CPU": {
+    "mean": 1590.7555700046942,
+    "std": 597.0300681291963,
+    "min": 773.2153000542894,
+    "max": 2410.8810999896377,
+    "failed": false
+  },
+  "graphsage,50000,1250000,CPU": {
+    "mean": 2083.6160799954087,
+    "std": 517.6735922396317,
+    "min": 1751.6940999776125,
+    "max": 3614.2243000213057,
+    "failed": false
+  },
+  "graphsage,50000,2000000,CPU": {
+    "mean": 4928.425929986406,
+    "std": 4879.579642712521,
+    "min": 2499.9243998900056,
+    "max": 18336.82480000425,
+    "failed": false
+  },
+  "graphsage,50000,2500000,CPU": {
+    "mean": 4967.4510700046085,
+    "std": 2650.4977506346527,
+    "min": 2965.460699982941,
+    "max": 11408.08590000961,
+    "failed": false
+  },
+  "graphsage,50000,3000000,CPU": {
+    "mean": 7620.53232997423,
+    "std": 6737.78369379125,
+    "min": 3502.3298000451177,
+    "max": 23859.09579996951,
+    "failed": false
+  },
+  "graphsage,50000,3750000,CPU": {
+    "mean": 10119.131400017068,
+    "std": 10725.78053517508,
+    "min": 4270.958699984476,
+    "max": 31663.40720001608,
+    "failed": false
+  },
+  "graphsage,50000,5000000,CPU": {
+    "mean": 9728.691860020626,
+    "std": 7125.531348460061,
+    "min": 5731.5799000207335,
+    "max": 29051.10559996683,
+    "failed": false
+  },
+  "graphsage,80000,800000,CPU": {
+    "mean": 3952.9964500223286,
+    "std": 3232.8989889149434,
+    "min": 1433.8081000605598,
+    "max": 9199.572900077328,
+    "failed": false
+  },
+  "graphsage,80000,2000000,CPU": {
+    "mean": 4999.340849998407,
+    "std": 3866.17255309334,
+    "min": 2471.136700012721,
+    "max": 15149.382499977946,
+    "failed": false
+  },
+  "graphsage,80000,3200000,CPU": {
+    "mean": 6852.700649993494,
+    "std": 7642.138899882522,
+    "min": 3985.632999916561,
+    "max": 29771.994900074787,
+    "failed": false
+  },
+  "graphsage,80000,4000000,CPU": {
+    "mean": 7733.350089984015,
+    "std": 8113.663994085138,
+    "min": 4805.029700044543,
+    "max": 32070.535499951802,
+    "failed": false
+  },
+  "graphsage,80000,4800000,CPU": {
+    "mean": 7901.8013700144365,
+    "std": 3431.12661384588,
+    "min": 5683.538399985991,
+    "max": 15092.571799992584,
+    "failed": false
+  },
+  "graphsage,80000,6000000,CPU": {
+    "mean": 12784.71645002719,
+    "std": 10267.291329652688,
+    "min": 7265.500699984841,
+    "max": 34613.831100054085,
+    "failed": false
+  },
+  "graphsage,80000,8000000,CPU": {
+    "mean": 118326.66015998693,
+    "std": 14536.786227545155,
+    "min": 100788.95860002376,
+    "max": 149812.18519993126,
+    "failed": false
+  },
+  "graphsage,100000,1000000,CPU": {
+    "mean": 4062.5149199855514,
+    "std": 3638.3385746465756,
+    "min": 1676.0594999650493,
+    "max": 10670.733599923551,
+    "failed": false
+  },
+  "graphsage,100000,2500000,CPU": {
+    "mean": 5510.606979997829,
+    "std": 3078.0388487659284,
+    "min": 3375.0196000328287,
+    "max": 11209.5413999632,
+    "failed": false
+  },
+  "graphsage,100000,4000000,CPU": {
+    "mean": 8065.097000007518,
+    "std": 8205.458362044084,
+    "min": 4754.898599931039,
+    "max": 32666.462900000624,
+    "failed": false
+  },
+  "graphsage,100000,5000000,CPU": {
+    "mean": 11335.667490027845,
+    "std": 8720.927540676048,
+    "min": 6141.607000026852,
+    "max": 32939.38280001748,
+    "failed": false
+  },
+  "graphsage,100000,6000000,CPU": {
+    "mean": 13230.775470007211,
+    "std": 10670.956485090948,
+    "min": 7478.914999985136,
+    "max": 34733.31449995749,
+    "failed": false
+  },
+  "graphsage,100000,7500000,CPU": {
+    "mean": 77957.0908700116,
+    "std": 11296.795623846509,
+    "min": 61744.78159996215,
+    "max": 95519.15670000017,
+    "failed": false
+  },
+  "graphsage,100000,10000000,CPU": {
+    "mean": 263834.90967003163,
+    "std": 39197.66549537607,
+    "min": 200272.91170007084,
+    "max": 340980.97110004164,
+    "failed": false
+  },
+  "graphsage,5000,50000,GPU": {
+    "mean": 15.878349996637553,
+    "std": 5.058349369549079,
+    "min": 13.015000033192337,
+    "max": 30.179099994711578,
+    "failed": false
+  },
+  "graphsage,5000,125000,GPU": {
+    "mean": 28.149050008505583,
+    "std": 1.7512998733036516,
+    "min": 26.22580004390329,
+    "max": 30.6426000315696,
+    "failed": false
+  },
+  "graphsage,5000,200000,GPU": {
+    "mean": 43.448089982848614,
+    "std": 2.0938979099517336,
+    "min": 39.717999985441566,
+    "max": 45.21209991071373,
+    "failed": false
+  },
+  "graphsage,5000,250000,GPU": {
+    "mean": 55.99739000899717,
+    "std": 0.6602088347821597,
+    "min": 55.15659996308386,
+    "max": 57.15600005351007,
+    "failed": false
+  },
+  "graphsage,5000,300000,GPU": {
+    "mean": 65.19286998081952,
+    "std": 0.45087372507331375,
+    "min": 64.62069996632636,
+    "max": 66.05839997064322,
+    "failed": false
+  },
+  "graphsage,5000,375000,GPU": {
+    "mean": 82.11978998733684,
+    "std": 0.9355583053352964,
+    "min": 81.09179988969117,
+    "max": 84.69779998995364,
+    "failed": false
+  },
+  "graphsage,5000,500000,GPU": {
+    "mean": 106.01801000302657,
+    "std": 0.571457778914681,
+    "min": 105.55550002027303,
+    "max": 107.25609993096441,
+    "failed": false
+  },
+  "graphsage,10000,100000,GPU": {
+    "mean": 27.552739973179996,
+    "std": 0.6641036633255938,
+    "min": 26.69119997881353,
+    "max": 28.672699932940304,
+    "failed": false
+  },
+  "graphsage,10000,250000,GPU": {
+    "mean": 57.8684100182727,
+    "std": 2.991340857767812,
+    "min": 51.21459998190403,
+    "max": 62.500900006853044,
+    "failed": false
+  },
+  "graphsage,10000,400000,GPU": {
+    "mean": 92.45372998993844,
+    "std": 1.038628070811421,
+    "min": 90.82969999872148,
+    "max": 94.15869996882975,
+    "failed": false
+  },
+  "graphsage,10000,500000,GPU": {
+    "mean": 113.75491998624057,
+    "std": 1.662871634665403,
+    "min": 111.58689996227622,
+    "max": 117.54020000807941,
+    "failed": false
+  },
+  "graphsage,10000,600000,GPU": {
+    "mean": 134.7350400290452,
+    "std": 3.914568874909394,
+    "min": 132.23940005991608,
+    "max": 146.1412999778986,
+    "failed": false
+  },
+  "graphsage,10000,750000,GPU": {
+    "mean": 164.59290999919176,
+    "std": 1.0718874577986843,
+    "min": 163.41310006100684,
+    "max": 166.56209994107485,
+    "failed": false
+  },
+  "graphsage,10000,1000000,GPU": {
+    "mean": 213.98053001612425,
+    "std": 5.807653820825021,
+    "min": 196.74229994416237,
+    "max": 217.4471999751404,
+    "failed": false
+  },
+  "graphsage,20000,200000,GPU": {
+    "mean": 57.20449001528323,
+    "std": 2.221616814785087,
+    "min": 53.17190010100603,
+    "max": 60.73979998473078,
+    "failed": false
+  },
+  "graphsage,20000,500000,GPU": {
+    "mean": 122.2826500190422,
+    "std": 2.428353502958593,
+    "min": 119.40160009544343,
+    "max": 127.64500000048429,
+    "failed": false
+  },
+  "graphsage,20000,800000,GPU": {
+    "mean": 183.6317500215955,
+    "std": 1.8301954950670243,
+    "min": 181.49610003456473,
+    "max": 186.4744999911636,
+    "failed": false
+  },
+  "graphsage,20000,1000000,GPU": {
+    "mean": 224.86804999643937,
+    "std": 1.300927523389652,
+    "min": 223.8818999612704,
+    "max": 228.39539998676628,
+    "failed": false
+  },
+  "graphsage,20000,1200000,GPU": {
+    "mean": 267.4900800222531,
+    "std": 2.406243431974303,
+    "min": 265.1717000408098,
+    "max": 272.590099950321,
+    "failed": false
+  },
+  "graphsage,20000,1500000,GPU": {
+    "mean": 319.074170012027,
+    "std": 10.741716053183033,
+    "min": 299.09979994408786,
+    "max": 335.1425000000745,
+    "failed": false
+  },
+  "graphsage,20000,2000000,GPU": {
+    "mean": 419.95287999743596,
+    "std": 17.4547498239475,
+    "min": 394.95979994535446,
+    "max": 435.54760003462434,
+    "failed": false
+  },
+  "graphsage,50000,500000,GPU": {
+    "mean": 148.50903000915423,
+    "std": 2.418485056037768,
+    "min": 145.52979997824878,
+    "max": 152.42269996087998,
+    "failed": false
+  },
+  "graphsage,50000,1250000,GPU": {
+    "mean": 303.0370599706657,
+    "std": 8.616793473273203,
+    "min": 283.12129992991686,
+    "max": 309.24630002118647,
+    "failed": false
+  },
+  "graphsage,50000,2000000,GPU": {
+    "mean": 464.38184999860823,
+    "std": 9.686428185285418,
+    "min": 441.72780006192625,
+    "max": 481.606199988164,
+    "failed": false
+  },
+  "graphsage,50000,2500000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,50000,3000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 6000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,50000,3750000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 7500000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,50000,5000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,80000,800000,GPU": {
+    "mean": 235.66911001689732,
+    "std": 3.9364110388543754,
+    "min": 230.9120000572875,
+    "max": 242.22929996903986,
+    "failed": false
+  },
+  "graphsage,80000,2000000,GPU": {
+    "mean": 488.64296997198835,
+    "std": 3.4979143654839975,
+    "min": 483.21049998048693,
+    "max": 495.1396998949349,
+    "failed": false
+  },
+  "graphsage,80000,3200000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 6400000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,80000,4000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 8000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,80000,4800000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 4800000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,80000,6000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 6000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,80000,8000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 8000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,100000,1000000,GPU": {
+    "mean": 291.7550399899483,
+    "std": 3.687377538973991,
+    "min": 286.4739999640733,
+    "max": 299.97509997338057,
+    "failed": false
+  },
+  "graphsage,100000,2500000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,100000,4000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 8000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,100000,5000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,100000,6000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 6000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,100000,7500000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 7500000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "graphsage,100000,10000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 10000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gcn,5000,50000,CPU": {
+    "mean": 48.201669997069985,
+    "std": 4.055473056070939,
+    "min": 43.90389996115118,
+    "max": 57.778800022788346,
+    "failed": false
+  },
+  "gcn,5000,125000,CPU": {
+    "mean": 91.3515700143762,
+    "std": 5.495675961276071,
+    "min": 82.38000003620982,
+    "max": 105.29360000509769,
+    "failed": false
+  },
+  "gcn,5000,200000,CPU": {
+    "mean": 324.94173999875784,
+    "std": 44.12738990512257,
+    "min": 222.61459997389466,
+    "max": 372.3087999969721,
+    "failed": false
+  },
+  "gcn,5000,250000,CPU": {
+    "mean": 412.57046998944134,
+    "std": 11.472830910768453,
+    "min": 396.7376999789849,
+    "max": 430.5054999422282,
+    "failed": false
+  },
+  "gcn,5000,300000,CPU": {
+    "mean": 471.3900499860756,
+    "std": 47.16571458115917,
+    "min": 363.03669994231313,
+    "max": 520.3302999725565,
+    "failed": false
+  },
+  "gcn,5000,375000,CPU": {
+    "mean": 638.1249699974433,
+    "std": 73.67637829435495,
+    "min": 596.595500013791,
+    "max": 855.6693000718951,
+    "failed": false
+  },
+  "gcn,5000,500000,CPU": {
+    "mean": 589.0119300223887,
+    "std": 196.88728944812104,
+    "min": 356.9968999363482,
+    "max": 796.0898999590427,
+    "failed": false
+  },
+  "gcn,10000,100000,CPU": {
+    "mean": 86.25168000580743,
+    "std": 2.669430477913774,
+    "min": 82.47609995305538,
+    "max": 91.02799999527633,
+    "failed": false
+  },
+  "gcn,10000,250000,CPU": {
+    "mean": 195.36095999646932,
+    "std": 5.617140960895848,
+    "min": 187.09979997947812,
+    "max": 205.86590003222227,
+    "failed": false
+  },
+  "gcn,10000,400000,CPU": {
+    "mean": 317.03300001099706,
+    "std": 24.25557859482529,
+    "min": 279.8289000056684,
+    "max": 364.39500004053116,
+    "failed": false
+  },
+  "gcn,10000,500000,CPU": {
+    "mean": 438.34588000318035,
+    "std": 63.895778547040635,
+    "min": 375.11779996566474,
+    "max": 560.6770999729633,
+    "failed": false
+  },
+  "gcn,10000,600000,CPU": {
+    "mean": 518.2246200041845,
+    "std": 81.26796555595477,
+    "min": 423.6920999828726,
+    "max": 647.7697000373155,
+    "failed": false
+  },
+  "gcn,10000,750000,CPU": {
+    "mean": 695.8260099869221,
+    "std": 229.37978281135085,
+    "min": 506.22280000243336,
+    "max": 1281.6284999717027,
+    "failed": false
+  },
+  "gcn,10000,1000000,CPU": {
+    "mean": 1400.8491600165144,
+    "std": 167.0796437259659,
+    "min": 1203.4748999867588,
+    "max": 1776.285900035873,
+    "failed": false
+  },
+  "gcn,20000,200000,CPU": {
+    "mean": 355.18391001969576,
+    "std": 60.12725390324426,
+    "min": 258.56210000347346,
+    "max": 462.0971999829635,
+    "failed": false
+  },
+  "gcn,20000,500000,CPU": {
+    "mean": 443.8391900039278,
+    "std": 49.28831640087731,
+    "min": 390.67699993029237,
+    "max": 541.5891000302508,
+    "failed": false
+  },
+  "gcn,20000,800000,CPU": {
+    "mean": 783.0378399929032,
+    "std": 113.8941361437854,
+    "min": 624.2136999499053,
+    "max": 949.1310999728739,
+    "failed": false
+  },
+  "gcn,20000,1000000,CPU": {
+    "mean": 912.1928200125694,
+    "std": 120.24194646993887,
+    "min": 744.0859000198543,
+    "max": 1060.646599973552,
+    "failed": false
+  },
+  "gcn,20000,1200000,CPU": {
+    "mean": 2170.3235899913125,
+    "std": 158.69366651077902,
+    "min": 1867.3920999281108,
+    "max": 2351.2151000322774,
+    "failed": false
+  },
+  "gcn,20000,1500000,CPU": {
+    "mean": 1340.3925400110893,
+    "std": 54.59305742689035,
+    "min": 1264.0890999464318,
+    "max": 1442.4798999680206,
+    "failed": false
+  },
+  "gcn,20000,2000000,CPU": {
+    "mean": 2424.992610013578,
+    "std": 811.0706141251776,
+    "min": 1625.0250999582931,
+    "max": 3679.0660000406206,
+    "failed": false
+  },
+  "gcn,50000,500000,CPU": {
+    "mean": 977.9994999989867,
+    "std": 235.37016762218963,
+    "min": 655.5017000064254,
+    "max": 1422.8918999433517,
+    "failed": false
+  },
+  "gcn,50000,1250000,CPU": {
+    "mean": 1482.2625000029802,
+    "std": 92.33357415971645,
+    "min": 1237.4857999384403,
+    "max": 1582.9067000886425,
+    "failed": false
+  },
+  "gcn,50000,2000000,CPU": {
+    "mean": 3818.9887100015767,
+    "std": 1467.1138981324982,
+    "min": 2018.754499964416,
+    "max": 5531.275000073947,
+    "failed": false
+  },
+  "gcn,50000,2500000,CPU": {
+    "mean": 3517.35235999804,
+    "std": 1632.5495230443837,
+    "min": 2419.694499927573,
+    "max": 6788.4483999805525,
+    "failed": false
+  },
+  "gcn,50000,3000000,CPU": {
+    "mean": 3137.115339981392,
+    "std": 875.4029347148908,
+    "min": 2721.252799965441,
+    "max": 5747.414100100286,
+    "failed": false
+  },
+  "gcn,50000,3750000,CPU": {
+    "mean": 7073.016269982327,
+    "std": 5412.897637589707,
+    "min": 3314.851099974476,
+    "max": 19828.722100006416,
+    "failed": false
+  },
+  "gcn,50000,5000000,CPU": {
+    "mean": 8812.120960000902,
+    "std": 7180.018670488144,
+    "min": 4042.4219999695197,
+    "max": 26687.732300022617,
+    "failed": false
+  },
+  "gcn,80000,800000,CPU": {
+    "mean": 1045.5947900074534,
+    "std": 118.0688167005867,
+    "min": 876.8233000300825,
+    "max": 1211.0326000256464,
+    "failed": false
+  },
+  "gcn,80000,2000000,CPU": {
+    "mean": 4747.850920027122,
+    "std": 4232.866425662357,
+    "min": 2176.0094000492245,
+    "max": 13598.916099988855,
+    "failed": false
+  },
+  "gcn,80000,3200000,CPU": {
+    "mean": 6065.905849984847,
+    "std": 5156.342206439334,
+    "min": 2936.9365000166,
+    "max": 18386.243199929595,
+    "failed": false
+  },
+  "gcn,80000,4000000,CPU": {
+    "mean": 5509.717139985878,
+    "std": 3691.1511385042495,
+    "min": 3621.6798999812454,
+    "max": 15373.762500006706,
+    "failed": false
+  },
+  "gcn,80000,4800000,CPU": {
+    "mean": 6819.503369985614,
+    "std": 7100.3183698572,
+    "min": 4241.499199997634,
+    "max": 28116.74420000054,
+    "failed": false
+  },
+  "gcn,80000,6000000,CPU": {
+    "mean": 8930.505169986282,
+    "std": 7937.308710644507,
+    "min": 5085.680700023659,
+    "max": 31016.257599927485,
+    "failed": false
+  },
+  "gcn,80000,8000000,CPU": {
+    "mean": 10121.597789984662,
+    "std": 6173.999660645072,
+    "min": 6698.024000041187,
+    "max": 27608.119699987583,
+    "failed": false
+  },
+  "gcn,100000,1000000,CPU": {
+    "mean": 1849.1007500095293,
+    "std": 1455.6925892509782,
+    "min": 1240.5556000303477,
+    "max": 6213.093600003049,
+    "failed": false
+  },
+  "gcn,100000,2500000,CPU": {
+    "mean": 4516.253530012909,
+    "std": 1957.3626644058825,
+    "min": 2601.1519000167027,
+    "max": 7745.185800013132,
+    "failed": false
+  },
+  "gcn,100000,4000000,CPU": {
+    "mean": 6476.284900016617,
+    "std": 5536.097391227309,
+    "min": 3690.5842000851408,
+    "max": 21632.945700082928,
+    "failed": false
+  },
+  "gcn,100000,5000000,CPU": {
+    "mean": 7207.722909993026,
+    "std": 7482.0023122561715,
+    "min": 4477.984800003469,
+    "max": 29648.386399960145,
+    "failed": false
+  },
+  "gcn,100000,6000000,CPU": {
+    "mean": 9145.53988003172,
+    "std": 5054.499095123608,
+    "min": 5535.721100051887,
+    "max": 21126.2569000246,
+    "failed": false
+  },
+  "gcn,100000,7500000,CPU": {
+    "mean": 10873.00733999582,
+    "std": 7274.723227710737,
+    "min": 6675.136699923314,
+    "max": 30405.922699952498,
+    "failed": false
+  },
+  "gcn,100000,10000000,CPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nException from src\\plugins\\intel_cpu\\src\\graph.cpp:1365:\nNode /conv/ScatterElements of type ScatterElementsUpdate\nException from src\\plugins\\intel_cpu\\src\\nodes\\scatter_update.cpp:851:\n[CPU] ScatterElementsUpdate node with name '/conv/ScatterElements' ScatterElementsUpdate node with name '/conv/ScatterElements' have indices value that points to non-existing output tensor element\n\n\n"
+  },
+  "gcn,5000,50000,GPU": {
+    "mean": 14.116870006546378,
+    "std": 0.4055954441137041,
+    "min": 13.59220000449568,
+    "max": 15.02050005365163,
+    "failed": false
+  },
+  "gcn,5000,125000,GPU": {
+    "mean": 31.150639976840466,
+    "std": 0.20876876138670658,
+    "min": 30.88239999487996,
+    "max": 31.470299931243062,
+    "failed": false
+  },
+  "gcn,5000,200000,GPU": {
+    "mean": 46.094850020017475,
+    "std": 0.437895599642173,
+    "min": 45.569200068712234,
+    "max": 47.22900001797825,
+    "failed": false
+  },
+  "gcn,5000,250000,GPU": {
+    "mean": 57.13772001909092,
+    "std": 0.5923022284299272,
+    "min": 56.21910002082586,
+    "max": 57.84230004064739,
+    "failed": false
+  },
+  "gcn,5000,300000,GPU": {
+    "mean": 68.8691700110212,
+    "std": 0.670476228082629,
+    "min": 68.13749996945262,
+    "max": 70.16660005319864,
+    "failed": false
+  },
+  "gcn,5000,375000,GPU": {
+    "mean": 82.19827997963876,
+    "std": 0.47943203323934364,
+    "min": 81.44009998068213,
+    "max": 83.02529994398355,
+    "failed": false
+  },
+  "gcn,5000,500000,GPU": {
+    "mean": 107.213599991519,
+    "std": 0.6468424709628486,
+    "min": 105.86090001743287,
+    "max": 108.30259998328984,
+    "failed": false
+  },
+  "gcn,10000,100000,GPU": {
+    "mean": 31.245480000507087,
+    "std": 2.5802035022496814,
+    "min": 28.14619999844581,
+    "max": 37.786099943332374,
+    "failed": false
+  },
+  "gcn,10000,250000,GPU": {
+    "mean": 61.701940023340285,
+    "std": 1.2206225146680048,
+    "min": 60.2845000103116,
+    "max": 64.72899997606874,
+    "failed": false
+  },
+  "gcn,10000,400000,GPU": {
+    "mean": 92.31713997432962,
+    "std": 1.0143119191524068,
+    "min": 91.02679998613894,
+    "max": 94.13240000139922,
+    "failed": false
+  },
+  "gcn,10000,500000,GPU": {
+    "mean": 113.2940600044094,
+    "std": 0.5918272544996497,
+    "min": 112.25210002157837,
+    "max": 113.98799996823072,
+    "failed": false
+  },
+  "gcn,10000,600000,GPU": {
+    "mean": 134.51292999088764,
+    "std": 1.5922036049328783,
+    "min": 132.80269992537796,
+    "max": 138.9975999481976,
+    "failed": false
+  },
+  "gcn,10000,750000,GPU": {
+    "mean": 164.76734000025317,
+    "std": 0.8048812846917919,
+    "min": 164.037499926053,
+    "max": 166.83100000955164,
+    "failed": false
+  },
+  "gcn,10000,1000000,GPU": {
+    "mean": 218.6069200048223,
+    "std": 1.378588198920518,
+    "min": 216.72829997260123,
+    "max": 221.96530003566295,
+    "failed": false
+  },
+  "gcn,20000,200000,GPU": {
+    "mean": 59.30066000437364,
+    "std": 0.580884848789131,
+    "min": 58.439299929887056,
+    "max": 60.47349993605167,
+    "failed": false
+  },
+  "gcn,20000,500000,GPU": {
+    "mean": 127.1519900066778,
+    "std": 2.2885001992824203,
+    "min": 124.58659999538213,
+    "max": 131.14539999514818,
+    "failed": false
+  },
+  "gcn,20000,800000,GPU": {
+    "mean": 188.21101001231,
+    "std": 5.892854714937669,
+    "min": 184.08200005069375,
+    "max": 204.7811000375077,
+    "failed": false
+  },
+  "gcn,20000,1000000,GPU": {
+    "mean": 229.3841200065799,
+    "std": 1.560933767615285,
+    "min": 226.6753000440076,
+    "max": 232.77539992704988,
+    "failed": false
+  },
+  "gcn,20000,1200000,GPU": {
+    "mean": 278.4270000178367,
+    "std": 1.8906020761350764,
+    "min": 275.8046000963077,
+    "max": 281.56660008244216,
+    "failed": false
+  },
+  "gcn,20000,1500000,GPU": {
+    "mean": 344.2942099762149,
+    "std": 0.9818688572138847,
+    "min": 342.30909997131675,
+    "max": 345.68999998737127,
+    "failed": false
+  },
+  "gcn,20000,2000000,GPU": {
+    "mean": 452.22851000726223,
+    "std": 2.2832613402665562,
+    "min": 448.2300999807194,
+    "max": 456.81619993411005,
+    "failed": false
+  },
+  "gcn,50000,500000,GPU": {
+    "mean": 148.3764800010249,
+    "std": 2.5178405599578477,
+    "min": 145.66780009772629,
+    "max": 155.01300001051277,
+    "failed": false
+  },
+  "gcn,50000,1250000,GPU": {
+    "mean": 306.8645900231786,
+    "std": 2.72470451827674,
+    "min": 302.89060005452484,
+    "max": 312.5705000711605,
+    "failed": false
+  },
+  "gcn,50000,2000000,GPU": {
+    "mean": 465.4610299738124,
+    "std": 3.0592849008531444,
+    "min": 460.12429997790605,
+    "max": 470.3038999577984,
+    "failed": false
+  },
+  "gcn,50000,2500000,GPU": {
+    "mean": 587.232280021999,
+    "std": 30.742222824142438,
+    "min": 566.471099969931,
+    "max": 653.6420000484213,
+    "failed": false
+  },
+  "gcn,50000,3000000,GPU": {
+    "mean": 679.0895099984482,
+    "std": 3.2826196334532565,
+    "min": 675.0143000390381,
+    "max": 685.5843000812456,
+    "failed": false
+  },
+  "gcn,50000,3750000,GPU": {
+    "mean": 835.5361699941568,
+    "std": 3.5329621403076796,
+    "min": 830.8508999180049,
+    "max": 841.9686000561342,
+    "failed": false
+  },
+  "gcn,50000,5000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5171085312 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gcn,80000,800000,GPU": {
+    "mean": 240.45773999532685,
+    "std": 3.5082848236536717,
+    "min": 235.2255000732839,
+    "max": 245.0396999483928,
+    "failed": false
+  },
+  "gcn,80000,2000000,GPU": {
+    "mean": 497.3069000057876,
+    "std": 7.840013590616479,
+    "min": 489.9388999911025,
+    "max": 516.4962999988347,
+    "failed": false
+  },
+  "gcn,80000,3200000,GPU": {
+    "mean": 749.4774399907328,
+    "std": 5.521197971903749,
+    "min": 742.9488999769092,
+    "max": 759.3151000328362,
+    "failed": false
+  },
+  "gcn,80000,4000000,GPU": {
+    "mean": 928.7129099830054,
+    "std": 5.167727142873959,
+    "min": 922.4226999795064,
+    "max": 941.8030999368057,
+    "failed": false
+  },
+  "gcn,80000,4800000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 4997051392 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gcn,80000,6000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 6225843200 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gcn,80000,8000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 8273819648 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gcn,100000,1000000,GPU": {
+    "mean": 308.36120997555554,
+    "std": 7.375286824122444,
+    "min": 297.2323999274522,
+    "max": 324.39989992417395,
+    "failed": false
+  },
+  "gcn,100000,2500000,GPU": {
+    "mean": 615.4263900010847,
+    "std": 4.422987363761571,
+    "min": 609.4976000022143,
+    "max": 624.4803000008687,
+    "failed": false
+  },
+  "gcn,100000,4000000,GPU": {
+    "mean": 928.5935999825597,
+    "std": 3.4496865614640964,
+    "min": 924.3169999681413,
+    "max": 936.5095000248402,
+    "failed": false
+  },
+  "gcn,100000,5000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5222352896 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gcn,100000,6000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 6246343680 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gcn,100000,7500000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 7782326272 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gcn,100000,10000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5171142656 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gat,5000,50000,CPU": {
+    "mean": 47.60565999895334,
+    "std": 4.620923696817679,
+    "min": 39.919100003317,
+    "max": 54.06090000178665,
+    "failed": false
+  },
+  "gat,5000,125000,CPU": {
+    "mean": 102.99276998266578,
+    "std": 11.740064727417874,
+    "min": 90.73039994109422,
+    "max": 127.01809999998659,
+    "failed": false
+  },
+  "gat,5000,200000,CPU": {
+    "mean": 140.08304002927616,
+    "std": 14.263161974166723,
+    "min": 114.22910005785525,
+    "max": 158.73899997677654,
+    "failed": false
+  },
+  "gat,5000,250000,CPU": {
+    "mean": 681.2723700073548,
+    "std": 181.8255760568166,
+    "min": 411.7331999586895,
+    "max": 1051.2344000162557,
+    "failed": false
+  },
+  "gat,5000,300000,CPU": {
+    "mean": 710.3391999960877,
+    "std": 187.57143829023934,
+    "min": 423.92860003747046,
+    "max": 904.4408000772819,
+    "failed": false
+  },
+  "gat,5000,375000,CPU": {
+    "mean": 622.2580500296317,
+    "std": 9.169934807784491,
+    "min": 611.9602000107989,
+    "max": 641.6133000748232,
+    "failed": false
+  },
+  "gat,5000,500000,CPU": {
+    "mean": 792.4641499877907,
+    "std": 91.94709639535458,
+    "min": 632.1833000984043,
+    "max": 1016.5787999285385,
+    "failed": false
+  },
+  "gat,10000,100000,CPU": {
+    "mean": 221.8163399840705,
+    "std": 13.222607879538547,
+    "min": 198.45440005883574,
+    "max": 245.32360001467168,
+    "failed": false
+  },
+  "gat,10000,250000,CPU": {
+    "mean": 461.1054399982095,
+    "std": 40.17827592307857,
+    "min": 359.47509994730353,
+    "max": 526.0904999449849,
+    "failed": false
+  },
+  "gat,10000,400000,CPU": {
+    "mean": 315.4642899869941,
+    "std": 18.511969363030165,
+    "min": 286.5672999760136,
+    "max": 359.1825000476092,
+    "failed": false
+  },
+  "gat,10000,500000,CPU": {
+    "mean": 416.45393000217155,
+    "std": 26.256195356704215,
+    "min": 377.39979999605566,
+    "max": 457.12170004844666,
+    "failed": false
+  },
+  "gat,10000,600000,CPU": {
+    "mean": 534.27695002174,
+    "std": 73.9552900730015,
+    "min": 455.4816000163555,
+    "max": 673.3388000866398,
+    "failed": false
+  },
+  "gat,10000,750000,CPU": {
+    "mean": 680.7308800285682,
+    "std": 89.44127637026834,
+    "min": 564.1818000003695,
+    "max": 828.6000000080094,
+    "failed": false
+  },
+  "gat,10000,1000000,CPU": {
+    "mean": 1597.5971400155686,
+    "std": 126.58784398941404,
+    "min": 1261.0918999416754,
+    "max": 1736.988399992697,
+    "failed": false
+  },
+  "gat,20000,200000,CPU": {
+    "mean": 485.6263300171122,
+    "std": 10.102016233510358,
+    "min": 466.25120006501675,
+    "max": 504.8010000027716,
+    "failed": false
+  },
+  "gat,20000,500000,CPU": {
+    "mean": 720.5132500035688,
+    "std": 184.80321552548637,
+    "min": 451.38630003202707,
+    "max": 1023.622400010936,
+    "failed": false
+  },
+  "gat,20000,800000,CPU": {
+    "mean": 866.9788700062782,
+    "std": 84.72409899222905,
+    "min": 686.7089999141172,
+    "max": 972.4488999927416,
+    "failed": false
+  },
+  "gat,20000,1000000,CPU": {
+    "mean": 960.921339970082,
+    "std": 115.40407085361944,
+    "min": 789.1034999629483,
+    "max": 1146.4926999760792,
+    "failed": false
+  },
+  "gat,20000,1200000,CPU": {
+    "mean": 2767.9041699972004,
+    "std": 1750.4908196450258,
+    "min": 1048.3829999575391,
+    "max": 5219.942199997604,
+    "failed": false
+  },
+  "gat,20000,1500000,CPU": {
+    "mean": 1436.1338199698366,
+    "std": 39.89815908642897,
+    "min": 1373.1802999973297,
+    "max": 1529.0733999572694,
+    "failed": false
+  },
+  "gat,20000,2000000,CPU": {
+    "mean": 3467.7084999973886,
+    "std": 2629.402389223585,
+    "min": 1704.760399996303,
+    "max": 8329.838400008157,
+    "failed": false
+  },
+  "gat,50000,500000,CPU": {
+    "mean": 751.7819600063376,
+    "std": 94.38065872220042,
+    "min": 622.4197000265121,
+    "max": 887.7538000233471,
+    "failed": false
+  },
+  "gat,50000,1250000,CPU": {
+    "mean": 3843.0028400267474,
+    "std": 2853.751628931811,
+    "min": 1339.8156000766903,
+    "max": 7664.367399993353,
+    "failed": false
+  },
+  "gat,50000,2000000,CPU": {
+    "mean": 4549.61028000107,
+    "std": 3681.185387581219,
+    "min": 2132.035700022243,
+    "max": 11212.18020003289,
+    "failed": false
+  },
+  "gat,50000,2500000,CPU": {
+    "mean": 3105.5009100120515,
+    "std": 1228.3259949937553,
+    "min": 2404.047599993646,
+    "max": 5615.849699941464,
+    "failed": false
+  },
+  "gat,50000,3000000,CPU": {
+    "mean": 2909.77898001438,
+    "std": 73.8954877798933,
+    "min": 2818.089900072664,
+    "max": 3056.8542999681085,
+    "failed": false
+  },
+  "gat,50000,3750000,CPU": {
+    "mean": 5250.567730015609,
+    "std": 2668.4734822084856,
+    "min": 3302.7890999801457,
+    "max": 10168.954499997199,
+    "failed": false
+  },
+  "gat,50000,5000000,CPU": {
+    "mean": 7121.070509997662,
+    "std": 7118.320884081023,
+    "min": 4233.592199976556,
+    "max": 28414.260199991986,
+    "failed": false
+  },
+  "gat,80000,800000,CPU": {
+    "mean": 2527.9880900285207,
+    "std": 183.71457774215423,
+    "min": 2196.5594000648707,
+    "max": 2832.942400011234,
+    "failed": false
+  },
+  "gat,80000,2000000,CPU": {
+    "mean": 2309.14192001801,
+    "std": 92.42058714443912,
+    "min": 2132.008200045675,
+    "max": 2465.6841999385506,
+    "failed": false
+  },
+  "gat,80000,3200000,CPU": {
+    "mean": 5680.498230003286,
+    "std": 4888.241986882891,
+    "min": 3166.949999984354,
+    "max": 19607.05330001656,
+    "failed": false
+  },
+  "gat,80000,4000000,CPU": {
+    "mean": 6213.315480016172,
+    "std": 6032.608977638494,
+    "min": 3639.7933999542147,
+    "max": 24188.733200076967,
+    "failed": false
+  },
+  "gat,80000,4800000,CPU": {
+    "mean": 6273.210439982358,
+    "std": 2550.5808429242406,
+    "min": 4488.840300007723,
+    "max": 12183.106299955398,
+    "failed": false
+  },
+  "gat,80000,6000000,CPU": {
+    "mean": 10416.884989989921,
+    "std": 9246.473039555463,
+    "min": 5339.797799941152,
+    "max": 29914.00019999128,
+    "failed": false
+  },
+  "gat,80000,8000000,CPU": {
+    "mean": 12295.76430002926,
+    "std": 8220.074693481427,
+    "min": 6872.720299987122,
+    "max": 28718.147900071926,
+    "failed": false
+  },
+  "gat,100000,1000000,CPU": {
+    "mean": 1566.7172099812888,
+    "std": 476.877170395379,
+    "min": 1247.2270999569446,
+    "max": 2953.5988999996334,
+    "failed": false
+  },
+  "gat,100000,2500000,CPU": {
+    "mean": 4130.852610000875,
+    "std": 1237.284044975147,
+    "min": 2659.711300046183,
+    "max": 6052.360300091095,
+    "failed": false
+  },
+  "gat,100000,4000000,CPU": {
+    "mean": 6202.458610024769,
+    "std": 5570.447740180404,
+    "min": 3906.1839000787586,
+    "max": 22655.976500012912,
+    "failed": false
+  },
+  "gat,100000,5000000,CPU": {
+    "mean": 7095.930130011402,
+    "std": 2857.4718703352914,
+    "min": 4716.3316999794915,
+    "max": 13178.733100066893,
+    "failed": false
+  },
+  "gat,100000,6000000,CPU": {
+    "mean": 10892.361169983633,
+    "std": 10391.617010720307,
+    "min": 5602.09040006157,
+    "max": 31783.89199997764,
+    "failed": false
+  },
+  "gat,100000,7500000,CPU": {
+    "mean": 11974.142859969288,
+    "std": 9851.67244536286,
+    "min": 6585.792399942875,
+    "max": 32256.33739994373,
+    "failed": false
+  },
+  "gat,100000,10000000,CPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nException from src\\plugins\\intel_cpu\\src\\graph.cpp:1365:\nNode /conv/ScatterElements of type ScatterElementsUpdate\nException from src\\plugins\\intel_cpu\\src\\nodes\\scatter_update.cpp:851:\n[CPU] ScatterElementsUpdate node with name '/conv/ScatterElements' ScatterElementsUpdate node with name '/conv/ScatterElements' have indices value that points to non-existing output tensor element\n\n\n"
+  },
+  "gat,5000,50000,GPU": {
+    "mean": 16.893229994457215,
+    "std": 0.9044807183717575,
+    "min": 15.8235999988392,
+    "max": 18.971499986946583,
+    "failed": false
+  },
+  "gat,5000,125000,GPU": {
+    "mean": 33.80550999427214,
+    "std": 1.404459569931766,
+    "min": 32.68760000355542,
+    "max": 37.37359994556755,
+    "failed": false
+  },
+  "gat,5000,200000,GPU": {
+    "mean": 49.83095999341458,
+    "std": 1.3722066839406133,
+    "min": 47.90080001112074,
+    "max": 52.43389995303005,
+    "failed": false
+  },
+  "gat,5000,250000,GPU": {
+    "mean": 62.54382998449728,
+    "std": 5.461660808430572,
+    "min": 59.41679992247373,
+    "max": 78.25459993910044,
+    "failed": false
+  },
+  "gat,5000,300000,GPU": {
+    "mean": 74.86151000484824,
+    "std": 2.621866875037997,
+    "min": 72.32889998704195,
+    "max": 79.68510000500828,
+    "failed": false
+  },
+  "gat,5000,375000,GPU": {
+    "mean": 90.53061997983605,
+    "std": 3.217733226710893,
+    "min": 85.93349996954203,
+    "max": 97.44619997218251,
+    "failed": false
+  },
+  "gat,5000,500000,GPU": {
+    "mean": 120.5945999827236,
+    "std": 4.168698576697086,
+    "min": 112.86210000980645,
+    "max": 129.67619998380542,
+    "failed": false
+  },
+  "gat,10000,100000,GPU": {
+    "mean": 33.51666000671685,
+    "std": 1.488303194854112,
+    "min": 32.12300001177937,
+    "max": 36.04429995175451,
+    "failed": false
+  },
+  "gat,10000,250000,GPU": {
+    "mean": 64.64954999973997,
+    "std": 0.9071105368684923,
+    "min": 63.73099994380027,
+    "max": 66.97599997278303,
+    "failed": false
+  },
+  "gat,10000,400000,GPU": {
+    "mean": 99.89625001326203,
+    "std": 2.496372059448759,
+    "min": 96.55699995346367,
+    "max": 104.20250007882714,
+    "failed": false
+  },
+  "gat,10000,500000,GPU": {
+    "mean": 123.7991799833253,
+    "std": 1.9961856666686084,
+    "min": 119.25399990286678,
+    "max": 125.57679996825755,
+    "failed": false
+  },
+  "gat,10000,600000,GPU": {
+    "mean": 149.38598999287933,
+    "std": 1.0956895877255322,
+    "min": 148.4072000021115,
+    "max": 152.1677999990061,
+    "failed": false
+  },
+  "gat,10000,750000,GPU": {
+    "mean": 185.00147002050653,
+    "std": 1.1132251957926558,
+    "min": 183.72319999616593,
+    "max": 187.51329998485744,
+    "failed": false
+  },
+  "gat,10000,1000000,GPU": {
+    "mean": 248.63921001087874,
+    "std": 1.0945051874118474,
+    "min": 247.1334000583738,
+    "max": 251.16669991984963,
+    "failed": false
+  },
+  "gat,20000,200000,GPU": {
+    "mean": 63.448969973251224,
+    "std": 0.6339985516114494,
+    "min": 62.54419998731464,
+    "max": 64.68409998342395,
+    "failed": false
+  },
+  "gat,20000,500000,GPU": {
+    "mean": 141.80565001443028,
+    "std": 1.4737722357326135,
+    "min": 139.23559989780188,
+    "max": 144.4854000583291,
+    "failed": false
+  },
+  "gat,20000,800000,GPU": {
+    "mean": 211.7223999928683,
+    "std": 3.68643195428662,
+    "min": 206.54499996453524,
+    "max": 220.34850006457418,
+    "failed": false
+  },
+  "gat,20000,1000000,GPU": {
+    "mean": 262.1929399902001,
+    "std": 2.930843911905622,
+    "min": 258.562000002712,
+    "max": 268.977600033395,
+    "failed": false
+  },
+  "gat,20000,1200000,GPU": {
+    "mean": 326.8829800072126,
+    "std": 17.244148675641792,
+    "min": 318.75530001707375,
+    "max": 378.3075000392273,
+    "failed": false
+  },
+  "gat,20000,1500000,GPU": {
+    "mean": 400.6928199902177,
+    "std": 5.221505937059303,
+    "min": 393.754499964416,
+    "max": 410.9078999608755,
+    "failed": false
+  },
+  "gat,20000,2000000,GPU": {
+    "mean": 529.972180002369,
+    "std": 4.5623043735401145,
+    "min": 523.413100047037,
+    "max": 538.4705000324175,
+    "failed": false
+  },
+  "gat,50000,500000,GPU": {
+    "mean": 167.99781997688115,
+    "std": 4.142497136172811,
+    "min": 161.28889995161444,
+    "max": 173.81309997290373,
+    "failed": false
+  },
+  "gat,50000,1250000,GPU": {
+    "mean": 352.2836300195195,
+    "std": 2.7132220910374403,
+    "min": 349.701999919489,
+    "max": 358.2934000296518,
+    "failed": false
+  },
+  "gat,50000,2000000,GPU": {
+    "mean": 538.4292099974118,
+    "std": 3.96304046240529,
+    "min": 531.0236999066547,
+    "max": 544.6907000150532,
+    "failed": false
+  },
+  "gat,50000,2500000,GPU": {
+    "mean": 658.2198099931702,
+    "std": 3.568524638981603,
+    "min": 653.9754000259563,
+    "max": 666.1055999575183,
+    "failed": false
+  },
+  "gat,50000,3000000,GPU": {
+    "mean": 781.5002200077288,
+    "std": 8.816344020167456,
+    "min": 771.9398000044748,
+    "max": 802.9078000690788,
+    "failed": false
+  },
+  "gat,50000,3750000,GPU": {
+    "mean": 967.7927199867554,
+    "std": 7.3087927337277225,
+    "min": 956.8099000025541,
+    "max": 978.2755000051111,
+    "failed": false
+  },
+  "gat,50000,5000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5171085312 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gat,80000,800000,GPU": {
+    "mean": 272.1885299892165,
+    "std": 2.4398197567259587,
+    "min": 267.14829995762557,
+    "max": 275.09270003065467,
+    "failed": false
+  },
+  "gat,80000,2000000,GPU": {
+    "mean": 574.4990999810398,
+    "std": 6.696456201274402,
+    "min": 566.2895999848843,
+    "max": 586.911299964413,
+    "failed": false
+  },
+  "gat,80000,3200000,GPU": {
+    "mean": 864.0682399971411,
+    "std": 4.576848242286588,
+    "min": 858.1034999806434,
+    "max": 872.9764999588951,
+    "failed": false
+  },
+  "gat,80000,4000000,GPU": {
+    "mean": 1073.948170011863,
+    "std": 4.774641624980941,
+    "min": 1068.4759999858215,
+    "max": 1083.3856000099331,
+    "failed": false
+  },
+  "gat,80000,4800000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 4997051392 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gat,80000,6000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 6225843200 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gat,80000,8000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 8273819648 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gat,100000,1000000,GPU": {
+    "mean": 348.6988199991174,
+    "std": 3.3101597959299793,
+    "min": 343.3029999723658,
+    "max": 355.0274999579415,
+    "failed": false
+  },
+  "gat,100000,2500000,GPU": {
+    "mean": 709.8028999869712,
+    "std": 8.459142067867443,
+    "min": 698.528700042516,
+    "max": 729.8608999699354,
+    "failed": false
+  },
+  "gat,100000,4000000,GPU": {
+    "mean": 1080.723999987822,
+    "std": 8.59521081762204,
+    "min": 1063.393999938853,
+    "max": 1096.441200003028,
+    "failed": false
+  },
+  "gat,100000,5000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5222352896 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gat,100000,6000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 6246343680 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gat,100000,7500000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 7782326272 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  "gat,100000,10000000,GPU": {
+    "mean": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5171142656 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  }
+}

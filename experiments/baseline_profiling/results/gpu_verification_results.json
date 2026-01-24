@@ -1,0 +1,188 @@
+[
+  {
+    "model": "graphsage",
+    "nodes": 5000,
+    "edges": 50000,
+    "method1_discard_ms": 14.339209999889135,
+    "method2_access_ms": 13.944565004203469,
+    "method3_numpy_ms": 14.5493250049185,
+    "diff_percent": 1.4653178594287268
+  },
+  {
+    "model": "graphsage",
+    "nodes": 10000,
+    "edges": 100000,
+    "method1_discard_ms": 28.496084996731952,
+    "method2_access_ms": 28.906109993113205,
+    "method3_numpy_ms": 30.57126000057906,
+    "diff_percent": 7.282316164080423
+  },
+  {
+    "model": "graphsage",
+    "nodes": 20000,
+    "edges": 200000,
+    "method1_discard_ms": 58.5927150095813,
+    "method2_access_ms": 59.44866501376964,
+    "method3_numpy_ms": 61.00691499887034,
+    "diff_percent": 4.120307428823304
+  },
+  {
+    "model": "graphsage",
+    "nodes": 50000,
+    "edges": 500000,
+    "method1_discard_ms": 148.5243299859576,
+    "method2_access_ms": 151.95073500508443,
+    "method3_numpy_ms": 157.94114499585703,
+    "diff_percent": 6.340250793112322
+  },
+  {
+    "model": "graphsage",
+    "nodes": 50000,
+    "edges": 2500000,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:223:\nCheck '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n"
+  },
+  {
+    "model": "graphsage",
+    "nodes": 80000,
+    "edges": 800000,
+    "method1_discard_ms": 243.75259500811808,
+    "method2_access_ms": 241.50846499833278,
+    "method3_numpy_ms": 251.9996500108391,
+    "diff_percent": 3.383371160600921
+  },
+  {
+    "model": "graphsage",
+    "nodes": 100000,
+    "edges": 1000000,
+    "method1_discard_ms": 301.2475800001994,
+    "method2_access_ms": 307.11702500702813,
+    "method3_numpy_ms": 329.96790999313816,
+    "diff_percent": 9.53379608656766
+  },
+  {
+    "model": "gcn",
+    "nodes": 5000,
+    "edges": 50000,
+    "method1_discard_ms": 16.439779999200255,
+    "method2_access_ms": 16.523449996020645,
+    "method3_numpy_ms": 18.444275012006983,
+    "diff_percent": 12.192955215363229
+  },
+  {
+    "model": "gcn",
+    "nodes": 10000,
+    "edges": 100000,
+    "method1_discard_ms": 33.62831000122242,
+    "method2_access_ms": 33.902784989913926,
+    "method3_numpy_ms": 33.70096999569796,
+    "diff_percent": 0.2160679334551818
+  },
+  {
+    "model": "gcn",
+    "nodes": 20000,
+    "edges": 200000,
+    "method1_discard_ms": 77.2560499899555,
+    "method2_access_ms": 65.88929500430822,
+    "method3_numpy_ms": 69.6430999902077,
+    "diff_percent": -9.854179705974614
+  },
+  {
+    "model": "gcn",
+    "nodes": 50000,
+    "edges": 500000,
+    "method1_discard_ms": 157.70811500842683,
+    "method2_access_ms": 157.8657150035724,
+    "method3_numpy_ms": 165.33597998786718,
+    "diff_percent": 4.836697831961764
+  },
+  {
+    "model": "gcn",
+    "nodes": 50000,
+    "edges": 2500000,
+    "method1_discard_ms": 582.3630149941891,
+    "method2_access_ms": 578.7972650083248,
+    "method3_numpy_ms": 580.825910018757,
+    "diff_percent": -0.2639427532065193
+  },
+  {
+    "model": "gcn",
+    "nodes": 80000,
+    "edges": 800000,
+    "method1_discard_ms": 237.92912501376122,
+    "method2_access_ms": 244.2390899930615,
+    "method3_numpy_ms": 249.09581499523483,
+    "diff_percent": 4.693284178987232
+  },
+  {
+    "model": "gcn",
+    "nodes": 100000,
+    "edges": 1000000,
+    "method1_discard_ms": 302.50409000436775,
+    "method2_access_ms": 308.1426349817775,
+    "method3_numpy_ms": 321.6769400052726,
+    "diff_percent": 6.338046537032952
+  },
+  {
+    "model": "gat",
+    "nodes": 5000,
+    "edges": 50000,
+    "method1_discard_ms": 18.085405003512278,
+    "method2_access_ms": 18.14892999245785,
+    "method3_numpy_ms": 18.265499995322898,
+    "diff_percent": 0.995802923825286
+  },
+  {
+    "model": "gat",
+    "nodes": 10000,
+    "edges": 100000,
+    "method1_discard_ms": 35.436760005541146,
+    "method2_access_ms": 38.211335003143176,
+    "method3_numpy_ms": 37.64273999258876,
+    "diff_percent": 6.225117608671531
+  },
+  {
+    "model": "gat",
+    "nodes": 20000,
+    "edges": 200000,
+    "method1_discard_ms": 68.36032000137493,
+    "method2_access_ms": 68.21301498566754,
+    "method3_numpy_ms": 72.00463500339538,
+    "diff_percent": 5.331038535143122
+  },
+  {
+    "model": "gat",
+    "nodes": 50000,
+    "edges": 500000,
+    "method1_discard_ms": 174.99126000329852,
+    "method2_access_ms": 171.73439998878166,
+    "method3_numpy_ms": 184.5188400009647,
+    "diff_percent": 5.444603346182311
+  },
+  {
+    "model": "gat",
+    "nodes": 50000,
+    "edges": 2500000,
+    "method1_discard_ms": 666.3238099892624,
+    "method2_access_ms": 672.425344993826,
+    "method3_numpy_ms": 679.6279650065117,
+    "diff_percent": 1.9966500998161356
+  },
+  {
+    "model": "gat",
+    "nodes": 80000,
+    "edges": 800000,
+    "method1_discard_ms": 277.0694100006949,
+    "method2_access_ms": 289.8590750119183,
+    "method3_numpy_ms": 292.78865997330286,
+    "diff_percent": 5.673397858164319
+  },
+  {
+    "model": "gat",
+    "nodes": 100000,
+    "edges": 1000000,
+    "method1_discard_ms": 352.37383998464793,
+    "method2_access_ms": 351.32442001486197,
+    "method3_numpy_ms": 366.4993150101509,
+    "diff_percent": 4.008661660615435
+  }
+]

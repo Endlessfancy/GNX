@@ -1,0 +1,110 @@
+[
+  {
+    "model": "graphsage",
+    "nodes": 1000,
+    "edges": 10000,
+    "sync_ms": 17.41478998446837,
+    "async_ms": 12.755130010191351,
+    "async_compute_ms": 13.794519985094666,
+    "diff_percent": 36.531654091757204
+  },
+  {
+    "model": "graphsage",
+    "nodes": 2000,
+    "edges": 20000,
+    "sync_ms": 25.767119973897934,
+    "async_ms": 22.926459985319525,
+    "async_compute_ms": 22.41567998426035,
+    "diff_percent": 12.39031228718854
+  },
+  {
+    "model": "graphsage",
+    "nodes": 5000,
+    "edges": 50000,
+    "sync_ms": 60.11084000347182,
+    "async_ms": 57.46435000328347,
+    "async_compute_ms": 56.11323000630364,
+    "diff_percent": 4.605446681354844
+  },
+  {
+    "model": "graphsage",
+    "nodes": 10000,
+    "edges": 100000,
+    "sync_ms": 124.99825998675078,
+    "async_ms": 127.41355998441577,
+    "async_compute_ms": 105.24468997027725,
+    "diff_percent": -1.8956381078751812
+  },
+  {
+    "model": "gcn",
+    "nodes": 1000,
+    "edges": 10000,
+    "sync_ms": 11.046029988210648,
+    "async_ms": 8.790279983077198,
+    "async_compute_ms": 8.449269994162023,
+    "diff_percent": 25.66186753409626
+  },
+  {
+    "model": "gcn",
+    "nodes": 2000,
+    "edges": 20000,
+    "sync_ms": 19.34655000222847,
+    "async_ms": 17.890200030524284,
+    "async_compute_ms": 17.890239995904267,
+    "diff_percent": 8.140490152258547
+  },
+  {
+    "model": "gcn",
+    "nodes": 5000,
+    "edges": 50000,
+    "sync_ms": 45.06665997905657,
+    "async_ms": 36.30254997406155,
+    "async_compute_ms": 35.201760032214224,
+    "diff_percent": 24.141857834386407
+  },
+  {
+    "model": "gcn",
+    "nodes": 10000,
+    "edges": 100000,
+    "sync_ms": 80.25211000349373,
+    "async_ms": 71.240890014451,
+    "async_compute_ms": 92.41401997860521,
+    "diff_percent": 12.648943587334227
+  },
+  {
+    "model": "gat",
+    "nodes": 1000,
+    "edges": 10000,
+    "sync_ms": 11.005490005481988,
+    "async_ms": 10.063480027019978,
+    "async_compute_ms": 8.740750001743436,
+    "diff_percent": 9.360678174277263
+  },
+  {
+    "model": "gat",
+    "nodes": 2000,
+    "edges": 20000,
+    "sync_ms": 20.215540018398315,
+    "async_ms": 18.553760007489473,
+    "async_compute_ms": 18.170289997942746,
+    "diff_percent": 8.95656734935691
+  },
+  {
+    "model": "gat",
+    "nodes": 5000,
+    "edges": 50000,
+    "sync_ms": 46.93283000960946,
+    "async_ms": 47.5815000012517,
+    "async_compute_ms": 47.48104006284848,
+    "diff_percent": -1.363281930214837
+  },
+  {
+    "model": "gat",
+    "nodes": 10000,
+    "edges": 100000,
+    "sync_ms": 135.64524998655543,
+    "async_ms": 106.38737000990659,
+    "async_compute_ms": 106.61611000541598,
+    "diff_percent": 27.501271977984228
+  }
+]

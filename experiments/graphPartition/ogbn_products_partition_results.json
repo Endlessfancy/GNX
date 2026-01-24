@@ -1,0 +1,5978 @@
+{
+  "dataset": "ogbn-products",
+  "num_nodes": 2449029,
+  "num_edges": 123718280,
+  "constraints": {
+    "max_nodes_per_subgraph": 100000,
+    "halo_ratio_limit": 0.3
+  },
+  "partitions": [
+    {
+      "k": 2,
+      "is_valid": false,
+      "edge_cut": 1155248,
+      "overall_halo_ratio": 0.18144007277986499,
+      "total_halo_nodes": 444352,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 1224514,
+          "num_halo": 204141,
+          "total_nodes": 1428655,
+          "internal_edges": 73071176,
+          "boundary_edges": 1155246,
+          "halo_ratio": 0.1667118546623395
+        },
+        {
+          "id": 1,
+          "num_owned": 1224515,
+          "num_halo": 240211,
+          "total_nodes": 1464726,
+          "internal_edges": 48336612,
+          "boundary_edges": 1155246,
+          "halo_ratio": 0.19616827886959326
+        }
+      ]
+    },
+    {
+      "k": 3,
+      "is_valid": false,
+      "edge_cut": 1878477,
+      "overall_halo_ratio": 0.28821259364425655,
+      "total_halo_nodes": 705841,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 816343,
+          "num_halo": 147932,
+          "total_nodes": 964275,
+          "internal_edges": 30573594,
+          "boundary_edges": 699270,
+          "halo_ratio": 0.18121304402683674
+        },
+        {
+          "id": 1,
+          "num_owned": 816343,
+          "num_halo": 252330,
+          "total_nodes": 1068673,
+          "internal_edges": 45702196,
+          "boundary_edges": 1399055,
+          "halo_ratio": 0.3090980139475686
+        },
+        {
+          "id": 2,
+          "num_owned": 816343,
+          "num_halo": 305579,
+          "total_nodes": 1121922,
+          "internal_edges": 43685536,
+          "boundary_edges": 1658629,
+          "halo_ratio": 0.37432672295836433
+        }
+      ]
+    },
+    {
+      "k": 4,
+      "is_valid": false,
+      "edge_cut": 2536192,
+      "overall_halo_ratio": 0.40852394969598155,
+      "total_halo_nodes": 1000487,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 612257,
+          "num_halo": 316800,
+          "total_nodes": 929057,
+          "internal_edges": 32738060,
+          "boundary_edges": 1776430,
+          "halo_ratio": 0.5174297721381708
+        },
+        {
+          "id": 1,
+          "num_owned": 612257,
+          "num_halo": 299474,
+          "total_nodes": 911731,
+          "internal_edges": 37977106,
+          "boundary_edges": 1734826,
+          "halo_ratio": 0.48913119817331613
+        },
+        {
+          "id": 2,
+          "num_owned": 612257,
+          "num_halo": 195186,
+          "total_nodes": 807443,
+          "internal_edges": 24105290,
+          "boundary_edges": 766227,
+          "halo_ratio": 0.31879749843611427
+        },
+        {
+          "id": 3,
+          "num_owned": 612258,
+          "num_halo": 189027,
+          "total_nodes": 801285,
+          "internal_edges": 23825444,
+          "boundary_edges": 794897,
+          "halo_ratio": 0.3087374930176494
+        }
+      ]
+    },
+    {
+      "k": 5,
+      "is_valid": false,
+      "edge_cut": 2873152,
+      "overall_halo_ratio": 0.47557093035648007,
+      "total_halo_nodes": 1164687,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 489805,
+          "num_halo": 144121,
+          "total_nodes": 633926,
+          "internal_edges": 18088484,
+          "boundary_edges": 478930,
+          "halo_ratio": 0.29424158593726074
+        },
+        {
+          "id": 1,
+          "num_owned": 489806,
+          "num_halo": 151587,
+          "total_nodes": 641393,
+          "internal_edges": 18293968,
+          "boundary_edges": 641206,
+          "halo_ratio": 0.30948375479271384
+        },
+        {
+          "id": 2,
+          "num_owned": 489806,
+          "num_halo": 230634,
+          "total_nodes": 720440,
+          "internal_edges": 23679138,
+          "boundary_edges": 1130673,
+          "halo_ratio": 0.4708680579658069
+        },
+        {
+          "id": 3,
+          "num_owned": 489806,
+          "num_halo": 301422,
+          "total_nodes": 791228,
+          "internal_edges": 28150578,
+          "boundary_edges": 1550015,
+          "halo_ratio": 0.6153905832104956
+        },
+        {
+          "id": 4,
+          "num_owned": 489806,
+          "num_halo": 336923,
+          "total_nodes": 826729,
+          "internal_edges": 29759820,
+          "boundary_edges": 1945468,
+          "halo_ratio": 0.6878702996696652
+        }
+      ]
+    },
+    {
+      "k": 6,
+      "is_valid": false,
+      "edge_cut": 2977791,
+      "overall_halo_ratio": 0.5154038600604566,
+      "total_halo_nodes": 1262239,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 408171,
+          "num_halo": 230502,
+          "total_nodes": 638673,
+          "internal_edges": 22148690,
+          "boundary_edges": 1079082,
+          "halo_ratio": 0.5647191985711871
+        },
+        {
+          "id": 1,
+          "num_owned": 408171,
+          "num_halo": 252076,
+          "total_nodes": 660247,
+          "internal_edges": 21970736,
+          "boundary_edges": 1288696,
+          "halo_ratio": 0.6175744969632826
+        },
+        {
+          "id": 2,
+          "num_owned": 408172,
+          "num_halo": 303151,
+          "total_nodes": 711323,
+          "internal_edges": 26125964,
+          "boundary_edges": 1613254,
+          "halo_ratio": 0.7427040561331988
+        },
+        {
+          "id": 3,
+          "num_owned": 408171,
+          "num_halo": 168155,
+          "total_nodes": 576326,
+          "internal_edges": 14634992,
+          "boundary_edges": 657999,
+          "halo_ratio": 0.4119719431316777
+        },
+        {
+          "id": 4,
+          "num_owned": 408172,
+          "num_halo": 149545,
+          "total_nodes": 557717,
+          "internal_edges": 18892710,
+          "boundary_edges": 594502,
+          "halo_ratio": 0.3663774095234362
+        },
+        {
+          "id": 5,
+          "num_owned": 408172,
+          "num_halo": 158810,
+          "total_nodes": 566982,
+          "internal_edges": 13989614,
+          "boundary_edges": 722041,
+          "halo_ratio": 0.38907617376988135
+        }
+      ]
+    },
+    {
+      "k": 7,
+      "is_valid": false,
+      "edge_cut": 3479269,
+      "overall_halo_ratio": 0.5916920542794716,
+      "total_halo_nodes": 1449071,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 349861,
+          "num_halo": 133111,
+          "total_nodes": 482972,
+          "internal_edges": 13335618,
+          "boundary_edges": 471625,
+          "halo_ratio": 0.38046824310226063
+        },
+        {
+          "id": 1,
+          "num_owned": 349861,
+          "num_halo": 132091,
+          "total_nodes": 481952,
+          "internal_edges": 11656616,
+          "boundary_edges": 617482,
+          "halo_ratio": 0.3775527995403889
+        },
+        {
+          "id": 2,
+          "num_owned": 349862,
+          "num_halo": 115898,
+          "total_nodes": 465760,
+          "internal_edges": 15222986,
+          "boundary_edges": 437823,
+          "halo_ratio": 0.33126775700133193
+        },
+        {
+          "id": 3,
+          "num_owned": 349861,
+          "num_halo": 296982,
+          "total_nodes": 646843,
+          "internal_edges": 16939876,
+          "boundary_edges": 1491312,
+          "halo_ratio": 0.8488571175409663
+        },
+        {
+          "id": 4,
+          "num_owned": 349861,
+          "num_halo": 236747,
+          "total_nodes": 586608,
+          "internal_edges": 19493138,
+          "boundary_edges": 1150098,
+          "halo_ratio": 0.6766887421004342
+        },
+        {
+          "id": 5,
+          "num_owned": 349861,
+          "num_halo": 257600,
+          "total_nodes": 607461,
+          "internal_edges": 22047706,
+          "boundary_edges": 1234678,
+          "halo_ratio": 0.7362924132726997
+        },
+        {
+          "id": 6,
+          "num_owned": 349862,
+          "num_halo": 276642,
+          "total_nodes": 626504,
+          "internal_edges": 18063810,
+          "boundary_edges": 1555512,
+          "halo_ratio": 0.790717482893255
+        }
+      ]
+    },
+    {
+      "k": 8,
+      "is_valid": false,
+      "edge_cut": 4043619,
+      "overall_halo_ratio": 0.68597268550107,
+      "total_halo_nodes": 1679967,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 306128,
+          "num_halo": 300540,
+          "total_nodes": 606668,
+          "internal_edges": 15848822,
+          "boundary_edges": 1499376,
+          "halo_ratio": 0.9817461976689489
+        },
+        {
+          "id": 1,
+          "num_owned": 306129,
+          "num_halo": 253006,
+          "total_nodes": 559135,
+          "internal_edges": 15901250,
+          "boundary_edges": 1265042,
+          "halo_ratio": 0.8264685802390496
+        },
+        {
+          "id": 2,
+          "num_owned": 306128,
+          "num_halo": 219134,
+          "total_nodes": 525262,
+          "internal_edges": 17884028,
+          "boundary_edges": 1078190,
+          "halo_ratio": 0.7158247530444781
+        },
+        {
+          "id": 3,
+          "num_owned": 306129,
+          "num_halo": 304555,
+          "total_nodes": 610684,
+          "internal_edges": 19030606,
+          "boundary_edges": 1719108,
+          "halo_ratio": 0.9948583766974053
+        },
+        {
+          "id": 4,
+          "num_owned": 306128,
+          "num_halo": 133608,
+          "total_nodes": 439736,
+          "internal_edges": 10472498,
+          "boundary_edges": 631921,
+          "halo_ratio": 0.43644488579940416
+        },
+        {
+          "id": 5,
+          "num_owned": 306129,
+          "num_halo": 185658,
+          "total_nodes": 491787,
+          "internal_edges": 11459194,
+          "boundary_edges": 786961,
+          "halo_ratio": 0.606469821545819
+        },
+        {
+          "id": 6,
+          "num_owned": 306129,
+          "num_halo": 147690,
+          "total_nodes": 453819,
+          "internal_edges": 11515682,
+          "boundary_edges": 575655,
+          "halo_ratio": 0.4824436757053399
+        },
+        {
+          "id": 7,
+          "num_owned": 306129,
+          "num_halo": 135776,
+          "total_nodes": 441905,
+          "internal_edges": 13518970,
+          "boundary_edges": 530977,
+          "halo_ratio": 0.44352544188887694
+        }
+      ]
+    },
+    {
+      "k": 9,
+      "is_valid": false,
+      "edge_cut": 3871027,
+      "overall_halo_ratio": 0.6908174627576888,
+      "total_halo_nodes": 1691832,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 271851,
+          "num_halo": 179777,
+          "total_nodes": 451628,
+          "internal_edges": 14849664,
+          "boundary_edges": 668756,
+          "halo_ratio": 0.6613071130876841
+        },
+        {
+          "id": 1,
+          "num_owned": 271579,
+          "num_halo": 52804,
+          "total_nodes": 324383,
+          "internal_edges": 9688962,
+          "boundary_edges": 174215,
+          "halo_ratio": 0.1944332956524621
+        },
+        {
+          "id": 2,
+          "num_owned": 270131,
+          "num_halo": 218430,
+          "total_nodes": 488561,
+          "internal_edges": 11195898,
+          "boundary_edges": 947767,
+          "halo_ratio": 0.8086076755352033
+        },
+        {
+          "id": 3,
+          "num_owned": 280291,
+          "num_halo": 144270,
+          "total_nodes": 424561,
+          "internal_edges": 8799628,
+          "boundary_edges": 695859,
+          "halo_ratio": 0.5147150639870706
+        },
+        {
+          "id": 4,
+          "num_owned": 277189,
+          "num_halo": 184583,
+          "total_nodes": 461772,
+          "internal_edges": 14778584,
+          "boundary_edges": 815303,
+          "halo_ratio": 0.6659102633942905
+        },
+        {
+          "id": 5,
+          "num_owned": 271866,
+          "num_halo": 162191,
+          "total_nodes": 434057,
+          "internal_edges": 10510670,
+          "boundary_edges": 610085,
+          "halo_ratio": 0.5965843467002127
+        },
+        {
+          "id": 6,
+          "num_owned": 267628,
+          "num_halo": 275989,
+          "total_nodes": 543617,
+          "internal_edges": 15611388,
+          "boundary_edges": 1445528,
+          "halo_ratio": 1.0312411257417011
+        },
+        {
+          "id": 7,
+          "num_owned": 274318,
+          "num_halo": 191972,
+          "total_nodes": 466290,
+          "internal_edges": 15072822,
+          "boundary_edges": 907654,
+          "halo_ratio": 0.6998155425455129
+        },
+        {
+          "id": 8,
+          "num_owned": 264176,
+          "num_halo": 281816,
+          "total_nodes": 545992,
+          "internal_edges": 15468618,
+          "boundary_edges": 1476879,
+          "halo_ratio": 1.0667736660408214
+        }
+      ]
+    },
+    {
+      "k": 10,
+      "is_valid": false,
+      "edge_cut": 3981626,
+      "overall_halo_ratio": 0.7181237951857654,
+      "total_halo_nodes": 1758706,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 242063,
+          "num_halo": 198929,
+          "total_nodes": 440992,
+          "internal_edges": 13172494,
+          "boundary_edges": 882146,
+          "halo_ratio": 0.8218067197382499
+        },
+        {
+          "id": 1,
+          "num_owned": 252261,
+          "num_halo": 209535,
+          "total_nodes": 461796,
+          "internal_edges": 11948636,
+          "boundary_edges": 929925,
+          "halo_ratio": 0.8306278021572895
+        },
+        {
+          "id": 2,
+          "num_owned": 242203,
+          "num_halo": 175884,
+          "total_nodes": 418087,
+          "internal_edges": 12864026,
+          "boundary_edges": 821087,
+          "halo_ratio": 0.7261842338864506
+        },
+        {
+          "id": 3,
+          "num_owned": 241022,
+          "num_halo": 246467,
+          "total_nodes": 487489,
+          "internal_edges": 14874796,
+          "boundary_edges": 1266198,
+          "halo_ratio": 1.0225912987196188
+        },
+        {
+          "id": 4,
+          "num_owned": 237758,
+          "num_halo": 270761,
+          "total_nodes": 508519,
+          "internal_edges": 13670006,
+          "boundary_edges": 1390188,
+          "halo_ratio": 1.1388092093641433
+        },
+        {
+          "id": 5,
+          "num_owned": 252262,
+          "num_halo": 126261,
+          "total_nodes": 378523,
+          "internal_edges": 9680344,
+          "boundary_edges": 446280,
+          "halo_ratio": 0.5005153372287542
+        },
+        {
+          "id": 6,
+          "num_owned": 239500,
+          "num_halo": 117816,
+          "total_nodes": 357316,
+          "internal_edges": 11532644,
+          "boundary_edges": 436211,
+          "halo_ratio": 0.4919248434237996
+        },
+        {
+          "id": 7,
+          "num_owned": 242190,
+          "num_halo": 103503,
+          "total_nodes": 345693,
+          "internal_edges": 10455774,
+          "boundary_edges": 330549,
+          "halo_ratio": 0.42736281431933604
+        },
+        {
+          "id": 8,
+          "num_owned": 247516,
+          "num_halo": 176855,
+          "total_nodes": 424371,
+          "internal_edges": 8863720,
+          "boundary_edges": 808176,
+          "halo_ratio": 0.7145194654082968
+        },
+        {
+          "id": 9,
+          "num_owned": 252254,
+          "num_halo": 132695,
+          "total_nodes": 384949,
+          "internal_edges": 8692600,
+          "boundary_edges": 652480,
+          "halo_ratio": 0.5260372481704948
+        }
+      ]
+    },
+    {
+      "k": 11,
+      "is_valid": false,
+      "edge_cut": 4268852,
+      "overall_halo_ratio": 0.7825864863176385,
+      "total_halo_nodes": 1916577,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 218297,
+          "num_halo": 130568,
+          "total_nodes": 348865,
+          "internal_edges": 12186262,
+          "boundary_edges": 534887,
+          "halo_ratio": 0.5981209086702978
+        },
+        {
+          "id": 1,
+          "num_owned": 226920,
+          "num_halo": 65351,
+          "total_nodes": 292271,
+          "internal_edges": 8122136,
+          "boundary_edges": 206357,
+          "halo_ratio": 0.28799136259474706
+        },
+        {
+          "id": 2,
+          "num_owned": 220762,
+          "num_halo": 230267,
+          "total_nodes": 451029,
+          "internal_edges": 10573902,
+          "boundary_edges": 1063284,
+          "halo_ratio": 1.0430554171460669
+        },
+        {
+          "id": 3,
+          "num_owned": 229329,
+          "num_halo": 139412,
+          "total_nodes": 368741,
+          "internal_edges": 8095044,
+          "boundary_edges": 626286,
+          "halo_ratio": 0.6079126495122728
+        },
+        {
+          "id": 4,
+          "num_owned": 221530,
+          "num_halo": 138371,
+          "total_nodes": 359901,
+          "internal_edges": 7579374,
+          "boundary_edges": 662485,
+          "halo_ratio": 0.6246151762740938
+        },
+        {
+          "id": 5,
+          "num_owned": 229240,
+          "num_halo": 118871,
+          "total_nodes": 348111,
+          "internal_edges": 8592534,
+          "boundary_edges": 407156,
+          "halo_ratio": 0.5185438841388937
+        },
+        {
+          "id": 6,
+          "num_owned": 226508,
+          "num_halo": 174958,
+          "total_nodes": 401466,
+          "internal_edges": 11581884,
+          "boundary_edges": 722090,
+          "halo_ratio": 0.7724142193653204
+        },
+        {
+          "id": 7,
+          "num_owned": 226634,
+          "num_halo": 233582,
+          "total_nodes": 460216,
+          "internal_edges": 12932706,
+          "boundary_edges": 996528,
+          "halo_ratio": 1.0306573594429786
+        },
+        {
+          "id": 8,
+          "num_owned": 216143,
+          "num_halo": 178369,
+          "total_nodes": 394512,
+          "internal_edges": 11603590,
+          "boundary_edges": 726683,
+          "halo_ratio": 0.8252360705643949
+        },
+        {
+          "id": 9,
+          "num_owned": 217208,
+          "num_halo": 242756,
+          "total_nodes": 459964,
+          "internal_edges": 11817464,
+          "boundary_edges": 1164605,
+          "halo_ratio": 1.1176199771647453
+        },
+        {
+          "id": 10,
+          "num_owned": 216458,
+          "num_halo": 264072,
+          "total_nodes": 480530,
+          "internal_edges": 12095696,
+          "boundary_edges": 1427327,
+          "halo_ratio": 1.2199687699230335
+        }
+      ]
+    },
+    {
+      "k": 12,
+      "is_valid": false,
+      "edge_cut": 4279962,
+      "overall_halo_ratio": 0.8093460714430086,
+      "total_halo_nodes": 1982112,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 200572,
+          "num_halo": 226201,
+          "total_nodes": 426773,
+          "internal_edges": 11744694,
+          "boundary_edges": 933171,
+          "halo_ratio": 1.1277795504856112
+        },
+        {
+          "id": 1,
+          "num_owned": 208534,
+          "num_halo": 206522,
+          "total_nodes": 415056,
+          "internal_edges": 11160480,
+          "boundary_edges": 846643,
+          "halo_ratio": 0.9903516932490625
+        },
+        {
+          "id": 2,
+          "num_owned": 198888,
+          "num_halo": 173978,
+          "total_nodes": 372866,
+          "internal_edges": 10182114,
+          "boundary_edges": 752799,
+          "halo_ratio": 0.874753630183822
+        },
+        {
+          "id": 3,
+          "num_owned": 208127,
+          "num_halo": 218191,
+          "total_nodes": 426318,
+          "internal_edges": 12285948,
+          "boundary_edges": 1095453,
+          "halo_ratio": 1.0483550908820096
+        },
+        {
+          "id": 4,
+          "num_owned": 203147,
+          "num_halo": 177869,
+          "total_nodes": 381016,
+          "internal_edges": 10501644,
+          "boundary_edges": 860504,
+          "halo_ratio": 0.875567938487893
+        },
+        {
+          "id": 5,
+          "num_owned": 199243,
+          "num_halo": 231417,
+          "total_nodes": 430660,
+          "internal_edges": 10404624,
+          "boundary_edges": 1085953,
+          "halo_ratio": 1.1614812063660958
+        },
+        {
+          "id": 6,
+          "num_owned": 198463,
+          "num_halo": 124954,
+          "total_nodes": 323417,
+          "internal_edges": 8222268,
+          "boundary_edges": 438122,
+          "halo_ratio": 0.6296085416425228
+        },
+        {
+          "id": 7,
+          "num_owned": 210218,
+          "num_halo": 130880,
+          "total_nodes": 341098,
+          "internal_edges": 6445292,
+          "boundary_edges": 623082,
+          "halo_ratio": 0.6225917856701139
+        },
+        {
+          "id": 8,
+          "num_owned": 200484,
+          "num_halo": 180298,
+          "total_nodes": 380782,
+          "internal_edges": 6855010,
+          "boundary_edges": 804241,
+          "halo_ratio": 0.8993136609405239
+        },
+        {
+          "id": 9,
+          "num_owned": 204017,
+          "num_halo": 40891,
+          "total_nodes": 244908,
+          "internal_edges": 7717434,
+          "boundary_edges": 131345,
+          "halo_ratio": 0.20042937598337393
+        },
+        {
+          "id": 10,
+          "num_owned": 210217,
+          "num_halo": 110410,
+          "total_nodes": 320627,
+          "internal_edges": 7700374,
+          "boundary_edges": 386286,
+          "halo_ratio": 0.5252191782776845
+        },
+        {
+          "id": 11,
+          "num_owned": 207119,
+          "num_halo": 160501,
+          "total_nodes": 367620,
+          "internal_edges": 11938482,
+          "boundary_edges": 602317,
+          "halo_ratio": 0.7749216633915769
+        }
+      ]
+    },
+    {
+      "k": 13,
+      "is_valid": false,
+      "edge_cut": 4554661,
+      "overall_halo_ratio": 0.8550098835089336,
+      "total_halo_nodes": 2093944,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 185729,
+          "num_halo": 139744,
+          "total_nodes": 325473,
+          "internal_edges": 7673508,
+          "boundary_edges": 549650,
+          "halo_ratio": 0.7524080784368623
+        },
+        {
+          "id": 1,
+          "num_owned": 187124,
+          "num_halo": 152656,
+          "total_nodes": 339780,
+          "internal_edges": 5862342,
+          "boundary_edges": 710392,
+          "halo_ratio": 0.8158012868472243
+        },
+        {
+          "id": 2,
+          "num_owned": 194047,
+          "num_halo": 134196,
+          "total_nodes": 328243,
+          "internal_edges": 5898072,
+          "boundary_edges": 646523,
+          "halo_ratio": 0.691564414806722
+        },
+        {
+          "id": 3,
+          "num_owned": 193823,
+          "num_halo": 54656,
+          "total_nodes": 248479,
+          "internal_edges": 5974296,
+          "boundary_edges": 171170,
+          "halo_ratio": 0.2819892376033804
+        },
+        {
+          "id": 4,
+          "num_owned": 190261,
+          "num_halo": 81179,
+          "total_nodes": 271440,
+          "internal_edges": 8097446,
+          "boundary_edges": 239053,
+          "halo_ratio": 0.4266717824462186
+        },
+        {
+          "id": 5,
+          "num_owned": 185758,
+          "num_halo": 139322,
+          "total_nodes": 325080,
+          "internal_edges": 11361920,
+          "boundary_edges": 492326,
+          "halo_ratio": 0.7500188417187954
+        },
+        {
+          "id": 6,
+          "num_owned": 194047,
+          "num_halo": 159335,
+          "total_nodes": 353382,
+          "internal_edges": 8016470,
+          "boundary_edges": 634069,
+          "halo_ratio": 0.8211155029451628
+        },
+        {
+          "id": 7,
+          "num_owned": 194047,
+          "num_halo": 201486,
+          "total_nodes": 395533,
+          "internal_edges": 10059710,
+          "boundary_edges": 843531,
+          "halo_ratio": 1.0383360732193747
+        },
+        {
+          "id": 8,
+          "num_owned": 183189,
+          "num_halo": 169749,
+          "total_nodes": 352938,
+          "internal_edges": 10135524,
+          "boundary_edges": 759814,
+          "halo_ratio": 0.9266331493703225
+        },
+        {
+          "id": 9,
+          "num_owned": 188093,
+          "num_halo": 182729,
+          "total_nodes": 370822,
+          "internal_edges": 9832312,
+          "boundary_edges": 811719,
+          "halo_ratio": 0.9714821923197567
+        },
+        {
+          "id": 10,
+          "num_owned": 187129,
+          "num_halo": 203199,
+          "total_nodes": 390328,
+          "internal_edges": 10347584,
+          "boundary_edges": 950350,
+          "halo_ratio": 1.0858765878084102
+        },
+        {
+          "id": 11,
+          "num_owned": 182892,
+          "num_halo": 251650,
+          "total_nodes": 434542,
+          "internal_edges": 9789378,
+          "boundary_edges": 1190689,
+          "halo_ratio": 1.3759486472891105
+        },
+        {
+          "id": 12,
+          "num_owned": 182890,
+          "num_halo": 224043,
+          "total_nodes": 406933,
+          "internal_edges": 11560408,
+          "boundary_edges": 1110024,
+          "halo_ratio": 1.225015036360654
+        }
+      ]
+    },
+    {
+      "k": 14,
+      "is_valid": false,
+      "edge_cut": 4540494,
+      "overall_halo_ratio": 0.8788830185351011,
+      "total_halo_nodes": 2152410,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 180187,
+          "num_halo": 181072,
+          "total_nodes": 361259,
+          "internal_edges": 9279842,
+          "boundary_edges": 660829,
+          "halo_ratio": 1.004911564097299
+        },
+        {
+          "id": 1,
+          "num_owned": 180187,
+          "num_halo": 189929,
+          "total_nodes": 370116,
+          "internal_edges": 9345980,
+          "boundary_edges": 787512,
+          "halo_ratio": 1.0540660535998712
+        },
+        {
+          "id": 2,
+          "num_owned": 171215,
+          "num_halo": 154970,
+          "total_nodes": 326185,
+          "internal_edges": 8767632,
+          "boundary_edges": 648451,
+          "halo_ratio": 0.905119294454341
+        },
+        {
+          "id": 3,
+          "num_owned": 170099,
+          "num_halo": 209905,
+          "total_nodes": 380004,
+          "internal_edges": 11236898,
+          "boundary_edges": 1031358,
+          "halo_ratio": 1.2340166608857195
+        },
+        {
+          "id": 4,
+          "num_owned": 170273,
+          "num_halo": 241645,
+          "total_nodes": 411918,
+          "internal_edges": 9157968,
+          "boundary_edges": 1129268,
+          "halo_ratio": 1.4191621689874496
+        },
+        {
+          "id": 5,
+          "num_owned": 174874,
+          "num_halo": 193810,
+          "total_nodes": 368684,
+          "internal_edges": 9741118,
+          "boundary_edges": 902270,
+          "halo_ratio": 1.108283678534259
+        },
+        {
+          "id": 6,
+          "num_owned": 170110,
+          "num_halo": 172430,
+          "total_nodes": 342540,
+          "internal_edges": 8437990,
+          "boundary_edges": 752986,
+          "halo_ratio": 1.0136382340838281
+        },
+        {
+          "id": 7,
+          "num_owned": 176411,
+          "num_halo": 45476,
+          "total_nodes": 221887,
+          "internal_edges": 7294132,
+          "boundary_edges": 133987,
+          "halo_ratio": 0.2577843785251487
+        },
+        {
+          "id": 8,
+          "num_owned": 176313,
+          "num_halo": 161194,
+          "total_nodes": 337507,
+          "internal_edges": 8520860,
+          "boundary_edges": 573181,
+          "halo_ratio": 0.9142490911050235
+        },
+        {
+          "id": 9,
+          "num_owned": 174890,
+          "num_halo": 78110,
+          "total_nodes": 253000,
+          "internal_edges": 5211132,
+          "boundary_edges": 245914,
+          "halo_ratio": 0.4466235919720967
+        },
+        {
+          "id": 10,
+          "num_owned": 180187,
+          "num_halo": 126453,
+          "total_nodes": 306640,
+          "internal_edges": 5531374,
+          "boundary_edges": 609372,
+          "halo_ratio": 0.7017875873398192
+        },
+        {
+          "id": 11,
+          "num_owned": 179979,
+          "num_halo": 146276,
+          "total_nodes": 326255,
+          "internal_edges": 5703546,
+          "boundary_edges": 679780,
+          "halo_ratio": 0.8127392640252474
+        },
+        {
+          "id": 12,
+          "num_owned": 170243,
+          "num_halo": 147398,
+          "total_nodes": 317641,
+          "internal_edges": 9490066,
+          "boundary_edges": 527116,
+          "halo_ratio": 0.8658094605945619
+        },
+        {
+          "id": 13,
+          "num_owned": 174061,
+          "num_halo": 103742,
+          "total_nodes": 277803,
+          "internal_edges": 6918766,
+          "boundary_edges": 398952,
+          "halo_ratio": 0.5960094449646963
+        }
+      ]
+    },
+    {
+      "k": 15,
+      "is_valid": false,
+      "edge_cut": 4809030,
+      "overall_halo_ratio": 0.9159458707920568,
+      "total_halo_nodes": 2243178,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 165507,
+          "num_halo": 41509,
+          "total_nodes": 207016,
+          "internal_edges": 6934552,
+          "boundary_edges": 134861,
+          "halo_ratio": 0.25079905985849543
+        },
+        {
+          "id": 1,
+          "num_owned": 168174,
+          "num_halo": 79225,
+          "total_nodes": 247399,
+          "internal_edges": 6022914,
+          "boundary_edges": 273362,
+          "halo_ratio": 0.4710894668617028
+        },
+        {
+          "id": 2,
+          "num_owned": 165493,
+          "num_halo": 118986,
+          "total_nodes": 284479,
+          "internal_edges": 5889686,
+          "boundary_edges": 427787,
+          "halo_ratio": 0.7189790504734339
+        },
+        {
+          "id": 3,
+          "num_owned": 165897,
+          "num_halo": 130982,
+          "total_nodes": 296879,
+          "internal_edges": 5330664,
+          "boundary_edges": 603726,
+          "halo_ratio": 0.789538086885236
+        },
+        {
+          "id": 4,
+          "num_owned": 168174,
+          "num_halo": 123801,
+          "total_nodes": 291975,
+          "internal_edges": 5273290,
+          "boundary_edges": 593652,
+          "halo_ratio": 0.736148275000892
+        },
+        {
+          "id": 5,
+          "num_owned": 164659,
+          "num_halo": 139229,
+          "total_nodes": 303888,
+          "internal_edges": 6356506,
+          "boundary_edges": 557828,
+          "halo_ratio": 0.8455596110750095
+        },
+        {
+          "id": 6,
+          "num_owned": 158510,
+          "num_halo": 128430,
+          "total_nodes": 286940,
+          "internal_edges": 8071104,
+          "boundary_edges": 422870,
+          "halo_ratio": 0.8102327928837297
+        },
+        {
+          "id": 7,
+          "num_owned": 158507,
+          "num_halo": 198414,
+          "total_nodes": 356921,
+          "internal_edges": 9433166,
+          "boundary_edges": 771854,
+          "halo_ratio": 1.2517680607165613
+        },
+        {
+          "id": 8,
+          "num_owned": 158507,
+          "num_halo": 209430,
+          "total_nodes": 367937,
+          "internal_edges": 8235200,
+          "boundary_edges": 829906,
+          "halo_ratio": 1.3212665686688916
+        },
+        {
+          "id": 9,
+          "num_owned": 159341,
+          "num_halo": 151040,
+          "total_nodes": 310381,
+          "internal_edges": 8623570,
+          "boundary_edges": 659096,
+          "halo_ratio": 0.9479041803427869
+        },
+        {
+          "id": 10,
+          "num_owned": 166608,
+          "num_halo": 166989,
+          "total_nodes": 333597,
+          "internal_edges": 8440000,
+          "boundary_edges": 670767,
+          "halo_ratio": 1.0022868049553444
+        },
+        {
+          "id": 11,
+          "num_owned": 161993,
+          "num_halo": 196948,
+          "total_nodes": 358941,
+          "internal_edges": 9958514,
+          "boundary_edges": 1030467,
+          "halo_ratio": 1.2157809288055657
+        },
+        {
+          "id": 12,
+          "num_owned": 160759,
+          "num_halo": 210140,
+          "total_nodes": 370899,
+          "internal_edges": 8213438,
+          "boundary_edges": 1052754,
+          "halo_ratio": 1.3071740928968207
+        },
+        {
+          "id": 13,
+          "num_owned": 160986,
+          "num_halo": 160595,
+          "total_nodes": 321581,
+          "internal_edges": 8145790,
+          "boundary_edges": 695984,
+          "halo_ratio": 0.9975712173729393
+        },
+        {
+          "id": 14,
+          "num_owned": 165914,
+          "num_halo": 187460,
+          "total_nodes": 353374,
+          "internal_edges": 9171838,
+          "boundary_edges": 893134,
+          "halo_ratio": 1.1298624588642308
+        }
+      ]
+    },
+    {
+      "k": 16,
+      "is_valid": false,
+      "edge_cut": 4766143,
+      "overall_halo_ratio": 0.9401913983052058,
+      "total_halo_nodes": 2302556,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 157663,
+          "num_halo": 185786,
+          "total_nodes": 343449,
+          "internal_edges": 8246276,
+          "boundary_edges": 721959,
+          "halo_ratio": 1.1783741270938648
+        },
+        {
+          "id": 1,
+          "num_owned": 151142,
+          "num_halo": 184779,
+          "total_nodes": 335921,
+          "internal_edges": 7799174,
+          "boundary_edges": 723999,
+          "halo_ratio": 1.2225523018088948
+        },
+        {
+          "id": 2,
+          "num_owned": 148605,
+          "num_halo": 142381,
+          "total_nodes": 290986,
+          "internal_edges": 7835230,
+          "boundary_edges": 596098,
+          "halo_ratio": 0.9581171562195081
+        },
+        {
+          "id": 3,
+          "num_owned": 149272,
+          "num_halo": 173868,
+          "total_nodes": 323140,
+          "internal_edges": 7899632,
+          "boundary_edges": 679077,
+          "halo_ratio": 1.16477303178091
+        },
+        {
+          "id": 4,
+          "num_owned": 154428,
+          "num_halo": 201789,
+          "total_nodes": 356217,
+          "internal_edges": 10491622,
+          "boundary_edges": 994324,
+          "halo_ratio": 1.3066866112363043
+        },
+        {
+          "id": 5,
+          "num_owned": 152300,
+          "num_halo": 226868,
+          "total_nodes": 379168,
+          "internal_edges": 7471590,
+          "boundary_edges": 1029602,
+          "halo_ratio": 1.4896126066973079
+        },
+        {
+          "id": 6,
+          "num_owned": 150525,
+          "num_halo": 131197,
+          "total_nodes": 281722,
+          "internal_edges": 7231350,
+          "boundary_edges": 528650,
+          "halo_ratio": 0.8715960803853181
+        },
+        {
+          "id": 7,
+          "num_owned": 148844,
+          "num_halo": 191427,
+          "total_nodes": 340271,
+          "internal_edges": 8511444,
+          "boundary_edges": 871130,
+          "halo_ratio": 1.2860914783263013
+        },
+        {
+          "id": 8,
+          "num_owned": 157663,
+          "num_halo": 128081,
+          "total_nodes": 285744,
+          "internal_edges": 5127242,
+          "boundary_edges": 589757,
+          "halo_ratio": 0.8123719579102262
+        },
+        {
+          "id": 9,
+          "num_owned": 157663,
+          "num_halo": 127844,
+          "total_nodes": 285507,
+          "internal_edges": 5058318,
+          "boundary_edges": 623221,
+          "halo_ratio": 0.8108687517045851
+        },
+        {
+          "id": 10,
+          "num_owned": 150908,
+          "num_halo": 131943,
+          "total_nodes": 282851,
+          "internal_edges": 6503782,
+          "boundary_edges": 509935,
+          "halo_ratio": 0.8743274047764201
+        },
+        {
+          "id": 11,
+          "num_owned": 153391,
+          "num_halo": 144936,
+          "total_nodes": 298327,
+          "internal_edges": 5890326,
+          "boundary_edges": 475665,
+          "halo_ratio": 0.9448794257811736
+        },
+        {
+          "id": 12,
+          "num_owned": 153391,
+          "num_halo": 47622,
+          "total_nodes": 201013,
+          "internal_edges": 6460662,
+          "boundary_edges": 148605,
+          "halo_ratio": 0.3104615003487819
+        },
+        {
+          "id": 13,
+          "num_owned": 151118,
+          "num_halo": 120076,
+          "total_nodes": 271194,
+          "internal_edges": 9060682,
+          "boundary_edges": 444345,
+          "halo_ratio": 0.7945843645363226
+        },
+        {
+          "id": 14,
+          "num_owned": 157663,
+          "num_halo": 132301,
+          "total_nodes": 289964,
+          "internal_edges": 6419938,
+          "boundary_edges": 480587,
+          "halo_ratio": 0.8391379080697436
+        },
+        {
+          "id": 15,
+          "num_owned": 154453,
+          "num_halo": 31658,
+          "total_nodes": 186111,
+          "internal_edges": 4178738,
+          "boundary_edges": 115320,
+          "halo_ratio": 0.20496850174486736
+        }
+      ]
+    },
+    {
+      "k": 17,
+      "is_valid": false,
+      "edge_cut": 5143539,
+      "overall_halo_ratio": 0.9888747744514255,
+      "total_halo_nodes": 2421783,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 146497,
+          "num_halo": 109691,
+          "total_nodes": 256188,
+          "internal_edges": 8802820,
+          "boundary_edges": 421152,
+          "halo_ratio": 0.7487593602599371
+        },
+        {
+          "id": 1,
+          "num_owned": 148389,
+          "num_halo": 51176,
+          "total_nodes": 199565,
+          "internal_edges": 4399380,
+          "boundary_edges": 156428,
+          "halo_ratio": 0.3448773157039942
+        },
+        {
+          "id": 2,
+          "num_owned": 146266,
+          "num_halo": 42450,
+          "total_nodes": 188716,
+          "internal_edges": 6232936,
+          "boundary_edges": 139614,
+          "halo_ratio": 0.29022465918258517
+        },
+        {
+          "id": 3,
+          "num_owned": 144187,
+          "num_halo": 69943,
+          "total_nodes": 214130,
+          "internal_edges": 4885652,
+          "boundary_edges": 233912,
+          "halo_ratio": 0.4850853405646834
+        },
+        {
+          "id": 4,
+          "num_owned": 146268,
+          "num_halo": 146080,
+          "total_nodes": 292348,
+          "internal_edges": 5035888,
+          "boundary_edges": 493038,
+          "halo_ratio": 0.9987146881067629
+        },
+        {
+          "id": 5,
+          "num_owned": 148380,
+          "num_halo": 138935,
+          "total_nodes": 287315,
+          "internal_edges": 6349484,
+          "boundary_edges": 536323,
+          "halo_ratio": 0.9363458687154603
+        },
+        {
+          "id": 6,
+          "num_owned": 148389,
+          "num_halo": 123162,
+          "total_nodes": 271551,
+          "internal_edges": 4541626,
+          "boundary_edges": 615104,
+          "halo_ratio": 0.8299941370317206
+        },
+        {
+          "id": 7,
+          "num_owned": 141641,
+          "num_halo": 125733,
+          "total_nodes": 267374,
+          "internal_edges": 4892720,
+          "boundary_edges": 556262,
+          "halo_ratio": 0.8876878869818767
+        },
+        {
+          "id": 8,
+          "num_owned": 146895,
+          "num_halo": 150125,
+          "total_nodes": 297020,
+          "internal_edges": 6549396,
+          "boundary_edges": 586637,
+          "halo_ratio": 1.0219884951836347
+        },
+        {
+          "id": 9,
+          "num_owned": 141780,
+          "num_halo": 191923,
+          "total_nodes": 333703,
+          "internal_edges": 8872542,
+          "boundary_edges": 751572,
+          "halo_ratio": 1.3536676541120045
+        },
+        {
+          "id": 10,
+          "num_owned": 145661,
+          "num_halo": 190878,
+          "total_nodes": 336539,
+          "internal_edges": 7436428,
+          "boundary_edges": 824452,
+          "halo_ratio": 1.3104262637219297
+        },
+        {
+          "id": 11,
+          "num_owned": 140078,
+          "num_halo": 132729,
+          "total_nodes": 272807,
+          "internal_edges": 7132638,
+          "boundary_edges": 540496,
+          "halo_ratio": 0.9475363725924127
+        },
+        {
+          "id": 12,
+          "num_owned": 139857,
+          "num_halo": 229710,
+          "total_nodes": 369567,
+          "internal_edges": 7588196,
+          "boundary_edges": 1010694,
+          "halo_ratio": 1.6424633733027307
+        },
+        {
+          "id": 13,
+          "num_owned": 141460,
+          "num_halo": 196023,
+          "total_nodes": 337483,
+          "internal_edges": 8200924,
+          "boundary_edges": 1047019,
+          "halo_ratio": 1.3857132758376927
+        },
+        {
+          "id": 14,
+          "num_owned": 141958,
+          "num_halo": 118477,
+          "total_nodes": 260435,
+          "internal_edges": 7235974,
+          "boundary_edges": 459515,
+          "halo_ratio": 0.8345919215542625
+        },
+        {
+          "id": 15,
+          "num_owned": 139857,
+          "num_halo": 219611,
+          "total_nodes": 359468,
+          "internal_edges": 7463092,
+          "boundary_edges": 1072281,
+          "halo_ratio": 1.5702539022001043
+        },
+        {
+          "id": 16,
+          "num_owned": 141466,
+          "num_halo": 185137,
+          "total_nodes": 326603,
+          "internal_edges": 7811522,
+          "boundary_edges": 842563,
+          "halo_ratio": 1.3087031512872351
+        }
+      ]
+    },
+    {
+      "k": 18,
+      "is_valid": false,
+      "edge_cut": 5143211,
+      "overall_halo_ratio": 1.0188115371439048,
+      "total_halo_nodes": 2495099,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 132726,
+          "num_halo": 178771,
+          "total_nodes": 311497,
+          "internal_edges": 6587268,
+          "boundary_edges": 764406,
+          "halo_ratio": 1.3469177101698235
+        },
+        {
+          "id": 1,
+          "num_owned": 133282,
+          "num_halo": 114561,
+          "total_nodes": 247843,
+          "internal_edges": 6629618,
+          "boundary_edges": 479952,
+          "halo_ratio": 0.8595384222925826
+        },
+        {
+          "id": 2,
+          "num_owned": 140145,
+          "num_halo": 180306,
+          "total_nodes": 320451,
+          "internal_edges": 7037540,
+          "boundary_edges": 714068,
+          "halo_ratio": 1.2865674836776195
+        },
+        {
+          "id": 3,
+          "num_owned": 137861,
+          "num_halo": 151937,
+          "total_nodes": 289798,
+          "internal_edges": 7213738,
+          "boundary_edges": 490067,
+          "halo_ratio": 1.1021028427183903
+        },
+        {
+          "id": 4,
+          "num_owned": 137172,
+          "num_halo": 148257,
+          "total_nodes": 285429,
+          "internal_edges": 6958050,
+          "boundary_edges": 629709,
+          "halo_ratio": 1.0808109526725571
+        },
+        {
+          "id": 5,
+          "num_owned": 134571,
+          "num_halo": 155751,
+          "total_nodes": 290322,
+          "internal_edges": 7614196,
+          "boundary_edges": 674609,
+          "halo_ratio": 1.1573890362708161
+        },
+        {
+          "id": 6,
+          "num_owned": 133250,
+          "num_halo": 216881,
+          "total_nodes": 350131,
+          "internal_edges": 7335628,
+          "boundary_edges": 940354,
+          "halo_ratio": 1.627624765478424
+        },
+        {
+          "id": 7,
+          "num_owned": 132088,
+          "num_halo": 215233,
+          "total_nodes": 347321,
+          "internal_edges": 7281434,
+          "boundary_edges": 1043880,
+          "halo_ratio": 1.6294667191569256
+        },
+        {
+          "id": 8,
+          "num_owned": 132187,
+          "num_halo": 202405,
+          "total_nodes": 334592,
+          "internal_edges": 8228194,
+          "boundary_edges": 980332,
+          "halo_ratio": 1.5312020092747396
+        },
+        {
+          "id": 9,
+          "num_owned": 140063,
+          "num_halo": 41996,
+          "total_nodes": 182059,
+          "internal_edges": 6054834,
+          "boundary_edges": 141748,
+          "halo_ratio": 0.2998365021454631
+        },
+        {
+          "id": 10,
+          "num_owned": 133019,
+          "num_halo": 42164,
+          "total_nodes": 175183,
+          "internal_edges": 3662200,
+          "boundary_edges": 138652,
+          "halo_ratio": 0.3169772739232741
+        },
+        {
+          "id": 11,
+          "num_owned": 140145,
+          "num_halo": 55947,
+          "total_nodes": 196092,
+          "internal_edges": 4462120,
+          "boundary_edges": 162727,
+          "halo_ratio": 0.3992079631809911
+        },
+        {
+          "id": 12,
+          "num_owned": 140145,
+          "num_halo": 140323,
+          "total_nodes": 280468,
+          "internal_edges": 6655994,
+          "boundary_edges": 482937,
+          "halo_ratio": 1.0012701130971493
+        },
+        {
+          "id": 13,
+          "num_owned": 137880,
+          "num_halo": 97880,
+          "total_nodes": 235760,
+          "internal_edges": 8088374,
+          "boundary_edges": 359121,
+          "halo_ratio": 0.7098926602843052
+        },
+        {
+          "id": 14,
+          "num_owned": 132447,
+          "num_halo": 141458,
+          "total_nodes": 273905,
+          "internal_edges": 6546326,
+          "boundary_edges": 459557,
+          "halo_ratio": 1.0680347610742411
+        },
+        {
+          "id": 15,
+          "num_owned": 138984,
+          "num_halo": 172162,
+          "total_nodes": 311146,
+          "internal_edges": 4422424,
+          "boundary_edges": 690560,
+          "halo_ratio": 1.2387181258274333
+        },
+        {
+          "id": 16,
+          "num_owned": 132919,
+          "num_halo": 116120,
+          "total_nodes": 249039,
+          "internal_edges": 4099132,
+          "boundary_edges": 538236,
+          "halo_ratio": 0.87361475786005
+        },
+        {
+          "id": 17,
+          "num_owned": 140145,
+          "num_halo": 122947,
+          "total_nodes": 263092,
+          "internal_edges": 4554800,
+          "boundary_edges": 595495,
+          "halo_ratio": 0.8772842413214884
+        }
+      ]
+    },
+    {
+      "k": 19,
+      "is_valid": false,
+      "edge_cut": 5370491,
+      "overall_halo_ratio": 1.048888763669193,
+      "total_halo_nodes": 2568759,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 130988,
+          "num_halo": 88795,
+          "total_nodes": 219783,
+          "internal_edges": 5081330,
+          "boundary_edges": 304154,
+          "halo_ratio": 0.6778865239563929
+        },
+        {
+          "id": 1,
+          "num_owned": 132719,
+          "num_halo": 44183,
+          "total_nodes": 176902,
+          "internal_edges": 5737740,
+          "boundary_edges": 167046,
+          "halo_ratio": 0.3329063660817215
+        },
+        {
+          "id": 2,
+          "num_owned": 132769,
+          "num_halo": 119769,
+          "total_nodes": 252538,
+          "internal_edges": 6464358,
+          "boundary_edges": 448084,
+          "halo_ratio": 0.9020855772055224
+        },
+        {
+          "id": 3,
+          "num_owned": 132769,
+          "num_halo": 54767,
+          "total_nodes": 187536,
+          "internal_edges": 4338850,
+          "boundary_edges": 170241,
+          "halo_ratio": 0.41249839947578126
+        },
+        {
+          "id": 4,
+          "num_owned": 129718,
+          "num_halo": 129864,
+          "total_nodes": 259582,
+          "internal_edges": 5049864,
+          "boundary_edges": 410646,
+          "halo_ratio": 1.0011255184322916
+        },
+        {
+          "id": 5,
+          "num_owned": 128570,
+          "num_halo": 44252,
+          "total_nodes": 172822,
+          "internal_edges": 5196162,
+          "boundary_edges": 163115,
+          "halo_ratio": 0.34418604651162793
+        },
+        {
+          "id": 6,
+          "num_owned": 128104,
+          "num_halo": 159477,
+          "total_nodes": 287581,
+          "internal_edges": 4198380,
+          "boundary_edges": 643203,
+          "halo_ratio": 1.244902579154437
+        },
+        {
+          "id": 7,
+          "num_owned": 132769,
+          "num_halo": 126453,
+          "total_nodes": 259222,
+          "internal_edges": 3895308,
+          "boundary_edges": 603291,
+          "halo_ratio": 0.9524286542792368
+        },
+        {
+          "id": 8,
+          "num_owned": 128103,
+          "num_halo": 107966,
+          "total_nodes": 236069,
+          "internal_edges": 4355492,
+          "boundary_edges": 502301,
+          "halo_ratio": 0.842806179402512
+        },
+        {
+          "id": 9,
+          "num_owned": 125135,
+          "num_halo": 169328,
+          "total_nodes": 294463,
+          "internal_edges": 7701094,
+          "boundary_edges": 813890,
+          "halo_ratio": 1.3531625844088384
+        },
+        {
+          "id": 10,
+          "num_owned": 125136,
+          "num_halo": 204750,
+          "total_nodes": 329886,
+          "internal_edges": 8049820,
+          "boundary_edges": 998164,
+          "halo_ratio": 1.6362197928653626
+        },
+        {
+          "id": 11,
+          "num_owned": 128906,
+          "num_halo": 102817,
+          "total_nodes": 231723,
+          "internal_edges": 6012406,
+          "boundary_edges": 418574,
+          "halo_ratio": 0.7976122135509596
+        },
+        {
+          "id": 12,
+          "num_owned": 129977,
+          "num_halo": 178211,
+          "total_nodes": 308188,
+          "internal_edges": 7465376,
+          "boundary_edges": 853898,
+          "halo_ratio": 1.3710964247520716
+        },
+        {
+          "id": 13,
+          "num_owned": 125137,
+          "num_halo": 191424,
+          "total_nodes": 316561,
+          "internal_edges": 6574180,
+          "boundary_edges": 877317,
+          "halo_ratio": 1.5297154318866522
+        },
+        {
+          "id": 14,
+          "num_owned": 125135,
+          "num_halo": 197549,
+          "total_nodes": 322684,
+          "internal_edges": 7169516,
+          "boundary_edges": 735235,
+          "halo_ratio": 1.578687018020538
+        },
+        {
+          "id": 15,
+          "num_owned": 130048,
+          "num_halo": 165851,
+          "total_nodes": 295899,
+          "internal_edges": 5812982,
+          "boundary_edges": 624497,
+          "halo_ratio": 1.2753060408464567
+        },
+        {
+          "id": 16,
+          "num_owned": 132769,
+          "num_halo": 165895,
+          "total_nodes": 298664,
+          "internal_edges": 7255700,
+          "boundary_edges": 661505,
+          "halo_ratio": 1.249501013037682
+        },
+        {
+          "id": 17,
+          "num_owned": 125138,
+          "num_halo": 120175,
+          "total_nodes": 245313,
+          "internal_edges": 6037132,
+          "boundary_edges": 488710,
+          "halo_ratio": 0.9603397848774953
+        },
+        {
+          "id": 18,
+          "num_owned": 125139,
+          "num_halo": 197233,
+          "total_nodes": 322372,
+          "internal_edges": 6581628,
+          "boundary_edges": 857091,
+          "halo_ratio": 1.5761113641630506
+        }
+      ]
+    },
+    {
+      "k": 20,
+      "is_valid": false,
+      "edge_cut": 5397317,
+      "overall_halo_ratio": 1.0693356428200729,
+      "total_halo_nodes": 2618834,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 119837,
+          "num_halo": 168274,
+          "total_nodes": 288111,
+          "internal_edges": 5686048,
+          "boundary_edges": 631855,
+          "halo_ratio": 1.4041906923571184
+        },
+        {
+          "id": 1,
+          "num_owned": 119640,
+          "num_halo": 160814,
+          "total_nodes": 280454,
+          "internal_edges": 7179944,
+          "boundary_edges": 602690,
+          "halo_ratio": 1.3441491140086927
+        },
+        {
+          "id": 2,
+          "num_owned": 126131,
+          "num_halo": 151391,
+          "total_nodes": 277522,
+          "internal_edges": 7010126,
+          "boundary_edges": 599214,
+          "halo_ratio": 1.2002679753589522
+        },
+        {
+          "id": 3,
+          "num_owned": 120573,
+          "num_halo": 169938,
+          "total_nodes": 290511,
+          "internal_edges": 6655896,
+          "boundary_edges": 724600,
+          "halo_ratio": 1.40942001940733
+        },
+        {
+          "id": 4,
+          "num_owned": 118879,
+          "num_halo": 120882,
+          "total_nodes": 239761,
+          "internal_edges": 5927046,
+          "boundary_edges": 483306,
+          "halo_ratio": 1.0168490650156883
+        },
+        {
+          "id": 5,
+          "num_owned": 122405,
+          "num_halo": 192065,
+          "total_nodes": 314470,
+          "internal_edges": 7106990,
+          "boundary_edges": 1004953,
+          "halo_ratio": 1.5690943997385727
+        },
+        {
+          "id": 6,
+          "num_owned": 118880,
+          "num_halo": 197993,
+          "total_nodes": 316873,
+          "internal_edges": 6572116,
+          "boundary_edges": 853862,
+          "halo_ratio": 1.665486204576043
+        },
+        {
+          "id": 7,
+          "num_owned": 126131,
+          "num_halo": 105991,
+          "total_nodes": 232122,
+          "internal_edges": 5151658,
+          "boundary_edges": 444239,
+          "halo_ratio": 0.8403247417367657
+        },
+        {
+          "id": 8,
+          "num_owned": 123107,
+          "num_halo": 170826,
+          "total_nodes": 293933,
+          "internal_edges": 6900918,
+          "boundary_edges": 822188,
+          "halo_ratio": 1.3876221498371335
+        },
+        {
+          "id": 9,
+          "num_owned": 118883,
+          "num_halo": 220690,
+          "total_nodes": 339573,
+          "internal_edges": 6360024,
+          "boundary_edges": 914411,
+          "halo_ratio": 1.8563629787269837
+        },
+        {
+          "id": 10,
+          "num_owned": 124545,
+          "num_halo": 113115,
+          "total_nodes": 237660,
+          "internal_edges": 5753146,
+          "boundary_edges": 427857,
+          "halo_ratio": 0.9082259424304469
+        },
+        {
+          "id": 11,
+          "num_owned": 118886,
+          "num_halo": 120402,
+          "total_nodes": 239288,
+          "internal_edges": 4789718,
+          "boundary_edges": 355808,
+          "halo_ratio": 1.0127517117238363
+        },
+        {
+          "id": 12,
+          "num_owned": 121924,
+          "num_halo": 129506,
+          "total_nodes": 251430,
+          "internal_edges": 3595604,
+          "boundary_edges": 523075,
+          "halo_ratio": 1.062186279977691
+        },
+        {
+          "id": 13,
+          "num_owned": 124919,
+          "num_halo": 118736,
+          "total_nodes": 243655,
+          "internal_edges": 4368834,
+          "boundary_edges": 558552,
+          "halo_ratio": 0.9505039265444007
+        },
+        {
+          "id": 14,
+          "num_owned": 126131,
+          "num_halo": 120599,
+          "total_nodes": 246730,
+          "internal_edges": 3437112,
+          "boundary_edges": 554201,
+          "halo_ratio": 0.956140837700486
+        },
+        {
+          "id": 15,
+          "num_owned": 126000,
+          "num_halo": 115418,
+          "total_nodes": 241418,
+          "internal_edges": 4878220,
+          "boundary_edges": 421578,
+          "halo_ratio": 0.9160158730158731
+        },
+        {
+          "id": 16,
+          "num_owned": 126131,
+          "num_halo": 50119,
+          "total_nodes": 176250,
+          "internal_edges": 4177746,
+          "boundary_edges": 162381,
+          "halo_ratio": 0.3973567164297437
+        },
+        {
+          "id": 17,
+          "num_owned": 120773,
+          "num_halo": 101007,
+          "total_nodes": 221780,
+          "internal_edges": 8237030,
+          "boundary_edges": 363798,
+          "halo_ratio": 0.8363375920114595
+        },
+        {
+          "id": 18,
+          "num_owned": 126131,
+          "num_halo": 47207,
+          "total_nodes": 173338,
+          "internal_edges": 5553832,
+          "boundary_edges": 183178,
+          "halo_ratio": 0.3742696085815541
+        },
+        {
+          "id": 19,
+          "num_owned": 119123,
+          "num_halo": 43861,
+          "total_nodes": 162984,
+          "internal_edges": 3581658,
+          "boundary_edges": 162868,
+          "halo_ratio": 0.36819925623095456
+        }
+      ]
+    },
+    {
+      "k": 21,
+      "is_valid": false,
+      "edge_cut": 5606353,
+      "overall_halo_ratio": 1.0957175272322215,
+      "total_halo_nodes": 2683444,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 115545,
+          "num_halo": 115666,
+          "total_nodes": 231211,
+          "internal_edges": 4435356,
+          "boundary_edges": 343914,
+          "halo_ratio": 1.0010472110433164
+        },
+        {
+          "id": 1,
+          "num_owned": 119222,
+          "num_halo": 111649,
+          "total_nodes": 230871,
+          "internal_edges": 5461692,
+          "boundary_edges": 422020,
+          "halo_ratio": 0.9364798443240342
+        },
+        {
+          "id": 2,
+          "num_owned": 115511,
+          "num_halo": 115725,
+          "total_nodes": 231236,
+          "internal_edges": 3437700,
+          "boundary_edges": 503125,
+          "halo_ratio": 1.0018526374111556
+        },
+        {
+          "id": 3,
+          "num_owned": 113219,
+          "num_halo": 113390,
+          "total_nodes": 226609,
+          "internal_edges": 3910932,
+          "boundary_edges": 456232,
+          "halo_ratio": 1.0015103472032079
+        },
+        {
+          "id": 4,
+          "num_owned": 120124,
+          "num_halo": 119017,
+          "total_nodes": 239141,
+          "internal_edges": 3416998,
+          "boundary_edges": 569887,
+          "halo_ratio": 0.9907845226599181
+        },
+        {
+          "id": 5,
+          "num_owned": 119226,
+          "num_halo": 43809,
+          "total_nodes": 163035,
+          "internal_edges": 5386992,
+          "boundary_edges": 175835,
+          "halo_ratio": 0.36744502038146043
+        },
+        {
+          "id": 6,
+          "num_owned": 116515,
+          "num_halo": 75839,
+          "total_nodes": 192354,
+          "internal_edges": 3468480,
+          "boundary_edges": 267065,
+          "halo_ratio": 0.65089473458353
+        },
+        {
+          "id": 7,
+          "num_owned": 114899,
+          "num_halo": 48900,
+          "total_nodes": 163799,
+          "internal_edges": 6079756,
+          "boundary_edges": 169379,
+          "halo_ratio": 0.4255911713766003
+        },
+        {
+          "id": 8,
+          "num_owned": 120124,
+          "num_halo": 51322,
+          "total_nodes": 171446,
+          "internal_edges": 3990710,
+          "boundary_edges": 168589,
+          "halo_ratio": 0.42724185008824217
+        },
+        {
+          "id": 9,
+          "num_owned": 120124,
+          "num_halo": 122113,
+          "total_nodes": 242237,
+          "internal_edges": 5132298,
+          "boundary_edges": 468648,
+          "halo_ratio": 1.016557890180147
+        },
+        {
+          "id": 10,
+          "num_owned": 113218,
+          "num_halo": 176057,
+          "total_nodes": 289275,
+          "internal_edges": 6653112,
+          "boundary_edges": 650230,
+          "halo_ratio": 1.5550265858785706
+        },
+        {
+          "id": 11,
+          "num_owned": 117598,
+          "num_halo": 131020,
+          "total_nodes": 248618,
+          "internal_edges": 5040570,
+          "boundary_edges": 415837,
+          "halo_ratio": 1.1141345941257503
+        },
+        {
+          "id": 12,
+          "num_owned": 120124,
+          "num_halo": 176445,
+          "total_nodes": 296569,
+          "internal_edges": 6610380,
+          "boundary_edges": 710096,
+          "halo_ratio": 1.4688571809130566
+        },
+        {
+          "id": 13,
+          "num_owned": 116784,
+          "num_halo": 101745,
+          "total_nodes": 218529,
+          "internal_edges": 5663242,
+          "boundary_edges": 448225,
+          "halo_ratio": 0.8712237977805178
+        },
+        {
+          "id": 14,
+          "num_owned": 113220,
+          "num_halo": 169886,
+          "total_nodes": 283106,
+          "internal_edges": 6139596,
+          "boundary_edges": 742293,
+          "halo_ratio": 1.5004946122593181
+        },
+        {
+          "id": 15,
+          "num_owned": 117136,
+          "num_halo": 188717,
+          "total_nodes": 305853,
+          "internal_edges": 5086358,
+          "boundary_edges": 860237,
+          "halo_ratio": 1.611093088375905
+        },
+        {
+          "id": 16,
+          "num_owned": 113220,
+          "num_halo": 212275,
+          "total_nodes": 325495,
+          "internal_edges": 7193208,
+          "boundary_edges": 1003589,
+          "halo_ratio": 1.8748895954778309
+        },
+        {
+          "id": 17,
+          "num_owned": 113218,
+          "num_halo": 159891,
+          "total_nodes": 273109,
+          "internal_edges": 7160620,
+          "boundary_edges": 749888,
+          "halo_ratio": 1.4122401031638079
+        },
+        {
+          "id": 18,
+          "num_owned": 119451,
+          "num_halo": 93480,
+          "total_nodes": 212931,
+          "internal_edges": 5664372,
+          "boundary_edges": 383504,
+          "halo_ratio": 0.7825803048948942
+        },
+        {
+          "id": 19,
+          "num_owned": 113219,
+          "num_halo": 199231,
+          "total_nodes": 312450,
+          "internal_edges": 6020036,
+          "boundary_edges": 966641,
+          "halo_ratio": 1.75969581077381
+        },
+        {
+          "id": 20,
+          "num_owned": 117332,
+          "num_halo": 157267,
+          "total_nodes": 274599,
+          "internal_edges": 6553186,
+          "boundary_edges": 737452,
+          "halo_ratio": 1.3403589813520609
+        }
+      ]
+    },
+    {
+      "k": 22,
+      "is_valid": false,
+      "edge_cut": 5594386,
+      "overall_halo_ratio": 1.1128790226657177,
+      "total_halo_nodes": 2725473,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 110009,
+          "num_halo": 130303,
+          "total_nodes": 240312,
+          "internal_edges": 6906880,
+          "boundary_edges": 412726,
+          "halo_ratio": 1.184475815615086
+        },
+        {
+          "id": 1,
+          "num_owned": 111899,
+          "num_halo": 156059,
+          "total_nodes": 267958,
+          "internal_edges": 6584682,
+          "boundary_edges": 585163,
+          "halo_ratio": 1.3946415964396464
+        },
+        {
+          "id": 2,
+          "num_owned": 114663,
+          "num_halo": 160298,
+          "total_nodes": 274961,
+          "internal_edges": 5986498,
+          "boundary_edges": 588305,
+          "halo_ratio": 1.3979923776632392
+        },
+        {
+          "id": 3,
+          "num_owned": 112424,
+          "num_halo": 95921,
+          "total_nodes": 208345,
+          "internal_edges": 5332410,
+          "boundary_edges": 436114,
+          "halo_ratio": 0.8532075001778979
+        },
+        {
+          "id": 4,
+          "num_owned": 108078,
+          "num_halo": 165418,
+          "total_nodes": 273496,
+          "internal_edges": 5570358,
+          "boundary_edges": 746903,
+          "halo_ratio": 1.53054275615759
+        },
+        {
+          "id": 5,
+          "num_owned": 110267,
+          "num_halo": 163503,
+          "total_nodes": 273770,
+          "internal_edges": 4155496,
+          "boundary_edges": 631000,
+          "halo_ratio": 1.482791769069622
+        },
+        {
+          "id": 6,
+          "num_owned": 108071,
+          "num_halo": 199732,
+          "total_nodes": 307803,
+          "internal_edges": 6993286,
+          "boundary_edges": 939220,
+          "halo_ratio": 1.8481553793339565
+        },
+        {
+          "id": 7,
+          "num_owned": 108071,
+          "num_halo": 175369,
+          "total_nodes": 283440,
+          "internal_edges": 5922396,
+          "boundary_edges": 871063,
+          "halo_ratio": 1.622720248725375
+        },
+        {
+          "id": 8,
+          "num_owned": 113633,
+          "num_halo": 103816,
+          "total_nodes": 217449,
+          "internal_edges": 4929314,
+          "boundary_edges": 442758,
+          "halo_ratio": 0.9136078427921467
+        },
+        {
+          "id": 9,
+          "num_owned": 108730,
+          "num_halo": 140342,
+          "total_nodes": 249072,
+          "internal_edges": 6011488,
+          "boundary_edges": 633176,
+          "halo_ratio": 1.2907385266255864
+        },
+        {
+          "id": 10,
+          "num_owned": 110711,
+          "num_halo": 213317,
+          "total_nodes": 324028,
+          "internal_edges": 6005786,
+          "boundary_edges": 982725,
+          "halo_ratio": 1.9267913757440542
+        },
+        {
+          "id": 11,
+          "num_owned": 113065,
+          "num_halo": 78137,
+          "total_nodes": 191202,
+          "internal_edges": 2940740,
+          "boundary_edges": 256604,
+          "halo_ratio": 0.6910803520099058
+        },
+        {
+          "id": 12,
+          "num_owned": 110952,
+          "num_halo": 95116,
+          "total_nodes": 206068,
+          "internal_edges": 4781298,
+          "boundary_edges": 342383,
+          "halo_ratio": 0.8572716129497441
+        },
+        {
+          "id": 13,
+          "num_owned": 110369,
+          "num_halo": 149831,
+          "total_nodes": 260200,
+          "internal_edges": 3740838,
+          "boundary_edges": 598006,
+          "halo_ratio": 1.357546050068407
+        },
+        {
+          "id": 14,
+          "num_owned": 114664,
+          "num_halo": 114516,
+          "total_nodes": 229180,
+          "internal_edges": 3791158,
+          "boundary_edges": 563523,
+          "halo_ratio": 0.9987092723086584
+        },
+        {
+          "id": 15,
+          "num_owned": 113500,
+          "num_halo": 103538,
+          "total_nodes": 217038,
+          "internal_edges": 3479702,
+          "boundary_edges": 478432,
+          "halo_ratio": 0.9122290748898678
+        },
+        {
+          "id": 16,
+          "num_owned": 108075,
+          "num_halo": 91928,
+          "total_nodes": 200003,
+          "internal_edges": 7646950,
+          "boundary_edges": 327715,
+          "halo_ratio": 0.8505944945639602
+        },
+        {
+          "id": 17,
+          "num_owned": 114664,
+          "num_halo": 116256,
+          "total_nodes": 230920,
+          "internal_edges": 4978856,
+          "boundary_edges": 436620,
+          "halo_ratio": 1.0138840438149725
+        },
+        {
+          "id": 18,
+          "num_owned": 114664,
+          "num_halo": 50966,
+          "total_nodes": 165630,
+          "internal_edges": 3835666,
+          "boundary_edges": 172297,
+          "halo_ratio": 0.44448126700620944
+        },
+        {
+          "id": 19,
+          "num_owned": 109526,
+          "num_halo": 115430,
+          "total_nodes": 224956,
+          "internal_edges": 4675004,
+          "boundary_edges": 342583,
+          "halo_ratio": 1.0539050088563446
+        },
+        {
+          "id": 20,
+          "num_owned": 113689,
+          "num_halo": 43992,
+          "total_nodes": 157681,
+          "internal_edges": 5216412,
+          "boundary_edges": 179741,
+          "halo_ratio": 0.38695036459112137
+        },
+        {
+          "id": 21,
+          "num_owned": 109305,
+          "num_halo": 61685,
+          "total_nodes": 170990,
+          "internal_edges": 3044298,
+          "boundary_edges": 221707,
+          "halo_ratio": 0.564338319381547
+        }
+      ]
+    },
+    {
+      "k": 23,
+      "is_valid": false,
+      "edge_cut": 5725606,
+      "overall_halo_ratio": 1.1453951749856779,
+      "total_halo_nodes": 2805106,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 109328,
+          "num_halo": 128379,
+          "total_nodes": 237707,
+          "internal_edges": 2567210,
+          "boundary_edges": 548245,
+          "halo_ratio": 1.1742554514854384
+        },
+        {
+          "id": 1,
+          "num_owned": 103588,
+          "num_halo": 63338,
+          "total_nodes": 166926,
+          "internal_edges": 4062058,
+          "boundary_edges": 218472,
+          "halo_ratio": 0.6114414797080743
+        },
+        {
+          "id": 2,
+          "num_owned": 103393,
+          "num_halo": 60783,
+          "total_nodes": 164176,
+          "internal_edges": 2910120,
+          "boundary_edges": 217794,
+          "halo_ratio": 0.5878831255500856
+        },
+        {
+          "id": 3,
+          "num_owned": 109679,
+          "num_halo": 105982,
+          "total_nodes": 215661,
+          "internal_edges": 3635954,
+          "boundary_edges": 475491,
+          "halo_ratio": 0.9662925446074454
+        },
+        {
+          "id": 4,
+          "num_owned": 109679,
+          "num_halo": 113043,
+          "total_nodes": 222722,
+          "internal_edges": 3497764,
+          "boundary_edges": 542470,
+          "halo_ratio": 1.0306713226779967
+        },
+        {
+          "id": 5,
+          "num_owned": 108120,
+          "num_halo": 112121,
+          "total_nodes": 220241,
+          "internal_edges": 6670386,
+          "boundary_edges": 373590,
+          "halo_ratio": 1.0370051794302626
+        },
+        {
+          "id": 6,
+          "num_owned": 108203,
+          "num_halo": 164980,
+          "total_nodes": 273183,
+          "internal_edges": 5250426,
+          "boundary_edges": 754088,
+          "halo_ratio": 1.5247266711643854
+        },
+        {
+          "id": 7,
+          "num_owned": 103373,
+          "num_halo": 146058,
+          "total_nodes": 249431,
+          "internal_edges": 6458454,
+          "boundary_edges": 686623,
+          "halo_ratio": 1.412922136341211
+        },
+        {
+          "id": 8,
+          "num_owned": 109317,
+          "num_halo": 91729,
+          "total_nodes": 201046,
+          "internal_edges": 4013560,
+          "boundary_edges": 275086,
+          "halo_ratio": 0.8391101109616985
+        },
+        {
+          "id": 9,
+          "num_owned": 108350,
+          "num_halo": 48043,
+          "total_nodes": 156393,
+          "internal_edges": 4681008,
+          "boundary_edges": 211873,
+          "halo_ratio": 0.44340562990309185
+        },
+        {
+          "id": 10,
+          "num_owned": 105126,
+          "num_halo": 77879,
+          "total_nodes": 183005,
+          "internal_edges": 3816502,
+          "boundary_edges": 311994,
+          "halo_ratio": 0.7408157829652037
+        },
+        {
+          "id": 11,
+          "num_owned": 103378,
+          "num_halo": 130243,
+          "total_nodes": 233621,
+          "internal_edges": 5878012,
+          "boundary_edges": 432138,
+          "halo_ratio": 1.2598715393990985
+        },
+        {
+          "id": 12,
+          "num_owned": 103375,
+          "num_halo": 169911,
+          "total_nodes": 273286,
+          "internal_edges": 5271738,
+          "boundary_edges": 749460,
+          "halo_ratio": 1.6436372430471584
+        },
+        {
+          "id": 13,
+          "num_owned": 104499,
+          "num_halo": 183582,
+          "total_nodes": 288081,
+          "internal_edges": 5249432,
+          "boundary_edges": 744599,
+          "halo_ratio": 1.756782361553699
+        },
+        {
+          "id": 14,
+          "num_owned": 103381,
+          "num_halo": 205385,
+          "total_nodes": 308766,
+          "internal_edges": 6330752,
+          "boundary_edges": 909596,
+          "halo_ratio": 1.9866803377796693
+        },
+        {
+          "id": 15,
+          "num_owned": 105519,
+          "num_halo": 146568,
+          "total_nodes": 252087,
+          "internal_edges": 5757118,
+          "boundary_edges": 667389,
+          "halo_ratio": 1.3890199869217865
+        },
+        {
+          "id": 16,
+          "num_owned": 105503,
+          "num_halo": 128064,
+          "total_nodes": 233567,
+          "internal_edges": 5014054,
+          "boundary_edges": 524175,
+          "halo_ratio": 1.2138422604096566
+        },
+        {
+          "id": 17,
+          "num_owned": 106011,
+          "num_halo": 155706,
+          "total_nodes": 261717,
+          "internal_edges": 5973614,
+          "boundary_edges": 555266,
+          "halo_ratio": 1.4687721085547727
+        },
+        {
+          "id": 18,
+          "num_owned": 109679,
+          "num_halo": 115478,
+          "total_nodes": 225157,
+          "internal_edges": 4770516,
+          "boundary_edges": 425184,
+          "halo_ratio": 1.052872473308473
+        },
+        {
+          "id": 19,
+          "num_owned": 109679,
+          "num_halo": 52807,
+          "total_nodes": 162486,
+          "internal_edges": 3711702,
+          "boundary_edges": 181545,
+          "halo_ratio": 0.48146864942240536
+        },
+        {
+          "id": 20,
+          "num_owned": 109679,
+          "num_halo": 146617,
+          "total_nodes": 256296,
+          "internal_edges": 6261500,
+          "boundary_edges": 553780,
+          "halo_ratio": 1.3367827934244476
+        },
+        {
+          "id": 21,
+          "num_owned": 104124,
+          "num_halo": 153821,
+          "total_nodes": 257945,
+          "internal_edges": 5276056,
+          "boundary_edges": 650319,
+          "halo_ratio": 1.4772866966309401
+        },
+        {
+          "id": 22,
+          "num_owned": 106046,
+          "num_halo": 104589,
+          "total_nodes": 210635,
+          "internal_edges": 5209148,
+          "boundary_edges": 442019,
+          "halo_ratio": 0.9862606793278389
+        }
+      ]
+    },
+    {
+      "k": 24,
+      "is_valid": false,
+      "edge_cut": 5704720,
+      "overall_halo_ratio": 1.1556567929575354,
+      "total_halo_nodes": 2830237,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 104905,
+          "num_halo": 94677,
+          "total_nodes": 199582,
+          "internal_edges": 4405632,
+          "boundary_edges": 387920,
+          "halo_ratio": 0.9025022639531004
+        },
+        {
+          "id": 1,
+          "num_owned": 99065,
+          "num_halo": 157633,
+          "total_nodes": 256698,
+          "internal_edges": 5350444,
+          "boundary_edges": 689053,
+          "halo_ratio": 1.5912077928632715
+        },
+        {
+          "id": 2,
+          "num_owned": 99068,
+          "num_halo": 168278,
+          "total_nodes": 267346,
+          "internal_edges": 5340986,
+          "boundary_edges": 730095,
+          "halo_ratio": 1.6986110550329068
+        },
+        {
+          "id": 3,
+          "num_owned": 100709,
+          "num_halo": 173531,
+          "total_nodes": 274240,
+          "internal_edges": 5046818,
+          "boundary_edges": 727938,
+          "halo_ratio": 1.7230932687247416
+        },
+        {
+          "id": 4,
+          "num_owned": 100965,
+          "num_halo": 177915,
+          "total_nodes": 278880,
+          "internal_edges": 5338226,
+          "boundary_edges": 895005,
+          "halo_ratio": 1.7621452978755014
+        },
+        {
+          "id": 5,
+          "num_owned": 99065,
+          "num_halo": 174030,
+          "total_nodes": 273095,
+          "internal_edges": 6765578,
+          "boundary_edges": 798707,
+          "halo_ratio": 1.7567253823247362
+        },
+        {
+          "id": 6,
+          "num_owned": 105109,
+          "num_halo": 147805,
+          "total_nodes": 252914,
+          "internal_edges": 5635674,
+          "boundary_edges": 538492,
+          "halo_ratio": 1.406206889990391
+        },
+        {
+          "id": 7,
+          "num_owned": 99073,
+          "num_halo": 163053,
+          "total_nodes": 262126,
+          "internal_edges": 4920548,
+          "boundary_edges": 667738,
+          "halo_ratio": 1.6457864403015958
+        },
+        {
+          "id": 8,
+          "num_owned": 100921,
+          "num_halo": 100311,
+          "total_nodes": 201232,
+          "internal_edges": 5023710,
+          "boundary_edges": 426954,
+          "halo_ratio": 0.993955668295003
+        },
+        {
+          "id": 9,
+          "num_owned": 105107,
+          "num_halo": 114614,
+          "total_nodes": 219721,
+          "internal_edges": 5345634,
+          "boundary_edges": 345022,
+          "halo_ratio": 1.0904506835891044
+        },
+        {
+          "id": 10,
+          "num_owned": 100694,
+          "num_halo": 168802,
+          "total_nodes": 269496,
+          "internal_edges": 4904528,
+          "boundary_edges": 653344,
+          "halo_ratio": 1.6763858819790654
+        },
+        {
+          "id": 11,
+          "num_owned": 100100,
+          "num_halo": 152606,
+          "total_nodes": 252706,
+          "internal_edges": 6044606,
+          "boundary_edges": 576315,
+          "halo_ratio": 1.5245354645354645
+        },
+        {
+          "id": 12,
+          "num_owned": 103213,
+          "num_halo": 97987,
+          "total_nodes": 201200,
+          "internal_edges": 3633738,
+          "boundary_edges": 401971,
+          "halo_ratio": 0.9493668433239999
+        },
+        {
+          "id": 13,
+          "num_owned": 105109,
+          "num_halo": 98979,
+          "total_nodes": 204088,
+          "internal_edges": 3298206,
+          "boundary_edges": 442779,
+          "halo_ratio": 0.9416795897592024
+        },
+        {
+          "id": 14,
+          "num_owned": 105109,
+          "num_halo": 114370,
+          "total_nodes": 219479,
+          "internal_edges": 2984782,
+          "boundary_edges": 530054,
+          "halo_ratio": 1.0881085349494335
+        },
+        {
+          "id": 15,
+          "num_owned": 104402,
+          "num_halo": 140058,
+          "total_nodes": 244460,
+          "internal_edges": 3160554,
+          "boundary_edges": 499599,
+          "halo_ratio": 1.3415260244056628
+        },
+        {
+          "id": 16,
+          "num_owned": 99066,
+          "num_halo": 115330,
+          "total_nodes": 214396,
+          "internal_edges": 4080464,
+          "boundary_edges": 327551,
+          "halo_ratio": 1.1641733793632527
+        },
+        {
+          "id": 17,
+          "num_owned": 100717,
+          "num_halo": 79410,
+          "total_nodes": 180127,
+          "internal_edges": 4716054,
+          "boundary_edges": 286125,
+          "halo_ratio": 0.7884468361845567
+        },
+        {
+          "id": 18,
+          "num_owned": 100423,
+          "num_halo": 11057,
+          "total_nodes": 111480,
+          "internal_edges": 2160968,
+          "boundary_edges": 42007,
+          "halo_ratio": 0.11010425898449558
+        },
+        {
+          "id": 19,
+          "num_owned": 105109,
+          "num_halo": 113216,
+          "total_nodes": 218325,
+          "internal_edges": 4710072,
+          "boundary_edges": 415335,
+          "halo_ratio": 1.0771294560884415
+        },
+        {
+          "id": 20,
+          "num_owned": 105109,
+          "num_halo": 58026,
+          "total_nodes": 163135,
+          "internal_edges": 3602632,
+          "boundary_edges": 198219,
+          "halo_ratio": 0.5520554852581606
+        },
+        {
+          "id": 21,
+          "num_owned": 100535,
+          "num_halo": 88259,
+          "total_nodes": 188794,
+          "internal_edges": 7634982,
+          "boundary_edges": 318313,
+          "halo_ratio": 0.8778932710001492
+        },
+        {
+          "id": 22,
+          "num_owned": 104892,
+          "num_halo": 53394,
+          "total_nodes": 158286,
+          "internal_edges": 4578038,
+          "boundary_edges": 230223,
+          "halo_ratio": 0.5090378675208787
+        },
+        {
+          "id": 23,
+          "num_owned": 100564,
+          "num_halo": 66896,
+          "total_nodes": 167460,
+          "internal_edges": 3625974,
+          "boundary_edges": 280673,
+          "halo_ratio": 0.6652082256075733
+        }
+      ]
+    },
+    {
+      "k": 25,
+      "is_valid": false,
+      "edge_cut": 5825018,
+      "overall_halo_ratio": 1.1753356126040158,
+      "total_halo_nodes": 2878431,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 95504,
+          "num_halo": 94701,
+          "total_nodes": 190205,
+          "internal_edges": 6310004,
+          "boundary_edges": 353787,
+          "halo_ratio": 0.991591975205227
+        },
+        {
+          "id": 1,
+          "num_owned": 100904,
+          "num_halo": 84620,
+          "total_nodes": 185524,
+          "internal_edges": 4568778,
+          "boundary_edges": 275086,
+          "halo_ratio": 0.838618885277095
+        },
+        {
+          "id": 2,
+          "num_owned": 100904,
+          "num_halo": 38471,
+          "total_nodes": 139375,
+          "internal_edges": 3058588,
+          "boundary_edges": 131352,
+          "halo_ratio": 0.38126337905335766
+        },
+        {
+          "id": 3,
+          "num_owned": 95335,
+          "num_halo": 19097,
+          "total_nodes": 114432,
+          "internal_edges": 2236450,
+          "boundary_edges": 61735,
+          "halo_ratio": 0.20031467981329
+        },
+        {
+          "id": 4,
+          "num_owned": 95631,
+          "num_halo": 61272,
+          "total_nodes": 156903,
+          "internal_edges": 3458080,
+          "boundary_edges": 258777,
+          "halo_ratio": 0.6407127395928098
+        },
+        {
+          "id": 5,
+          "num_owned": 100904,
+          "num_halo": 47704,
+          "total_nodes": 148608,
+          "internal_edges": 4377770,
+          "boundary_edges": 209383,
+          "halo_ratio": 0.4727661936097677
+        },
+        {
+          "id": 6,
+          "num_owned": 95240,
+          "num_halo": 102369,
+          "total_nodes": 197609,
+          "internal_edges": 3782688,
+          "boundary_edges": 286826,
+          "halo_ratio": 1.0748530029399412
+        },
+        {
+          "id": 7,
+          "num_owned": 100904,
+          "num_halo": 156428,
+          "total_nodes": 257332,
+          "internal_edges": 3637176,
+          "boundary_edges": 591082,
+          "halo_ratio": 1.5502655989851741
+        },
+        {
+          "id": 8,
+          "num_owned": 97882,
+          "num_halo": 71225,
+          "total_nodes": 169107,
+          "internal_edges": 4364402,
+          "boundary_edges": 261971,
+          "halo_ratio": 0.7276618785885045
+        },
+        {
+          "id": 9,
+          "num_owned": 98582,
+          "num_halo": 97301,
+          "total_nodes": 195883,
+          "internal_edges": 3357414,
+          "boundary_edges": 389699,
+          "halo_ratio": 0.9870057414132397
+        },
+        {
+          "id": 10,
+          "num_owned": 100904,
+          "num_halo": 116858,
+          "total_nodes": 217762,
+          "internal_edges": 2874524,
+          "boundary_edges": 564383,
+          "halo_ratio": 1.1581106794577023
+        },
+        {
+          "id": 11,
+          "num_owned": 100904,
+          "num_halo": 98013,
+          "total_nodes": 198917,
+          "internal_edges": 3239048,
+          "boundary_edges": 450436,
+          "halo_ratio": 0.9713490049948466
+        },
+        {
+          "id": 12,
+          "num_owned": 100569,
+          "num_halo": 128968,
+          "total_nodes": 229537,
+          "internal_edges": 5315154,
+          "boundary_edges": 471685,
+          "halo_ratio": 1.2823832393679961
+        },
+        {
+          "id": 13,
+          "num_owned": 100903,
+          "num_halo": 136989,
+          "total_nodes": 237892,
+          "internal_edges": 5015996,
+          "boundary_edges": 584329,
+          "halo_ratio": 1.3576305957206427
+        },
+        {
+          "id": 14,
+          "num_owned": 95106,
+          "num_halo": 108843,
+          "total_nodes": 203949,
+          "internal_edges": 4980052,
+          "boundary_edges": 456634,
+          "halo_ratio": 1.1444388366664564
+        },
+        {
+          "id": 15,
+          "num_owned": 100904,
+          "num_halo": 131691,
+          "total_nodes": 232595,
+          "internal_edges": 4221446,
+          "boundary_edges": 484728,
+          "halo_ratio": 1.3051117894236106
+        },
+        {
+          "id": 16,
+          "num_owned": 97338,
+          "num_halo": 142448,
+          "total_nodes": 239786,
+          "internal_edges": 5689080,
+          "boundary_edges": 506029,
+          "halo_ratio": 1.463436684542522
+        },
+        {
+          "id": 17,
+          "num_owned": 95337,
+          "num_halo": 138038,
+          "total_nodes": 233375,
+          "internal_edges": 4899934,
+          "boundary_edges": 487871,
+          "halo_ratio": 1.4478953606679463
+        },
+        {
+          "id": 18,
+          "num_owned": 96176,
+          "num_halo": 174146,
+          "total_nodes": 270322,
+          "internal_edges": 4575318,
+          "boundary_edges": 737710,
+          "halo_ratio": 1.810701214440193
+        },
+        {
+          "id": 19,
+          "num_owned": 95103,
+          "num_halo": 166220,
+          "total_nodes": 261323,
+          "internal_edges": 6379000,
+          "boundary_edges": 749196,
+          "halo_ratio": 1.747789239035572
+        },
+        {
+          "id": 20,
+          "num_owned": 97547,
+          "num_halo": 183874,
+          "total_nodes": 281421,
+          "internal_edges": 5168500,
+          "boundary_edges": 939290,
+          "halo_ratio": 1.8849785231734446
+        },
+        {
+          "id": 21,
+          "num_owned": 95104,
+          "num_halo": 172277,
+          "total_nodes": 267381,
+          "internal_edges": 4996308,
+          "boundary_edges": 695293,
+          "halo_ratio": 1.811459034320323
+        },
+        {
+          "id": 22,
+          "num_owned": 100196,
+          "num_halo": 98254,
+          "total_nodes": 198450,
+          "internal_edges": 4928408,
+          "boundary_edges": 397751,
+          "halo_ratio": 0.9806179887420655
+        },
+        {
+          "id": 23,
+          "num_owned": 95510,
+          "num_halo": 161515,
+          "total_nodes": 257025,
+          "internal_edges": 5242556,
+          "boundary_edges": 660628,
+          "halo_ratio": 1.6910794681185217
+        },
+        {
+          "id": 24,
+          "num_owned": 95638,
+          "num_halo": 147109,
+          "total_nodes": 242747,
+          "internal_edges": 5391578,
+          "boundary_edges": 644367,
+          "halo_ratio": 1.538185658420293
+        }
+      ]
+    },
+    {
+      "k": 26,
+      "is_valid": false,
+      "edge_cut": 5912795,
+      "overall_halo_ratio": 1.210937069344626,
+      "total_halo_nodes": 2965620,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 95220,
+          "num_halo": 133670,
+          "total_nodes": 228890,
+          "internal_edges": 5106886,
+          "boundary_edges": 459042,
+          "halo_ratio": 1.403801722327242
+        },
+        {
+          "id": 1,
+          "num_owned": 91446,
+          "num_halo": 102898,
+          "total_nodes": 194344,
+          "internal_edges": 4681178,
+          "boundary_edges": 441173,
+          "halo_ratio": 1.1252323775780242
+        },
+        {
+          "id": 2,
+          "num_owned": 97023,
+          "num_halo": 134497,
+          "total_nodes": 231520,
+          "internal_edges": 4650538,
+          "boundary_edges": 550235,
+          "halo_ratio": 1.3862383146264288
+        },
+        {
+          "id": 3,
+          "num_owned": 97023,
+          "num_halo": 142703,
+          "total_nodes": 239726,
+          "internal_edges": 5292636,
+          "boundary_edges": 509707,
+          "halo_ratio": 1.4708161982210404
+        },
+        {
+          "id": 4,
+          "num_owned": 91446,
+          "num_halo": 162623,
+          "total_nodes": 254069,
+          "internal_edges": 4725964,
+          "boundary_edges": 598417,
+          "halo_ratio": 1.7783500645189512
+        },
+        {
+          "id": 5,
+          "num_owned": 91449,
+          "num_halo": 145531,
+          "total_nodes": 236980,
+          "internal_edges": 5289528,
+          "boundary_edges": 531946,
+          "halo_ratio": 1.591389736355783
+        },
+        {
+          "id": 6,
+          "num_owned": 95423,
+          "num_halo": 142565,
+          "total_nodes": 237988,
+          "internal_edges": 3392966,
+          "boundary_edges": 568500,
+          "halo_ratio": 1.4940318371880994
+        },
+        {
+          "id": 7,
+          "num_owned": 91445,
+          "num_halo": 185576,
+          "total_nodes": 277021,
+          "internal_edges": 6083492,
+          "boundary_edges": 800926,
+          "halo_ratio": 2.0293728470665426
+        },
+        {
+          "id": 8,
+          "num_owned": 92243,
+          "num_halo": 160377,
+          "total_nodes": 252620,
+          "internal_edges": 5346950,
+          "boundary_edges": 832823,
+          "halo_ratio": 1.7386359940591698
+        },
+        {
+          "id": 9,
+          "num_owned": 94439,
+          "num_halo": 84642,
+          "total_nodes": 179081,
+          "internal_edges": 4523048,
+          "boundary_edges": 345363,
+          "halo_ratio": 0.8962610785798241
+        },
+        {
+          "id": 10,
+          "num_owned": 93429,
+          "num_halo": 155207,
+          "total_nodes": 248636,
+          "internal_edges": 4987416,
+          "boundary_edges": 692097,
+          "halo_ratio": 1.6612293827398346
+        },
+        {
+          "id": 11,
+          "num_owned": 93094,
+          "num_halo": 172076,
+          "total_nodes": 265170,
+          "internal_edges": 5109304,
+          "boundary_edges": 705543,
+          "halo_ratio": 1.848411283219112
+        },
+        {
+          "id": 12,
+          "num_owned": 92481,
+          "num_halo": 147475,
+          "total_nodes": 239956,
+          "internal_edges": 4766258,
+          "boundary_edges": 634350,
+          "halo_ratio": 1.594651874439074
+        },
+        {
+          "id": 13,
+          "num_owned": 93594,
+          "num_halo": 17119,
+          "total_nodes": 110713,
+          "internal_edges": 2400426,
+          "boundary_edges": 52167,
+          "halo_ratio": 0.182907023954527
+        },
+        {
+          "id": 14,
+          "num_owned": 91617,
+          "num_halo": 62629,
+          "total_nodes": 154246,
+          "internal_edges": 3059110,
+          "boundary_edges": 248675,
+          "halo_ratio": 0.6835958392001484
+        },
+        {
+          "id": 15,
+          "num_owned": 97021,
+          "num_halo": 46015,
+          "total_nodes": 143036,
+          "internal_edges": 4266478,
+          "boundary_edges": 209849,
+          "halo_ratio": 0.47427876439121425
+        },
+        {
+          "id": 16,
+          "num_owned": 93303,
+          "num_halo": 96014,
+          "total_nodes": 189317,
+          "internal_edges": 4336870,
+          "boundary_edges": 302079,
+          "halo_ratio": 1.0290558717297407
+        },
+        {
+          "id": 17,
+          "num_owned": 97023,
+          "num_halo": 44905,
+          "total_nodes": 141928,
+          "internal_edges": 3234554,
+          "boundary_edges": 164570,
+          "halo_ratio": 0.4628284015130433
+        },
+        {
+          "id": 18,
+          "num_owned": 97023,
+          "num_halo": 112274,
+          "total_nodes": 209297,
+          "internal_edges": 3802878,
+          "boundary_edges": 420119,
+          "halo_ratio": 1.1571895323789205
+        },
+        {
+          "id": 19,
+          "num_owned": 94803,
+          "num_halo": 69796,
+          "total_nodes": 164599,
+          "internal_edges": 4509592,
+          "boundary_edges": 237099,
+          "halo_ratio": 0.7362214275919539
+        },
+        {
+          "id": 20,
+          "num_owned": 94774,
+          "num_halo": 103472,
+          "total_nodes": 198246,
+          "internal_edges": 3776822,
+          "boundary_edges": 306870,
+          "halo_ratio": 1.091776225547091
+        },
+        {
+          "id": 21,
+          "num_owned": 91445,
+          "num_halo": 110226,
+          "total_nodes": 201671,
+          "internal_edges": 6410780,
+          "boundary_edges": 398206,
+          "halo_ratio": 1.205380283230357
+        },
+        {
+          "id": 22,
+          "num_owned": 94207,
+          "num_halo": 92661,
+          "total_nodes": 186868,
+          "internal_edges": 3277882,
+          "boundary_edges": 369905,
+          "halo_ratio": 0.9835893298799452
+        },
+        {
+          "id": 23,
+          "num_owned": 94013,
+          "num_halo": 135505,
+          "total_nodes": 229518,
+          "internal_edges": 3194610,
+          "boundary_edges": 523386,
+          "halo_ratio": 1.4413432184910597
+        },
+        {
+          "id": 24,
+          "num_owned": 97022,
+          "num_halo": 109709,
+          "total_nodes": 206731,
+          "internal_edges": 2787962,
+          "boundary_edges": 504371,
+          "halo_ratio": 1.130764156583043
+        },
+        {
+          "id": 25,
+          "num_owned": 97023,
+          "num_halo": 95455,
+          "total_nodes": 192478,
+          "internal_edges": 2878574,
+          "boundary_edges": 418160,
+          "halo_ratio": 0.9838388835636911
+        }
+      ]
+    },
+    {
+      "k": 27,
+      "is_valid": false,
+      "edge_cut": 6016977,
+      "overall_halo_ratio": 1.2390780182676482,
+      "total_halo_nodes": 3034538,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 93428,
+          "num_halo": 93144,
+          "total_nodes": 186572,
+          "internal_edges": 3294426,
+          "boundary_edges": 369360,
+          "halo_ratio": 0.9969602260564285
+        },
+        {
+          "id": 1,
+          "num_owned": 93429,
+          "num_halo": 116131,
+          "total_nodes": 209560,
+          "internal_edges": 2574084,
+          "boundary_edges": 554877,
+          "halo_ratio": 1.2429866529664237
+        },
+        {
+          "id": 2,
+          "num_owned": 93430,
+          "num_halo": 101052,
+          "total_nodes": 194482,
+          "internal_edges": 3044004,
+          "boundary_edges": 462469,
+          "halo_ratio": 1.0815797923579151
+        },
+        {
+          "id": 3,
+          "num_owned": 93430,
+          "num_halo": 53335,
+          "total_nodes": 146765,
+          "internal_edges": 2551120,
+          "boundary_edges": 166181,
+          "halo_ratio": 0.5708551857005244
+        },
+        {
+          "id": 4,
+          "num_owned": 89607,
+          "num_halo": 70894,
+          "total_nodes": 160501,
+          "internal_edges": 3972266,
+          "boundary_edges": 260585,
+          "halo_ratio": 0.7911658687379334
+        },
+        {
+          "id": 5,
+          "num_owned": 90373,
+          "num_halo": 127480,
+          "total_nodes": 217853,
+          "internal_edges": 3053694,
+          "boundary_edges": 453178,
+          "halo_ratio": 1.4105982981642746
+        },
+        {
+          "id": 6,
+          "num_owned": 91414,
+          "num_halo": 75075,
+          "total_nodes": 166489,
+          "internal_edges": 2646954,
+          "boundary_edges": 237342,
+          "halo_ratio": 0.821263701402411
+        },
+        {
+          "id": 7,
+          "num_owned": 92915,
+          "num_halo": 46489,
+          "total_nodes": 139404,
+          "internal_edges": 4058260,
+          "boundary_edges": 225232,
+          "halo_ratio": 0.5003390195339826
+        },
+        {
+          "id": 8,
+          "num_owned": 88109,
+          "num_halo": 55559,
+          "total_nodes": 143668,
+          "internal_edges": 3090294,
+          "boundary_edges": 240588,
+          "halo_ratio": 0.630571224279018
+        },
+        {
+          "id": 9,
+          "num_owned": 92720,
+          "num_halo": 146848,
+          "total_nodes": 239568,
+          "internal_edges": 5659342,
+          "boundary_edges": 783428,
+          "halo_ratio": 1.583779119930975
+        },
+        {
+          "id": 10,
+          "num_owned": 88384,
+          "num_halo": 105584,
+          "total_nodes": 193968,
+          "internal_edges": 6409954,
+          "boundary_edges": 397333,
+          "halo_ratio": 1.194605358435916
+        },
+        {
+          "id": 11,
+          "num_owned": 93430,
+          "num_halo": 80489,
+          "total_nodes": 173919,
+          "internal_edges": 4023142,
+          "boundary_edges": 252992,
+          "halo_ratio": 0.8614898854757572
+        },
+        {
+          "id": 12,
+          "num_owned": 89705,
+          "num_halo": 94866,
+          "total_nodes": 184571,
+          "internal_edges": 3835768,
+          "boundary_edges": 267552,
+          "halo_ratio": 1.0575330249149992
+        },
+        {
+          "id": 13,
+          "num_owned": 90783,
+          "num_halo": 119646,
+          "total_nodes": 210429,
+          "internal_edges": 5175422,
+          "boundary_edges": 363767,
+          "halo_ratio": 1.317933974422524
+        },
+        {
+          "id": 14,
+          "num_owned": 93082,
+          "num_halo": 178149,
+          "total_nodes": 271231,
+          "internal_edges": 4305980,
+          "boundary_edges": 740811,
+          "halo_ratio": 1.9138931264906212
+        },
+        {
+          "id": 15,
+          "num_owned": 88064,
+          "num_halo": 170842,
+          "total_nodes": 258906,
+          "internal_edges": 4439764,
+          "boundary_edges": 679466,
+          "halo_ratio": 1.939975472383721
+        },
+        {
+          "id": 16,
+          "num_owned": 88060,
+          "num_halo": 149696,
+          "total_nodes": 237756,
+          "internal_edges": 4717346,
+          "boundary_edges": 670566,
+          "halo_ratio": 1.699931864637747
+        },
+        {
+          "id": 17,
+          "num_owned": 88058,
+          "num_halo": 136333,
+          "total_nodes": 224391,
+          "internal_edges": 4727572,
+          "boundary_edges": 549232,
+          "halo_ratio": 1.548218219809671
+        },
+        {
+          "id": 18,
+          "num_owned": 88064,
+          "num_halo": 82650,
+          "total_nodes": 170714,
+          "internal_edges": 4011844,
+          "boundary_edges": 342519,
+          "halo_ratio": 0.9385219840116279
+        },
+        {
+          "id": 19,
+          "num_owned": 88062,
+          "num_halo": 195439,
+          "total_nodes": 283501,
+          "internal_edges": 5763648,
+          "boundary_edges": 898766,
+          "halo_ratio": 2.219334105516568
+        },
+        {
+          "id": 20,
+          "num_owned": 88058,
+          "num_halo": 160132,
+          "total_nodes": 248190,
+          "internal_edges": 5108046,
+          "boundary_edges": 566497,
+          "halo_ratio": 1.818483272388653
+        },
+        {
+          "id": 21,
+          "num_owned": 92047,
+          "num_halo": 112874,
+          "total_nodes": 204921,
+          "internal_edges": 3645994,
+          "boundary_edges": 407307,
+          "halo_ratio": 1.2262648429606613
+        },
+        {
+          "id": 22,
+          "num_owned": 93299,
+          "num_halo": 52904,
+          "total_nodes": 146203,
+          "internal_edges": 3154648,
+          "boundary_edges": 182287,
+          "halo_ratio": 0.567037160098179
+        },
+        {
+          "id": 23,
+          "num_owned": 88059,
+          "num_halo": 106849,
+          "total_nodes": 194908,
+          "internal_edges": 4565422,
+          "boundary_edges": 449965,
+          "halo_ratio": 1.2133796659058131
+        },
+        {
+          "id": 24,
+          "num_owned": 89145,
+          "num_halo": 138902,
+          "total_nodes": 228047,
+          "internal_edges": 4321752,
+          "boundary_edges": 569210,
+          "halo_ratio": 1.5581580570979865
+        },
+        {
+          "id": 25,
+          "num_owned": 90446,
+          "num_halo": 127486,
+          "total_nodes": 217932,
+          "internal_edges": 4151476,
+          "boundary_edges": 444929,
+          "halo_ratio": 1.4095261260862835
+        },
+        {
+          "id": 26,
+          "num_owned": 93428,
+          "num_halo": 135690,
+          "total_nodes": 229118,
+          "internal_edges": 5382116,
+          "boundary_edges": 497503,
+          "halo_ratio": 1.4523483324057027
+        }
+      ]
+    },
+    {
+      "k": 28,
+      "is_valid": false,
+      "edge_cut": 6134813,
+      "overall_halo_ratio": 1.2615154822584789,
+      "total_halo_nodes": 3089488,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 86208,
+          "num_halo": 158602,
+          "total_nodes": 244810,
+          "internal_edges": 3616254,
+          "boundary_edges": 670659,
+          "halo_ratio": 1.8397596510764662
+        },
+        {
+          "id": 1,
+          "num_owned": 84913,
+          "num_halo": 177362,
+          "total_nodes": 262275,
+          "internal_edges": 5560712,
+          "boundary_edges": 751502,
+          "halo_ratio": 2.0887496614181575
+        },
+        {
+          "id": 2,
+          "num_owned": 86176,
+          "num_halo": 146527,
+          "total_nodes": 232703,
+          "internal_edges": 5268862,
+          "boundary_edges": 757784,
+          "halo_ratio": 1.7003225956182695
+        },
+        {
+          "id": 3,
+          "num_owned": 90093,
+          "num_halo": 81446,
+          "total_nodes": 171539,
+          "internal_edges": 3798054,
+          "boundary_edges": 348289,
+          "halo_ratio": 0.9040214001087765
+        },
+        {
+          "id": 4,
+          "num_owned": 86248,
+          "num_halo": 149689,
+          "total_nodes": 235937,
+          "internal_edges": 4690246,
+          "boundary_edges": 665786,
+          "halo_ratio": 1.7355648826639458
+        },
+        {
+          "id": 5,
+          "num_owned": 84989,
+          "num_halo": 150062,
+          "total_nodes": 235051,
+          "internal_edges": 4584538,
+          "boundary_edges": 606568,
+          "halo_ratio": 1.7656637917848192
+        },
+        {
+          "id": 6,
+          "num_owned": 84915,
+          "num_halo": 151285,
+          "total_nodes": 236200,
+          "internal_edges": 4541624,
+          "boundary_edges": 666100,
+          "halo_ratio": 1.781605134546311
+        },
+        {
+          "id": 7,
+          "num_owned": 90090,
+          "num_halo": 96079,
+          "total_nodes": 186169,
+          "internal_edges": 4485802,
+          "boundary_edges": 265233,
+          "halo_ratio": 1.0664779664779664
+        },
+        {
+          "id": 8,
+          "num_owned": 89458,
+          "num_halo": 139007,
+          "total_nodes": 228465,
+          "internal_edges": 4504788,
+          "boundary_edges": 528298,
+          "halo_ratio": 1.553880033088153
+        },
+        {
+          "id": 9,
+          "num_owned": 84913,
+          "num_halo": 178630,
+          "total_nodes": 263543,
+          "internal_edges": 4583598,
+          "boundary_edges": 633920,
+          "halo_ratio": 2.103682592771425
+        },
+        {
+          "id": 10,
+          "num_owned": 86368,
+          "num_halo": 146917,
+          "total_nodes": 233285,
+          "internal_edges": 4428868,
+          "boundary_edges": 520313,
+          "halo_ratio": 1.7010582623193775
+        },
+        {
+          "id": 11,
+          "num_owned": 90093,
+          "num_halo": 134597,
+          "total_nodes": 224690,
+          "internal_edges": 5019792,
+          "boundary_edges": 486496,
+          "halo_ratio": 1.4939784444962427
+        },
+        {
+          "id": 12,
+          "num_owned": 87783,
+          "num_halo": 142001,
+          "total_nodes": 229784,
+          "internal_edges": 4314568,
+          "boundary_edges": 604354,
+          "halo_ratio": 1.617636672248613
+        },
+        {
+          "id": 13,
+          "num_owned": 85540,
+          "num_halo": 93640,
+          "total_nodes": 179180,
+          "internal_edges": 4329360,
+          "boundary_edges": 403967,
+          "halo_ratio": 1.0946925415010522
+        },
+        {
+          "id": 14,
+          "num_owned": 86146,
+          "num_halo": 51593,
+          "total_nodes": 137739,
+          "internal_edges": 3142784,
+          "boundary_edges": 172530,
+          "halo_ratio": 0.5989018642769253
+        },
+        {
+          "id": 15,
+          "num_owned": 90092,
+          "num_halo": 113567,
+          "total_nodes": 203659,
+          "internal_edges": 3688004,
+          "boundary_edges": 415371,
+          "halo_ratio": 1.2605669759801092
+        },
+        {
+          "id": 16,
+          "num_owned": 90093,
+          "num_halo": 54663,
+          "total_nodes": 144756,
+          "internal_edges": 3199114,
+          "boundary_edges": 192595,
+          "halo_ratio": 0.6067397023076154
+        },
+        {
+          "id": 17,
+          "num_owned": 90093,
+          "num_halo": 43351,
+          "total_nodes": 133444,
+          "internal_edges": 4015490,
+          "boundary_edges": 203488,
+          "halo_ratio": 0.48118055786798086
+        },
+        {
+          "id": 18,
+          "num_owned": 85184,
+          "num_halo": 52080,
+          "total_nodes": 137264,
+          "internal_edges": 2958666,
+          "boundary_edges": 225054,
+          "halo_ratio": 0.6113824192336589
+        },
+        {
+          "id": 19,
+          "num_owned": 88026,
+          "num_halo": 33673,
+          "total_nodes": 121699,
+          "internal_edges": 2731686,
+          "boundary_edges": 101566,
+          "halo_ratio": 0.38253470565514736
+        },
+        {
+          "id": 20,
+          "num_owned": 86912,
+          "num_halo": 88132,
+          "total_nodes": 175044,
+          "internal_edges": 6318772,
+          "boundary_edges": 330058,
+          "halo_ratio": 1.0140371870397644
+        },
+        {
+          "id": 21,
+          "num_owned": 90093,
+          "num_halo": 129879,
+          "total_nodes": 219972,
+          "internal_edges": 3312652,
+          "boundary_edges": 469835,
+          "halo_ratio": 1.4416103359861476
+        },
+        {
+          "id": 22,
+          "num_owned": 86123,
+          "num_halo": 65907,
+          "total_nodes": 152030,
+          "internal_edges": 4202720,
+          "boundary_edges": 234254,
+          "halo_ratio": 0.7652659568291862
+        },
+        {
+          "id": 23,
+          "num_owned": 85656,
+          "num_halo": 88319,
+          "total_nodes": 173975,
+          "internal_edges": 3580072,
+          "boundary_edges": 245612,
+          "halo_ratio": 1.0310894741757728
+        },
+        {
+          "id": 24,
+          "num_owned": 87023,
+          "num_halo": 119642,
+          "total_nodes": 206665,
+          "internal_edges": 2683522,
+          "boundary_edges": 471906,
+          "halo_ratio": 1.3748319409811198
+        },
+        {
+          "id": 25,
+          "num_owned": 90088,
+          "num_halo": 90617,
+          "total_nodes": 180705,
+          "internal_edges": 2670666,
+          "boundary_edges": 384290,
+          "halo_ratio": 1.0058720362312406
+        },
+        {
+          "id": 26,
+          "num_owned": 90093,
+          "num_halo": 110575,
+          "total_nodes": 200668,
+          "internal_edges": 2501546,
+          "boundary_edges": 511055,
+          "halo_ratio": 1.2273428568257245
+        },
+        {
+          "id": 27,
+          "num_owned": 85620,
+          "num_halo": 101646,
+          "total_nodes": 187266,
+          "internal_edges": 2715910,
+          "boundary_edges": 402727,
+          "halo_ratio": 1.1871758934828311
+        }
+      ]
+    },
+    {
+      "k": 29,
+      "is_valid": false,
+      "edge_cut": 6195129,
+      "overall_halo_ratio": 1.2797320897384228,
+      "total_halo_nodes": 3134101,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 86986,
+          "num_halo": 21466,
+          "total_nodes": 108452,
+          "internal_edges": 2072992,
+          "boundary_edges": 64981,
+          "halo_ratio": 0.24677534315866922
+        },
+        {
+          "id": 1,
+          "num_owned": 84550,
+          "num_halo": 55161,
+          "total_nodes": 139711,
+          "internal_edges": 4002774,
+          "boundary_edges": 194979,
+          "halo_ratio": 0.6524068598462448
+        },
+        {
+          "id": 2,
+          "num_owned": 86985,
+          "num_halo": 131815,
+          "total_nodes": 218800,
+          "internal_edges": 2894206,
+          "boundary_edges": 475844,
+          "halo_ratio": 1.5153762142898202
+        },
+        {
+          "id": 3,
+          "num_owned": 86986,
+          "num_halo": 114341,
+          "total_nodes": 201327,
+          "internal_edges": 2368968,
+          "boundary_edges": 531880,
+          "halo_ratio": 1.314475892672384
+        },
+        {
+          "id": 4,
+          "num_owned": 81991,
+          "num_halo": 95515,
+          "total_nodes": 177506,
+          "internal_edges": 2238872,
+          "boundary_edges": 390645,
+          "halo_ratio": 1.164944932980449
+        },
+        {
+          "id": 5,
+          "num_owned": 84422,
+          "num_halo": 116892,
+          "total_nodes": 201314,
+          "internal_edges": 2489166,
+          "boundary_edges": 498166,
+          "halo_ratio": 1.3846153846153846
+        },
+        {
+          "id": 6,
+          "num_owned": 84407,
+          "num_halo": 84473,
+          "total_nodes": 168880,
+          "internal_edges": 2950352,
+          "boundary_edges": 332920,
+          "halo_ratio": 1.000781925669672
+        },
+        {
+          "id": 7,
+          "num_owned": 85965,
+          "num_halo": 54586,
+          "total_nodes": 140551,
+          "internal_edges": 2777654,
+          "boundary_edges": 170860,
+          "halo_ratio": 0.6349793520618856
+        },
+        {
+          "id": 8,
+          "num_owned": 86986,
+          "num_halo": 105520,
+          "total_nodes": 192506,
+          "internal_edges": 3530858,
+          "boundary_edges": 391043,
+          "halo_ratio": 1.213068769687076
+        },
+        {
+          "id": 9,
+          "num_owned": 86986,
+          "num_halo": 50013,
+          "total_nodes": 136999,
+          "internal_edges": 3037122,
+          "boundary_edges": 177496,
+          "halo_ratio": 0.5749545903938564
+        },
+        {
+          "id": 10,
+          "num_owned": 81986,
+          "num_halo": 80239,
+          "total_nodes": 162225,
+          "internal_edges": 3125070,
+          "boundary_edges": 332581,
+          "halo_ratio": 0.9786914839118874
+        },
+        {
+          "id": 11,
+          "num_owned": 86986,
+          "num_halo": 46103,
+          "total_nodes": 133089,
+          "internal_edges": 3945780,
+          "boundary_edges": 219813,
+          "halo_ratio": 0.5300048283631849
+        },
+        {
+          "id": 12,
+          "num_owned": 84565,
+          "num_halo": 72675,
+          "total_nodes": 157240,
+          "internal_edges": 6290580,
+          "boundary_edges": 267318,
+          "halo_ratio": 0.8593980961390646
+        },
+        {
+          "id": 13,
+          "num_owned": 86001,
+          "num_halo": 97500,
+          "total_nodes": 183501,
+          "internal_edges": 3955578,
+          "boundary_edges": 277800,
+          "halo_ratio": 1.1337077475843305
+        },
+        {
+          "id": 14,
+          "num_owned": 86986,
+          "num_halo": 135851,
+          "total_nodes": 222837,
+          "internal_edges": 4286650,
+          "boundary_edges": 451918,
+          "halo_ratio": 1.5617570643551837
+        },
+        {
+          "id": 15,
+          "num_owned": 82613,
+          "num_halo": 105878,
+          "total_nodes": 188491,
+          "internal_edges": 4136646,
+          "boundary_edges": 358796,
+          "halo_ratio": 1.2816142737825766
+        },
+        {
+          "id": 16,
+          "num_owned": 82036,
+          "num_halo": 144904,
+          "total_nodes": 226940,
+          "internal_edges": 4611576,
+          "boundary_edges": 515181,
+          "halo_ratio": 1.7663464820322785
+        },
+        {
+          "id": 17,
+          "num_owned": 86434,
+          "num_halo": 130700,
+          "total_nodes": 217134,
+          "internal_edges": 4844502,
+          "boundary_edges": 483402,
+          "halo_ratio": 1.5121364277946179
+        },
+        {
+          "id": 18,
+          "num_owned": 81989,
+          "num_halo": 149132,
+          "total_nodes": 231121,
+          "internal_edges": 4186024,
+          "boundary_edges": 602114,
+          "halo_ratio": 1.8189269292222128
+        },
+        {
+          "id": 19,
+          "num_owned": 83268,
+          "num_halo": 118175,
+          "total_nodes": 201443,
+          "internal_edges": 3942402,
+          "boundary_edges": 482626,
+          "halo_ratio": 1.4192126627275785
+        },
+        {
+          "id": 20,
+          "num_owned": 81985,
+          "num_halo": 107614,
+          "total_nodes": 189599,
+          "internal_edges": 3906956,
+          "boundary_edges": 433290,
+          "halo_ratio": 1.3126059645057022
+        },
+        {
+          "id": 21,
+          "num_owned": 81986,
+          "num_halo": 165471,
+          "total_nodes": 247457,
+          "internal_edges": 3968668,
+          "boundary_edges": 656492,
+          "halo_ratio": 2.0182836093967262
+        },
+        {
+          "id": 22,
+          "num_owned": 82067,
+          "num_halo": 153379,
+          "total_nodes": 235446,
+          "internal_edges": 3669770,
+          "boundary_edges": 644612,
+          "halo_ratio": 1.8689485420449146
+        },
+        {
+          "id": 23,
+          "num_owned": 81987,
+          "num_halo": 161487,
+          "total_nodes": 243474,
+          "internal_edges": 5364930,
+          "boundary_edges": 738453,
+          "halo_ratio": 1.9696659226462732
+        },
+        {
+          "id": 24,
+          "num_owned": 81991,
+          "num_halo": 150306,
+          "total_nodes": 232297,
+          "internal_edges": 5098090,
+          "boundary_edges": 772614,
+          "halo_ratio": 1.833201205010306
+        },
+        {
+          "id": 25,
+          "num_owned": 85539,
+          "num_halo": 130405,
+          "total_nodes": 215944,
+          "internal_edges": 4646306,
+          "boundary_edges": 535623,
+          "halo_ratio": 1.5245092881609559
+        },
+        {
+          "id": 26,
+          "num_owned": 86262,
+          "num_halo": 152843,
+          "total_nodes": 239105,
+          "internal_edges": 4627496,
+          "boundary_edges": 677330,
+          "halo_ratio": 1.7718462358860216
+        },
+        {
+          "id": 27,
+          "num_owned": 83236,
+          "num_halo": 102368,
+          "total_nodes": 185604,
+          "internal_edges": 4536470,
+          "boundary_edges": 295880,
+          "halo_ratio": 1.2298524676822529
+        },
+        {
+          "id": 28,
+          "num_owned": 84848,
+          "num_halo": 99289,
+          "total_nodes": 184137,
+          "internal_edges": 3821576,
+          "boundary_edges": 415589,
+          "halo_ratio": 1.1701984725627004
+        }
+      ]
+    },
+    {
+      "k": 30,
+      "is_valid": false,
+      "edge_cut": 6284687,
+      "overall_halo_ratio": 1.301165890644823,
+      "total_halo_nodes": 3186593,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 79394,
+          "num_halo": 111067,
+          "total_nodes": 190461,
+          "internal_edges": 4553940,
+          "boundary_edges": 311971,
+          "halo_ratio": 1.3989344282943295
+        },
+        {
+          "id": 1,
+          "num_owned": 79259,
+          "num_halo": 147368,
+          "total_nodes": 226627,
+          "internal_edges": 4459708,
+          "boundary_edges": 523190,
+          "halo_ratio": 1.859321969744761
+        },
+        {
+          "id": 2,
+          "num_owned": 79253,
+          "num_halo": 122075,
+          "total_nodes": 201328,
+          "internal_edges": 4885266,
+          "boundary_edges": 423540,
+          "halo_ratio": 1.5403202402432716
+        },
+        {
+          "id": 3,
+          "num_owned": 79252,
+          "num_halo": 144690,
+          "total_nodes": 223942,
+          "internal_edges": 3644310,
+          "boundary_edges": 573337,
+          "halo_ratio": 1.825695250593045
+        },
+        {
+          "id": 4,
+          "num_owned": 79262,
+          "num_halo": 87510,
+          "total_nodes": 166772,
+          "internal_edges": 4034872,
+          "boundary_edges": 391369,
+          "halo_ratio": 1.1040599530670434
+        },
+        {
+          "id": 5,
+          "num_owned": 84087,
+          "num_halo": 118061,
+          "total_nodes": 202148,
+          "internal_edges": 3841274,
+          "boundary_edges": 445819,
+          "halo_ratio": 1.4040339172523695
+        },
+        {
+          "id": 6,
+          "num_owned": 83742,
+          "num_halo": 130139,
+          "total_nodes": 213881,
+          "internal_edges": 4705638,
+          "boundary_edges": 463814,
+          "halo_ratio": 1.5540469537388646
+        },
+        {
+          "id": 7,
+          "num_owned": 80537,
+          "num_halo": 129610,
+          "total_nodes": 210147,
+          "internal_edges": 2773746,
+          "boundary_edges": 489787,
+          "halo_ratio": 1.6093224232340415
+        },
+        {
+          "id": 8,
+          "num_owned": 79513,
+          "num_halo": 155059,
+          "total_nodes": 234572,
+          "internal_edges": 3732824,
+          "boundary_edges": 664907,
+          "halo_ratio": 1.9501087872423377
+        },
+        {
+          "id": 9,
+          "num_owned": 79252,
+          "num_halo": 162212,
+          "total_nodes": 241464,
+          "internal_edges": 5251448,
+          "boundary_edges": 686648,
+          "halo_ratio": 2.0467874627769644
+        },
+        {
+          "id": 10,
+          "num_owned": 79252,
+          "num_halo": 141302,
+          "total_nodes": 220554,
+          "internal_edges": 4907590,
+          "boundary_edges": 716458,
+          "halo_ratio": 1.782945540806541
+        },
+        {
+          "id": 11,
+          "num_owned": 79251,
+          "num_halo": 152805,
+          "total_nodes": 232056,
+          "internal_edges": 4036720,
+          "boundary_edges": 658058,
+          "halo_ratio": 1.9281144717416816
+        },
+        {
+          "id": 12,
+          "num_owned": 83641,
+          "num_halo": 124512,
+          "total_nodes": 208153,
+          "internal_edges": 4882708,
+          "boundary_edges": 592767,
+          "halo_ratio": 1.488647911909231
+        },
+        {
+          "id": 13,
+          "num_owned": 83495,
+          "num_halo": 78582,
+          "total_nodes": 162077,
+          "internal_edges": 3422224,
+          "boundary_edges": 324075,
+          "halo_ratio": 0.9411581531828254
+        },
+        {
+          "id": 14,
+          "num_owned": 82565,
+          "num_halo": 176567,
+          "total_nodes": 259132,
+          "internal_edges": 4343402,
+          "boundary_edges": 779998,
+          "halo_ratio": 2.138521165142615
+        },
+        {
+          "id": 15,
+          "num_owned": 83404,
+          "num_halo": 38229,
+          "total_nodes": 121633,
+          "internal_edges": 2317204,
+          "boundary_edges": 115080,
+          "halo_ratio": 0.4583593113040142
+        },
+        {
+          "id": 16,
+          "num_owned": 82714,
+          "num_halo": 125716,
+          "total_nodes": 208430,
+          "internal_edges": 2946426,
+          "boundary_edges": 453590,
+          "halo_ratio": 1.5198878061754963
+        },
+        {
+          "id": 17,
+          "num_owned": 82703,
+          "num_halo": 65691,
+          "total_nodes": 148394,
+          "internal_edges": 3831850,
+          "boundary_edges": 239104,
+          "halo_ratio": 0.7943000858493646
+        },
+        {
+          "id": 18,
+          "num_owned": 84086,
+          "num_halo": 89342,
+          "total_nodes": 173428,
+          "internal_edges": 2503316,
+          "boundary_edges": 380652,
+          "halo_ratio": 1.062507432866351
+        },
+        {
+          "id": 19,
+          "num_owned": 79256,
+          "num_halo": 103838,
+          "total_nodes": 183094,
+          "internal_edges": 2578840,
+          "boundary_edges": 416030,
+          "halo_ratio": 1.3101594831937013
+        },
+        {
+          "id": 20,
+          "num_owned": 79252,
+          "num_halo": 103495,
+          "total_nodes": 182747,
+          "internal_edges": 2498740,
+          "boundary_edges": 376180,
+          "halo_ratio": 1.3058976429616918
+        },
+        {
+          "id": 21,
+          "num_owned": 84087,
+          "num_halo": 106857,
+          "total_nodes": 190944,
+          "internal_edges": 2318230,
+          "boundary_edges": 505061,
+          "halo_ratio": 1.2707909664989832
+        },
+        {
+          "id": 22,
+          "num_owned": 83963,
+          "num_halo": 46920,
+          "total_nodes": 130883,
+          "internal_edges": 3797328,
+          "boundary_edges": 232961,
+          "halo_ratio": 0.5588175744077749
+        },
+        {
+          "id": 23,
+          "num_owned": 79252,
+          "num_halo": 60929,
+          "total_nodes": 140181,
+          "internal_edges": 2504770,
+          "boundary_edges": 275362,
+          "halo_ratio": 0.7688007873618331
+        },
+        {
+          "id": 24,
+          "num_owned": 82711,
+          "num_halo": 89638,
+          "total_nodes": 172349,
+          "internal_edges": 3628182,
+          "boundary_edges": 248357,
+          "halo_ratio": 1.0837494408240742
+        },
+        {
+          "id": 25,
+          "num_owned": 82131,
+          "num_halo": 61779,
+          "total_nodes": 143910,
+          "internal_edges": 4055510,
+          "boundary_edges": 197142,
+          "halo_ratio": 0.7522007524564416
+        },
+        {
+          "id": 26,
+          "num_owned": 81960,
+          "num_halo": 87758,
+          "total_nodes": 169718,
+          "internal_edges": 5366368,
+          "boundary_edges": 314383,
+          "halo_ratio": 1.0707418252806247
+        },
+        {
+          "id": 27,
+          "num_owned": 83952,
+          "num_halo": 114938,
+          "total_nodes": 198890,
+          "internal_edges": 3646156,
+          "boundary_edges": 400694,
+          "halo_ratio": 1.3690918620163903
+        },
+        {
+          "id": 28,
+          "num_owned": 84087,
+          "num_halo": 79105,
+          "total_nodes": 163192,
+          "internal_edges": 3144088,
+          "boundary_edges": 255538,
+          "halo_ratio": 0.9407518403558219
+        },
+        {
+          "id": 29,
+          "num_owned": 83716,
+          "num_halo": 30799,
+          "total_nodes": 114515,
+          "internal_edges": 2536248,
+          "boundary_edges": 113482,
+          "halo_ratio": 0.36789860958478665
+        }
+      ]
+    },
+    {
+      "k": 31,
+      "is_valid": false,
+      "edge_cut": 6278233,
+      "overall_halo_ratio": 1.302664035419752,
+      "total_halo_nodes": 3190262,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 81374,
+          "num_halo": 89890,
+          "total_nodes": 171264,
+          "internal_edges": 1960290,
+          "boundary_edges": 274517,
+          "halo_ratio": 1.1046525917369183
+        },
+        {
+          "id": 1,
+          "num_owned": 77944,
+          "num_halo": 55142,
+          "total_nodes": 133086,
+          "internal_edges": 3808896,
+          "boundary_edges": 190990,
+          "halo_ratio": 0.7074566355332034
+        },
+        {
+          "id": 2,
+          "num_owned": 80646,
+          "num_halo": 129229,
+          "total_nodes": 209875,
+          "internal_edges": 3149542,
+          "boundary_edges": 486804,
+          "halo_ratio": 1.602422934801478
+        },
+        {
+          "id": 3,
+          "num_owned": 81373,
+          "num_halo": 87641,
+          "total_nodes": 169014,
+          "internal_edges": 2448292,
+          "boundary_edges": 368282,
+          "halo_ratio": 1.0770280068327331
+        },
+        {
+          "id": 4,
+          "num_owned": 76699,
+          "num_halo": 101130,
+          "total_nodes": 177829,
+          "internal_edges": 2420276,
+          "boundary_edges": 412569,
+          "halo_ratio": 1.3185308804547646
+        },
+        {
+          "id": 5,
+          "num_owned": 76699,
+          "num_halo": 83472,
+          "total_nodes": 160171,
+          "internal_edges": 2597750,
+          "boundary_edges": 322075,
+          "halo_ratio": 1.0883062360656592
+        },
+        {
+          "id": 6,
+          "num_owned": 81374,
+          "num_halo": 108494,
+          "total_nodes": 189868,
+          "internal_edges": 2233204,
+          "boundary_edges": 515399,
+          "halo_ratio": 1.3332759849583404
+        },
+        {
+          "id": 7,
+          "num_owned": 79179,
+          "num_halo": 27446,
+          "total_nodes": 106625,
+          "internal_edges": 1998166,
+          "boundary_edges": 94128,
+          "halo_ratio": 0.34663231412369444
+        },
+        {
+          "id": 8,
+          "num_owned": 81374,
+          "num_halo": 58741,
+          "total_nodes": 140115,
+          "internal_edges": 3056950,
+          "boundary_edges": 193034,
+          "halo_ratio": 0.7218644775972669
+        },
+        {
+          "id": 9,
+          "num_owned": 76700,
+          "num_halo": 64252,
+          "total_nodes": 140952,
+          "internal_edges": 2706206,
+          "boundary_edges": 293364,
+          "halo_ratio": 0.8377053455019556
+        },
+        {
+          "id": 10,
+          "num_owned": 80867,
+          "num_halo": 43787,
+          "total_nodes": 124654,
+          "internal_edges": 3547552,
+          "boundary_edges": 221385,
+          "halo_ratio": 0.5414693261775508
+        },
+        {
+          "id": 11,
+          "num_owned": 81374,
+          "num_halo": 18037,
+          "total_nodes": 99411,
+          "internal_edges": 2002836,
+          "boundary_edges": 57530,
+          "halo_ratio": 0.22165556565979305
+        },
+        {
+          "id": 12,
+          "num_owned": 81374,
+          "num_halo": 86912,
+          "total_nodes": 168286,
+          "internal_edges": 3607228,
+          "boundary_edges": 247562,
+          "halo_ratio": 1.068056135866493
+        },
+        {
+          "id": 13,
+          "num_owned": 76696,
+          "num_halo": 109779,
+          "total_nodes": 186475,
+          "internal_edges": 5028658,
+          "boundary_edges": 478785,
+          "halo_ratio": 1.4313523521435276
+        },
+        {
+          "id": 14,
+          "num_owned": 76696,
+          "num_halo": 78134,
+          "total_nodes": 154830,
+          "internal_edges": 5542524,
+          "boundary_edges": 246683,
+          "halo_ratio": 1.018749348075519
+        },
+        {
+          "id": 15,
+          "num_owned": 80031,
+          "num_halo": 117961,
+          "total_nodes": 197992,
+          "internal_edges": 3245220,
+          "boundary_edges": 444681,
+          "halo_ratio": 1.4739413477277554
+        },
+        {
+          "id": 16,
+          "num_owned": 78319,
+          "num_halo": 124614,
+          "total_nodes": 202933,
+          "internal_edges": 4623846,
+          "boundary_edges": 453712,
+          "halo_ratio": 1.5911081602165502
+        },
+        {
+          "id": 17,
+          "num_owned": 76699,
+          "num_halo": 87328,
+          "total_nodes": 164027,
+          "internal_edges": 3886278,
+          "boundary_edges": 390295,
+          "halo_ratio": 1.1385806855369691
+        },
+        {
+          "id": 18,
+          "num_owned": 80439,
+          "num_halo": 136405,
+          "total_nodes": 216844,
+          "internal_edges": 4383314,
+          "boundary_edges": 590530,
+          "halo_ratio": 1.6957570332798766
+        },
+        {
+          "id": 19,
+          "num_owned": 76696,
+          "num_halo": 117717,
+          "total_nodes": 194413,
+          "internal_edges": 4426094,
+          "boundary_edges": 392031,
+          "halo_ratio": 1.5348518827579014
+        },
+        {
+          "id": 20,
+          "num_owned": 77676,
+          "num_halo": 142719,
+          "total_nodes": 220395,
+          "internal_edges": 4439844,
+          "boundary_edges": 501350,
+          "halo_ratio": 1.837362892012977
+        },
+        {
+          "id": 21,
+          "num_owned": 80196,
+          "num_halo": 116714,
+          "total_nodes": 196910,
+          "internal_edges": 3499820,
+          "boundary_edges": 437121,
+          "halo_ratio": 1.4553593695446156
+        },
+        {
+          "id": 22,
+          "num_owned": 81373,
+          "num_halo": 83986,
+          "total_nodes": 165359,
+          "internal_edges": 3688386,
+          "boundary_edges": 269404,
+          "halo_ratio": 1.03211138829833
+        },
+        {
+          "id": 23,
+          "num_owned": 79150,
+          "num_halo": 144397,
+          "total_nodes": 223547,
+          "internal_edges": 4237750,
+          "boundary_edges": 649664,
+          "halo_ratio": 1.824346178142767
+        },
+        {
+          "id": 24,
+          "num_owned": 76697,
+          "num_halo": 139977,
+          "total_nodes": 216674,
+          "internal_edges": 4308222,
+          "boundary_edges": 600444,
+          "halo_ratio": 1.8250648656401163
+        },
+        {
+          "id": 25,
+          "num_owned": 81374,
+          "num_halo": 83017,
+          "total_nodes": 164391,
+          "internal_edges": 3473704,
+          "boundary_edges": 338229,
+          "halo_ratio": 1.0201907243099761
+        },
+        {
+          "id": 26,
+          "num_owned": 76702,
+          "num_halo": 119617,
+          "total_nodes": 196319,
+          "internal_edges": 3983674,
+          "boundary_edges": 390940,
+          "halo_ratio": 1.559503011655498
+        },
+        {
+          "id": 27,
+          "num_owned": 79723,
+          "num_halo": 158968,
+          "total_nodes": 238691,
+          "internal_edges": 4370020,
+          "boundary_edges": 634171,
+          "halo_ratio": 1.9940042396798916
+        },
+        {
+          "id": 28,
+          "num_owned": 77199,
+          "num_halo": 153800,
+          "total_nodes": 230999,
+          "internal_edges": 3291704,
+          "boundary_edges": 637833,
+          "halo_ratio": 1.992253785670799
+        },
+        {
+          "id": 29,
+          "num_owned": 79351,
+          "num_halo": 158501,
+          "total_nodes": 237852,
+          "internal_edges": 5636372,
+          "boundary_edges": 772541,
+          "halo_ratio": 1.997466950637043
+        },
+        {
+          "id": 30,
+          "num_owned": 77035,
+          "num_halo": 162455,
+          "total_nodes": 239490,
+          "internal_edges": 3559208,
+          "boundary_edges": 650401,
+          "halo_ratio": 2.108846628156033
+        }
+      ]
+    },
+    {
+      "k": 32,
+      "is_valid": false,
+      "edge_cut": 6514187,
+      "overall_halo_ratio": 1.3572738420002377,
+      "total_halo_nodes": 3324003,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 74299,
+          "num_halo": 136276,
+          "total_nodes": 210575,
+          "internal_edges": 3959264,
+          "boundary_edges": 551671,
+          "halo_ratio": 1.8341565835340987
+        },
+        {
+          "id": 1,
+          "num_owned": 75648,
+          "num_halo": 124818,
+          "total_nodes": 200466,
+          "internal_edges": 3894786,
+          "boundary_edges": 529899,
+          "halo_ratio": 1.6499841370558375
+        },
+        {
+          "id": 2,
+          "num_owned": 77569,
+          "num_halo": 138115,
+          "total_nodes": 215684,
+          "internal_edges": 3522784,
+          "boundary_edges": 573946,
+          "halo_ratio": 1.7805437739303072
+        },
+        {
+          "id": 3,
+          "num_owned": 74298,
+          "num_halo": 98993,
+          "total_nodes": 173291,
+          "internal_edges": 3764336,
+          "boundary_edges": 365239,
+          "halo_ratio": 1.3323777221459527
+        },
+        {
+          "id": 4,
+          "num_owned": 74299,
+          "num_halo": 153686,
+          "total_nodes": 227985,
+          "internal_edges": 3715000,
+          "boundary_edges": 649689,
+          "halo_ratio": 2.0684800602969085
+        },
+        {
+          "id": 5,
+          "num_owned": 75579,
+          "num_halo": 150700,
+          "total_nodes": 226279,
+          "internal_edges": 3761362,
+          "boundary_edges": 620199,
+          "halo_ratio": 1.993940115640588
+        },
+        {
+          "id": 6,
+          "num_owned": 74300,
+          "num_halo": 163300,
+          "total_nodes": 237600,
+          "internal_edges": 5025056,
+          "boundary_edges": 691368,
+          "halo_ratio": 2.1978465679676984
+        },
+        {
+          "id": 7,
+          "num_owned": 77061,
+          "num_halo": 143753,
+          "total_nodes": 220814,
+          "internal_edges": 4676006,
+          "boundary_edges": 756776,
+          "halo_ratio": 1.865444258444609
+        },
+        {
+          "id": 8,
+          "num_owned": 75685,
+          "num_halo": 126723,
+          "total_nodes": 202408,
+          "internal_edges": 4359646,
+          "boundary_edges": 428768,
+          "halo_ratio": 1.6743476250247737
+        },
+        {
+          "id": 9,
+          "num_owned": 78831,
+          "num_halo": 87484,
+          "total_nodes": 166315,
+          "internal_edges": 3587494,
+          "boundary_edges": 256513,
+          "halo_ratio": 1.1097664624322918
+        },
+        {
+          "id": 10,
+          "num_owned": 77397,
+          "num_halo": 124421,
+          "total_nodes": 201818,
+          "internal_edges": 3342892,
+          "boundary_edges": 413066,
+          "halo_ratio": 1.6075687688153288
+        },
+        {
+          "id": 11,
+          "num_owned": 78831,
+          "num_halo": 117652,
+          "total_nodes": 196483,
+          "internal_edges": 4633912,
+          "boundary_edges": 427278,
+          "halo_ratio": 1.492458550570207
+        },
+        {
+          "id": 12,
+          "num_owned": 74300,
+          "num_halo": 87000,
+          "total_nodes": 161300,
+          "internal_edges": 3506274,
+          "boundary_edges": 373653,
+          "halo_ratio": 1.17092866756393
+        },
+        {
+          "id": 13,
+          "num_owned": 74299,
+          "num_halo": 130226,
+          "total_nodes": 204525,
+          "internal_edges": 3556680,
+          "boundary_edges": 546606,
+          "halo_ratio": 1.7527288388807387
+        },
+        {
+          "id": 14,
+          "num_owned": 78831,
+          "num_halo": 132821,
+          "total_nodes": 211652,
+          "internal_edges": 3695394,
+          "boundary_edges": 552565,
+          "halo_ratio": 1.6848828506551992
+        },
+        {
+          "id": 15,
+          "num_owned": 74300,
+          "num_halo": 166244,
+          "total_nodes": 240544,
+          "internal_edges": 4234580,
+          "boundary_edges": 601644,
+          "halo_ratio": 2.2374697173620457
+        },
+        {
+          "id": 16,
+          "num_owned": 78828,
+          "num_halo": 105750,
+          "total_nodes": 184578,
+          "internal_edges": 3415178,
+          "boundary_edges": 399512,
+          "halo_ratio": 1.3415283909270816
+        },
+        {
+          "id": 17,
+          "num_owned": 78831,
+          "num_halo": 83365,
+          "total_nodes": 162196,
+          "internal_edges": 5235740,
+          "boundary_edges": 259370,
+          "halo_ratio": 1.0575154444317592
+        },
+        {
+          "id": 18,
+          "num_owned": 78831,
+          "num_halo": 39903,
+          "total_nodes": 118734,
+          "internal_edges": 2374676,
+          "boundary_edges": 151700,
+          "halo_ratio": 0.5061841153860791
+        },
+        {
+          "id": 19,
+          "num_owned": 76996,
+          "num_halo": 80211,
+          "total_nodes": 157207,
+          "internal_edges": 2808604,
+          "boundary_edges": 267732,
+          "halo_ratio": 1.0417554158657594
+        },
+        {
+          "id": 20,
+          "num_owned": 74305,
+          "num_halo": 55094,
+          "total_nodes": 129399,
+          "internal_edges": 2603584,
+          "boundary_edges": 264168,
+          "halo_ratio": 0.7414575062243456
+        },
+        {
+          "id": 21,
+          "num_owned": 78831,
+          "num_halo": 45047,
+          "total_nodes": 123878,
+          "internal_edges": 3577224,
+          "boundary_edges": 227642,
+          "halo_ratio": 0.5714376324034961
+        },
+        {
+          "id": 22,
+          "num_owned": 75791,
+          "num_halo": 71548,
+          "total_nodes": 147339,
+          "internal_edges": 2854996,
+          "boundary_edges": 222130,
+          "halo_ratio": 0.944017099655632
+        },
+        {
+          "id": 23,
+          "num_owned": 75976,
+          "num_halo": 30,
+          "total_nodes": 76006,
+          "internal_edges": 1606688,
+          "boundary_edges": 40,
+          "halo_ratio": 0.00039486153522164894
+        },
+        {
+          "id": 24,
+          "num_owned": 78831,
+          "num_halo": 109104,
+          "total_nodes": 187935,
+          "internal_edges": 2183714,
+          "boundary_edges": 515608,
+          "halo_ratio": 1.38402405145184
+        },
+        {
+          "id": 25,
+          "num_owned": 77227,
+          "num_halo": 85252,
+          "total_nodes": 162479,
+          "internal_edges": 2605428,
+          "boundary_edges": 329889,
+          "halo_ratio": 1.1039144340709854
+        },
+        {
+          "id": 26,
+          "num_owned": 75642,
+          "num_halo": 103807,
+          "total_nodes": 179449,
+          "internal_edges": 2444172,
+          "boundary_edges": 414043,
+          "halo_ratio": 1.3723460511356125
+        },
+        {
+          "id": 27,
+          "num_owned": 78831,
+          "num_halo": 83889,
+          "total_nodes": 162720,
+          "internal_edges": 2394980,
+          "boundary_edges": 356371,
+          "halo_ratio": 1.064162575636488
+        },
+        {
+          "id": 28,
+          "num_owned": 78831,
+          "num_halo": 130163,
+          "total_nodes": 208994,
+          "internal_edges": 2797748,
+          "boundary_edges": 472064,
+          "halo_ratio": 1.6511651507655618
+        },
+        {
+          "id": 29,
+          "num_owned": 76354,
+          "num_halo": 59880,
+          "total_nodes": 136234,
+          "internal_edges": 3615264,
+          "boundary_edges": 207274,
+          "halo_ratio": 0.7842418209916966
+        },
+        {
+          "id": 30,
+          "num_owned": 74481,
+          "num_halo": 109683,
+          "total_nodes": 184164,
+          "internal_edges": 3758772,
+          "boundary_edges": 375738,
+          "halo_ratio": 1.4726306037781447
+        },
+        {
+          "id": 31,
+          "num_owned": 74916,
+          "num_halo": 79065,
+          "total_nodes": 153981,
+          "internal_edges": 3177684,
+          "boundary_edges": 226201,
+          "halo_ratio": 1.0553820278712158
+        }
+      ]
+    },
+    {
+      "k": 33,
+      "is_valid": false,
+      "edge_cut": 6509333,
+      "overall_halo_ratio": 1.3585674159023842,
+      "total_halo_nodes": 3327171,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 74783,
+          "num_halo": 78072,
+          "total_nodes": 152855,
+          "internal_edges": 4984252,
+          "boundary_edges": 286109,
+          "halo_ratio": 1.0439805838225265
+        },
+        {
+          "id": 1,
+          "num_owned": 74284,
+          "num_halo": 62326,
+          "total_nodes": 136610,
+          "internal_edges": 2865414,
+          "boundary_edges": 204309,
+          "halo_ratio": 0.8390232082278822
+        },
+        {
+          "id": 2,
+          "num_owned": 76443,
+          "num_halo": 43614,
+          "total_nodes": 120057,
+          "internal_edges": 3416462,
+          "boundary_edges": 223114,
+          "halo_ratio": 0.5705427573486127
+        },
+        {
+          "id": 3,
+          "num_owned": 72052,
+          "num_halo": 54788,
+          "total_nodes": 126840,
+          "internal_edges": 2563996,
+          "boundary_edges": 267087,
+          "halo_ratio": 0.760395270082718
+        },
+        {
+          "id": 4,
+          "num_owned": 76443,
+          "num_halo": 75986,
+          "total_nodes": 152429,
+          "internal_edges": 3027388,
+          "boundary_edges": 236041,
+          "halo_ratio": 0.9940216893633165
+        },
+        {
+          "id": 5,
+          "num_owned": 76443,
+          "num_halo": 104221,
+          "total_nodes": 180664,
+          "internal_edges": 3390410,
+          "boundary_edges": 384917,
+          "halo_ratio": 1.3633818662271235
+        },
+        {
+          "id": 6,
+          "num_owned": 76443,
+          "num_halo": 36477,
+          "total_nodes": 112920,
+          "internal_edges": 2455944,
+          "boundary_edges": 138049,
+          "halo_ratio": 0.47717907460460735
+        },
+        {
+          "id": 7,
+          "num_owned": 73486,
+          "num_halo": 8566,
+          "total_nodes": 82052,
+          "internal_edges": 1823312,
+          "boundary_edges": 26413,
+          "halo_ratio": 0.11656642081484908
+        },
+        {
+          "id": 8,
+          "num_owned": 75680,
+          "num_halo": 97930,
+          "total_nodes": 173610,
+          "internal_edges": 2081074,
+          "boundary_edges": 394928,
+          "halo_ratio": 1.2940010570824525
+        },
+        {
+          "id": 9,
+          "num_owned": 74559,
+          "num_halo": 93254,
+          "total_nodes": 167813,
+          "internal_edges": 2584702,
+          "boundary_edges": 387077,
+          "halo_ratio": 1.250741023887123
+        },
+        {
+          "id": 10,
+          "num_owned": 74305,
+          "num_halo": 85618,
+          "total_nodes": 159923,
+          "internal_edges": 2173852,
+          "boundary_edges": 334799,
+          "halo_ratio": 1.1522508579503399
+        },
+        {
+          "id": 11,
+          "num_owned": 76443,
+          "num_halo": 116675,
+          "total_nodes": 193118,
+          "internal_edges": 2301538,
+          "boundary_edges": 570379,
+          "halo_ratio": 1.5263006423086483
+        },
+        {
+          "id": 12,
+          "num_owned": 74268,
+          "num_halo": 87854,
+          "total_nodes": 162122,
+          "internal_edges": 3254482,
+          "boundary_edges": 241024,
+          "halo_ratio": 1.1829320838045996
+        },
+        {
+          "id": 13,
+          "num_owned": 76182,
+          "num_halo": 104309,
+          "total_nodes": 180491,
+          "internal_edges": 1833782,
+          "boundary_edges": 332527,
+          "halo_ratio": 1.369207949384369
+        },
+        {
+          "id": 14,
+          "num_owned": 76443,
+          "num_halo": 67348,
+          "total_nodes": 143791,
+          "internal_edges": 3649602,
+          "boundary_edges": 239521,
+          "halo_ratio": 0.8810224611802258
+        },
+        {
+          "id": 15,
+          "num_owned": 73292,
+          "num_halo": 114711,
+          "total_nodes": 188003,
+          "internal_edges": 2837152,
+          "boundary_edges": 403553,
+          "halo_ratio": 1.5651230693663702
+        },
+        {
+          "id": 16,
+          "num_owned": 72052,
+          "num_halo": 134132,
+          "total_nodes": 206184,
+          "internal_edges": 3080536,
+          "boundary_edges": 597052,
+          "halo_ratio": 1.8615999555876312
+        },
+        {
+          "id": 17,
+          "num_owned": 72052,
+          "num_halo": 80020,
+          "total_nodes": 152072,
+          "internal_edges": 3529932,
+          "boundary_edges": 343464,
+          "halo_ratio": 1.1105867984233608
+        },
+        {
+          "id": 18,
+          "num_owned": 72978,
+          "num_halo": 129426,
+          "total_nodes": 202404,
+          "internal_edges": 3174880,
+          "boundary_edges": 514055,
+          "halo_ratio": 1.7734933815670475
+        },
+        {
+          "id": 19,
+          "num_owned": 72292,
+          "num_halo": 117432,
+          "total_nodes": 189724,
+          "internal_edges": 4613474,
+          "boundary_edges": 366229,
+          "halo_ratio": 1.624412106457146
+        },
+        {
+          "id": 20,
+          "num_owned": 72050,
+          "num_halo": 96248,
+          "total_nodes": 168298,
+          "internal_edges": 4604576,
+          "boundary_edges": 330830,
+          "halo_ratio": 1.3358501040943789
+        },
+        {
+          "id": 21,
+          "num_owned": 72050,
+          "num_halo": 132343,
+          "total_nodes": 204393,
+          "internal_edges": 4167826,
+          "boundary_edges": 472350,
+          "halo_ratio": 1.836821651630812
+        },
+        {
+          "id": 22,
+          "num_owned": 75572,
+          "num_halo": 111573,
+          "total_nodes": 187145,
+          "internal_edges": 3663582,
+          "boundary_edges": 376568,
+          "halo_ratio": 1.4763801407928863
+        },
+        {
+          "id": 23,
+          "num_owned": 76443,
+          "num_halo": 117897,
+          "total_nodes": 194340,
+          "internal_edges": 4439676,
+          "boundary_edges": 429990,
+          "halo_ratio": 1.5422864094815745
+        },
+        {
+          "id": 24,
+          "num_owned": 72047,
+          "num_halo": 163567,
+          "total_nodes": 235614,
+          "internal_edges": 4830282,
+          "boundary_edges": 682930,
+          "halo_ratio": 2.2702818993157243
+        },
+        {
+          "id": 25,
+          "num_owned": 73042,
+          "num_halo": 143821,
+          "total_nodes": 216863,
+          "internal_edges": 4212458,
+          "boundary_edges": 720659,
+          "halo_ratio": 1.9690178253607513
+        },
+        {
+          "id": 26,
+          "num_owned": 73776,
+          "num_halo": 153336,
+          "total_nodes": 227112,
+          "internal_edges": 3753748,
+          "boundary_edges": 655953,
+          "halo_ratio": 2.07839947950553
+        },
+        {
+          "id": 27,
+          "num_owned": 76440,
+          "num_halo": 110086,
+          "total_nodes": 186526,
+          "internal_edges": 2820950,
+          "boundary_edges": 377288,
+          "halo_ratio": 1.4401622187336474
+        },
+        {
+          "id": 28,
+          "num_owned": 76222,
+          "num_halo": 78200,
+          "total_nodes": 154422,
+          "internal_edges": 3205264,
+          "boundary_edges": 329213,
+          "halo_ratio": 1.0259505129752564
+        },
+        {
+          "id": 29,
+          "num_owned": 72047,
+          "num_halo": 98071,
+          "total_nodes": 170118,
+          "internal_edges": 3748022,
+          "boundary_edges": 330613,
+          "halo_ratio": 1.3612086554610185
+        },
+        {
+          "id": 30,
+          "num_owned": 73833,
+          "num_halo": 147866,
+          "total_nodes": 221699,
+          "internal_edges": 3836408,
+          "boundary_edges": 592108,
+          "halo_ratio": 2.0027088158411552
+        },
+        {
+          "id": 31,
+          "num_owned": 72537,
+          "num_halo": 133168,
+          "total_nodes": 205705,
+          "internal_edges": 3920496,
+          "boundary_edges": 606510,
+          "halo_ratio": 1.8358630767746116
+        },
+        {
+          "id": 32,
+          "num_owned": 72047,
+          "num_halo": 148236,
+          "total_nodes": 220283,
+          "internal_edges": 3854154,
+          "boundary_edges": 622995,
+          "halo_ratio": 2.057490249420517
+        }
+      ]
+    },
+    {
+      "k": 34,
+      "is_valid": false,
+      "edge_cut": 6501139,
+      "overall_halo_ratio": 1.3683855928206647,
+      "total_halo_nodes": 3351216,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 71692,
+          "num_halo": 120287,
+          "total_nodes": 191979,
+          "internal_edges": 3945456,
+          "boundary_edges": 486277,
+          "halo_ratio": 1.6778301623612117
+        },
+        {
+          "id": 1,
+          "num_owned": 71974,
+          "num_halo": 118962,
+          "total_nodes": 190936,
+          "internal_edges": 3839964,
+          "boundary_edges": 408941,
+          "halo_ratio": 1.6528468613666045
+        },
+        {
+          "id": 2,
+          "num_owned": 69931,
+          "num_halo": 129991,
+          "total_nodes": 199922,
+          "internal_edges": 3394654,
+          "boundary_edges": 558210,
+          "halo_ratio": 1.8588465773405214
+        },
+        {
+          "id": 3,
+          "num_owned": 69928,
+          "num_halo": 85963,
+          "total_nodes": 155891,
+          "internal_edges": 3136772,
+          "boundary_edges": 365548,
+          "halo_ratio": 1.2293072874957098
+        },
+        {
+          "id": 4,
+          "num_owned": 69930,
+          "num_halo": 97213,
+          "total_nodes": 167143,
+          "internal_edges": 4440346,
+          "boundary_edges": 254547,
+          "halo_ratio": 1.3901472901472902
+        },
+        {
+          "id": 5,
+          "num_owned": 74194,
+          "num_halo": 100565,
+          "total_nodes": 174759,
+          "internal_edges": 2641772,
+          "boundary_edges": 348496,
+          "halo_ratio": 1.3554330538857589
+        },
+        {
+          "id": 6,
+          "num_owned": 74175,
+          "num_halo": 122992,
+          "total_nodes": 197167,
+          "internal_edges": 4485332,
+          "boundary_edges": 444662,
+          "halo_ratio": 1.6581327940680823
+        },
+        {
+          "id": 7,
+          "num_owned": 74194,
+          "num_halo": 99370,
+          "total_nodes": 173564,
+          "internal_edges": 2966548,
+          "boundary_edges": 324519,
+          "halo_ratio": 1.3393266301857294
+        },
+        {
+          "id": 8,
+          "num_owned": 71875,
+          "num_halo": 132002,
+          "total_nodes": 203877,
+          "internal_edges": 4398794,
+          "boundary_edges": 678135,
+          "halo_ratio": 1.8365495652173913
+        },
+        {
+          "id": 9,
+          "num_owned": 69928,
+          "num_halo": 137486,
+          "total_nodes": 207414,
+          "internal_edges": 4999266,
+          "boundary_edges": 614030,
+          "halo_ratio": 1.9661079967967052
+        },
+        {
+          "id": 10,
+          "num_owned": 69931,
+          "num_halo": 151383,
+          "total_nodes": 221314,
+          "internal_edges": 4212878,
+          "boundary_edges": 561707,
+          "halo_ratio": 2.1647481088501523
+        },
+        {
+          "id": 11,
+          "num_owned": 69928,
+          "num_halo": 158779,
+          "total_nodes": 228707,
+          "internal_edges": 3158304,
+          "boundary_edges": 638420,
+          "halo_ratio": 2.2706069099645347
+        },
+        {
+          "id": 12,
+          "num_owned": 70386,
+          "num_halo": 144196,
+          "total_nodes": 214582,
+          "internal_edges": 3073176,
+          "boundary_edges": 580178,
+          "halo_ratio": 2.0486460375642883
+        },
+        {
+          "id": 13,
+          "num_owned": 70517,
+          "num_halo": 76698,
+          "total_nodes": 147215,
+          "internal_edges": 3148120,
+          "boundary_edges": 281455,
+          "halo_ratio": 1.087652622771814
+        },
+        {
+          "id": 14,
+          "num_owned": 73408,
+          "num_halo": 149602,
+          "total_nodes": 223010,
+          "internal_edges": 3970480,
+          "boundary_edges": 589826,
+          "halo_ratio": 2.037952266782912
+        },
+        {
+          "id": 15,
+          "num_owned": 69928,
+          "num_halo": 147600,
+          "total_nodes": 217528,
+          "internal_edges": 3803874,
+          "boundary_edges": 615857,
+          "halo_ratio": 2.110742477977348
+        },
+        {
+          "id": 16,
+          "num_owned": 69929,
+          "num_halo": 110802,
+          "total_nodes": 180731,
+          "internal_edges": 3700238,
+          "boundary_edges": 467600,
+          "halo_ratio": 1.5844928427404938
+        },
+        {
+          "id": 17,
+          "num_owned": 69929,
+          "num_halo": 51449,
+          "total_nodes": 121378,
+          "internal_edges": 2472930,
+          "boundary_edges": 261544,
+          "halo_ratio": 0.7357319566989375
+        },
+        {
+          "id": 18,
+          "num_owned": 74192,
+          "num_halo": 45078,
+          "total_nodes": 119270,
+          "internal_edges": 3356116,
+          "boundary_edges": 239289,
+          "halo_ratio": 0.6075857235281432
+        },
+        {
+          "id": 19,
+          "num_owned": 74193,
+          "num_halo": 82227,
+          "total_nodes": 156420,
+          "internal_edges": 3399984,
+          "boundary_edges": 268420,
+          "halo_ratio": 1.1082851481945737
+        },
+        {
+          "id": 20,
+          "num_owned": 70322,
+          "num_halo": 45727,
+          "total_nodes": 116049,
+          "internal_edges": 1967084,
+          "boundary_edges": 132263,
+          "halo_ratio": 0.6502516993259577
+        },
+        {
+          "id": 21,
+          "num_owned": 73844,
+          "num_halo": 40922,
+          "total_nodes": 114766,
+          "internal_edges": 2246774,
+          "boundary_edges": 154533,
+          "halo_ratio": 0.5541682465738584
+        },
+        {
+          "id": 22,
+          "num_owned": 73465,
+          "num_halo": 67923,
+          "total_nodes": 141388,
+          "internal_edges": 2310520,
+          "boundary_edges": 225556,
+          "halo_ratio": 0.9245627169400394
+        },
+        {
+          "id": 23,
+          "num_owned": 74194,
+          "num_halo": 100984,
+          "total_nodes": 175178,
+          "internal_edges": 3523060,
+          "boundary_edges": 373131,
+          "halo_ratio": 1.3610804108148906
+        },
+        {
+          "id": 24,
+          "num_owned": 72274,
+          "num_halo": 25420,
+          "total_nodes": 97694,
+          "internal_edges": 2325470,
+          "boundary_edges": 66324,
+          "halo_ratio": 0.35171707668041063
+        },
+        {
+          "id": 25,
+          "num_owned": 72801,
+          "num_halo": 78809,
+          "total_nodes": 151610,
+          "internal_edges": 3150380,
+          "boundary_edges": 222150,
+          "halo_ratio": 1.082526338923916
+        },
+        {
+          "id": 26,
+          "num_owned": 70853,
+          "num_halo": 91015,
+          "total_nodes": 161868,
+          "internal_edges": 4248356,
+          "boundary_edges": 343713,
+          "halo_ratio": 1.2845609924773826
+        },
+        {
+          "id": 27,
+          "num_owned": 74194,
+          "num_halo": 107873,
+          "total_nodes": 182067,
+          "internal_edges": 4064170,
+          "boundary_edges": 392971,
+          "halo_ratio": 1.4539315847642666
+        },
+        {
+          "id": 28,
+          "num_owned": 71951,
+          "num_halo": 48919,
+          "total_nodes": 120870,
+          "internal_edges": 3605888,
+          "boundary_edges": 169475,
+          "halo_ratio": 0.6798932606913038
+        },
+        {
+          "id": 29,
+          "num_owned": 72460,
+          "num_halo": 99539,
+          "total_nodes": 171999,
+          "internal_edges": 2442142,
+          "boundary_edges": 398367,
+          "halo_ratio": 1.3737096329009109
+        },
+        {
+          "id": 30,
+          "num_owned": 69929,
+          "num_halo": 88804,
+          "total_nodes": 158733,
+          "internal_edges": 2305034,
+          "boundary_edges": 309429,
+          "halo_ratio": 1.2699166297244349
+        },
+        {
+          "id": 31,
+          "num_owned": 74194,
+          "num_halo": 84524,
+          "total_nodes": 158718,
+          "internal_edges": 2307748,
+          "boundary_edges": 345213,
+          "halo_ratio": 1.1392295872981644
+        },
+        {
+          "id": 32,
+          "num_owned": 74192,
+          "num_halo": 110670,
+          "total_nodes": 184862,
+          "internal_edges": 1721706,
+          "boundary_edges": 453152,
+          "halo_ratio": 1.4916702609445762
+        },
+        {
+          "id": 33,
+          "num_owned": 74194,
+          "num_halo": 97442,
+          "total_nodes": 171636,
+          "internal_edges": 1952670,
+          "boundary_edges": 428336,
+          "halo_ratio": 1.3133407014044263
+        }
+      ]
+    },
+    {
+      "k": 35,
+      "is_valid": false,
+      "edge_cut": 6575789,
+      "overall_halo_ratio": 1.3728224533070046,
+      "total_halo_nodes": 3362082,
+      "subgraphs": [
+        {
+          "id": 0,
+          "num_owned": 68097,
+          "num_halo": 103519,
+          "total_nodes": 171616,
+          "internal_edges": 2042856,
+          "boundary_edges": 449858,
+          "halo_ratio": 1.5201697578454263
+        },
+        {
+          "id": 1,
+          "num_owned": 68428,
+          "num_halo": 76487,
+          "total_nodes": 144915,
+          "internal_edges": 2001248,
+          "boundary_edges": 297835,
+          "halo_ratio": 1.11777342608289
+        },
+        {
+          "id": 2,
+          "num_owned": 72074,
+          "num_halo": 98894,
+          "total_nodes": 170968,
+          "internal_edges": 1957858,
+          "boundary_edges": 439682,
+          "halo_ratio": 1.3721175458556483
+        },
+        {
+          "id": 3,
+          "num_owned": 67931,
+          "num_halo": 83262,
+          "total_nodes": 151193,
+          "internal_edges": 2304104,
+          "boundary_edges": 322952,
+          "halo_ratio": 1.22568488613446
+        },
+        {
+          "id": 4,
+          "num_owned": 72074,
+          "num_halo": 49138,
+          "total_nodes": 121212,
+          "internal_edges": 3763262,
+          "boundary_edges": 171822,
+          "halo_ratio": 0.6817715126120376
+        },
+        {
+          "id": 5,
+          "num_owned": 72074,
+          "num_halo": 105881,
+          "total_nodes": 177955,
+          "internal_edges": 1587590,
+          "boundary_edges": 397187,
+          "halo_ratio": 1.4690595776562978
+        },
+        {
+          "id": 6,
+          "num_owned": 69922,
+          "num_halo": 19,
+          "total_nodes": 69941,
+          "internal_edges": 1558188,
+          "boundary_edges": 19,
+          "halo_ratio": 0.00027173135779868997
+        },
+        {
+          "id": 7,
+          "num_owned": 70848,
+          "num_halo": 78662,
+          "total_nodes": 149510,
+          "internal_edges": 2544030,
+          "boundary_edges": 260628,
+          "halo_ratio": 1.1102924570912376
+        },
+        {
+          "id": 8,
+          "num_owned": 71915,
+          "num_halo": 81145,
+          "total_nodes": 153060,
+          "internal_edges": 3097238,
+          "boundary_edges": 227627,
+          "halo_ratio": 1.1283459639852604
+        },
+        {
+          "id": 9,
+          "num_owned": 69130,
+          "num_halo": 60476,
+          "total_nodes": 129606,
+          "internal_edges": 2413990,
+          "boundary_edges": 189980,
+          "halo_ratio": 0.8748155648777666
+        },
+        {
+          "id": 10,
+          "num_owned": 72074,
+          "num_halo": 41988,
+          "total_nodes": 114062,
+          "internal_edges": 3277672,
+          "boundary_edges": 234784,
+          "halo_ratio": 0.5825679163082388
+        },
+        {
+          "id": 11,
+          "num_owned": 67930,
+          "num_halo": 49589,
+          "total_nodes": 117519,
+          "internal_edges": 2396640,
+          "boundary_edges": 261741,
+          "halo_ratio": 0.7300014721036361
+        },
+        {
+          "id": 12,
+          "num_owned": 68362,
+          "num_halo": 96072,
+          "total_nodes": 164434,
+          "internal_edges": 3939812,
+          "boundary_edges": 336715,
+          "halo_ratio": 1.4053421491471871
+        },
+        {
+          "id": 13,
+          "num_owned": 67931,
+          "num_halo": 54626,
+          "total_nodes": 122557,
+          "internal_edges": 4881220,
+          "boundary_edges": 165177,
+          "halo_ratio": 0.804139494487053
+        },
+        {
+          "id": 14,
+          "num_owned": 68454,
+          "num_halo": 94500,
+          "total_nodes": 162954,
+          "internal_edges": 2865712,
+          "boundary_edges": 314811,
+          "halo_ratio": 1.3804890875624507
+        },
+        {
+          "id": 15,
+          "num_owned": 71139,
+          "num_halo": 136906,
+          "total_nodes": 208045,
+          "internal_edges": 4489328,
+          "boundary_edges": 712172,
+          "halo_ratio": 1.924485865699546
+        },
+        {
+          "id": 16,
+          "num_owned": 72074,
+          "num_halo": 123070,
+          "total_nodes": 195144,
+          "internal_edges": 3107596,
+          "boundary_edges": 486164,
+          "halo_ratio": 1.7075505730221716
+        },
+        {
+          "id": 17,
+          "num_owned": 72074,
+          "num_halo": 37879,
+          "total_nodes": 109953,
+          "internal_edges": 2200854,
+          "boundary_edges": 146953,
+          "halo_ratio": 0.5255570663484752
+        },
+        {
+          "id": 18,
+          "num_owned": 70681,
+          "num_halo": 68907,
+          "total_nodes": 139588,
+          "internal_edges": 2536572,
+          "boundary_edges": 226373,
+          "halo_ratio": 0.9749013171856652
+        },
+        {
+          "id": 19,
+          "num_owned": 72074,
+          "num_halo": 98440,
+          "total_nodes": 170514,
+          "internal_edges": 3071596,
+          "boundary_edges": 363562,
+          "halo_ratio": 1.3658184643560785
+        },
+        {
+          "id": 20,
+          "num_owned": 71757,
+          "num_halo": 132239,
+          "total_nodes": 203996,
+          "internal_edges": 4510354,
+          "boundary_edges": 487825,
+          "halo_ratio": 1.8428724723720333
+        },
+        {
+          "id": 21,
+          "num_owned": 69201,
+          "num_halo": 107150,
+          "total_nodes": 176351,
+          "internal_edges": 3494096,
+          "boundary_edges": 367142,
+          "halo_ratio": 1.5483880290747243
+        },
+        {
+          "id": 22,
+          "num_owned": 72074,
+          "num_halo": 115583,
+          "total_nodes": 187657,
+          "internal_edges": 4240260,
+          "boundary_edges": 419782,
+          "halo_ratio": 1.6036712267946833
+        },
+        {
+          "id": 23,
+          "num_owned": 67930,
+          "num_halo": 127282,
+          "total_nodes": 195212,
+          "internal_edges": 3297356,
+          "boundary_edges": 504205,
+          "halo_ratio": 1.8737229500956867
+        },
+        {
+          "id": 24,
+          "num_owned": 67934,
+          "num_halo": 67347,
+          "total_nodes": 135281,
+          "internal_edges": 3189490,
+          "boundary_edges": 306210,
+          "halo_ratio": 0.9913592604586805
+        },
+        {
+          "id": 25,
+          "num_owned": 67930,
+          "num_halo": 136317,
+          "total_nodes": 204247,
+          "internal_edges": 3244010,
+          "boundary_edges": 588840,
+          "halo_ratio": 2.0067275136169584
+        },
+        {
+          "id": 26,
+          "num_owned": 67930,
+          "num_halo": 121558,
+          "total_nodes": 189488,
+          "internal_edges": 3969756,
+          "boundary_edges": 413812,
+          "halo_ratio": 1.7894597379655528
+        },
+        {
+          "id": 27,
+          "num_owned": 68489,
+          "num_halo": 97234,
+          "total_nodes": 165723,
+          "internal_edges": 3409246,
+          "boundary_edges": 304466,
+          "halo_ratio": 1.4197024339674984
+        },
+        {
+          "id": 28,
+          "num_owned": 72074,
+          "num_halo": 143428,
+          "total_nodes": 215502,
+          "internal_edges": 3116122,
+          "boundary_edges": 598884,
+          "halo_ratio": 1.9900102672253517
+        },
+        {
+          "id": 29,
+          "num_owned": 71189,
+          "num_halo": 142125,
+          "total_nodes": 213314,
+          "internal_edges": 3685430,
+          "boundary_edges": 559350,
+          "halo_ratio": 1.9964460801528325
+        },
+        {
+          "id": 30,
+          "num_owned": 72074,
+          "num_halo": 71684,
+          "total_nodes": 143758,
+          "internal_edges": 3053202,
+          "boundary_edges": 301708,
+          "halo_ratio": 0.9945888947470655
+        },
+        {
+          "id": 31,
+          "num_owned": 67930,
+          "num_halo": 117296,
+          "total_nodes": 185226,
+          "internal_edges": 3133220,
+          "boundary_edges": 414491,
+          "halo_ratio": 1.726718680995142
+        },
+        {
+          "id": 32,
+          "num_owned": 67930,
+          "num_halo": 175890,
+          "total_nodes": 243820,
+          "internal_edges": 4503186,
+          "boundary_edges": 703717,
+          "halo_ratio": 2.589283085529221
+        },
+        {
+          "id": 33,
+          "num_owned": 68541,
+          "num_halo": 126343,
+          "total_nodes": 194884,
+          "internal_edges": 3887888,
+          "boundary_edges": 547485,
+          "halo_ratio": 1.8433200566084533
+        },
+        {
+          "id": 34,
+          "num_owned": 70760,
+          "num_halo": 141146,
+          "total_nodes": 211906,
+          "internal_edges": 3795732,
+          "boundary_edges": 627607,
+          "halo_ratio": 1.9947145279819107
+        }
+      ]
+    }
+  ]
+}

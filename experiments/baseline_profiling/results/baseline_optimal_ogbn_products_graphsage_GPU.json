@@ -1,0 +1,47 @@
+{
+  "dataset": "ogbn_products",
+  "model": "graphsage",
+  "device": "GPU",
+  "optimal_k": 6,
+  "optimal_total_time_ms": 27735.846769286785,
+  "optimal_avg_time_ms": 4622.6411282144645,
+  "optimal_throughput_per_sec": 0.03605442474203987,
+  "subgraphs": [
+    {
+      "id": 0,
+      "nodes": 638673,
+      "edges": 22148690,
+      "time_ms": 5071.691496859201
+    },
+    {
+      "id": 1,
+      "nodes": 660247,
+      "edges": 21970736,
+      "time_ms": 5031.04289173125
+    },
+    {
+      "id": 2,
+      "nodes": 711323,
+      "edges": 26125964,
+      "time_ms": 5981.655295384308
+    },
+    {
+      "id": 3,
+      "nodes": 576326,
+      "edges": 14634992,
+      "time_ms": 3744.891395727529
+    },
+    {
+      "id": 4,
+      "nodes": 557717,
+      "edges": 18892710,
+      "time_ms": 4326.730541993115
+    },
+    {
+      "id": 5,
+      "nodes": 566982,
+      "edges": 13989614,
+      "time_ms": 3579.8351475913823
+    }
+  ]
+}

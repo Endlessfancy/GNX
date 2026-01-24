@@ -1,4 +1,4 @@
-(MIX) PS C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only> python .\cpu_batch_4096_baseline.py --device NPU
+(MIX) PS C:\Private\Research\GNX_final\GNX\experiments\baseline> python .\GraphSAGE_batch_4096_baseline.py --device NPU
 ================================================================================
 NPU Batch-4096 Baseline Test (1 Layer, 1-hop) - OpenVINO
   (Using HETERO:NPU,CPU for automatic fallback)
@@ -35,28 +35,28 @@ Partitioning 89,250 nodes into batches of 4096...
   Batch 22/22: target=3,234, halo=10,535, total=13,769, edges=96,832
 
 Exporting 22 static ONNX models for NPU...
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch0_n64759_e618876.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch1_n47966_e426540.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch2_n39375_e332844.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch3_n33931_e277624.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch4_n31768_e255618.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch5_n28781_e228462.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch6_n27423_e214524.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch7_n26274_e204478.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch8_n24784_e191408.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch9_n24165_e185456.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch10_n22908_e174022.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch11_n22685_e172422.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch12_n21551_e161304.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch13_n21062_e157548.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch14_n20117_e150008.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch15_n20003_e150044.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch16_n19575_e145752.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch17_n19061_e142904.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch18_n18555_e137708.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch19_n18048_e134254.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch20_n17561_e130658.onnx
-  ONNX model exists (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\models\graphsage_npu_batch21_n13769_e96832.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch0_n64759_e618876.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch1_n47966_e426540.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch2_n39375_e332844.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch3_n33931_e277624.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch4_n31768_e255618.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch5_n28781_e228462.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch6_n27423_e214524.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch7_n26274_e204478.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch8_n24784_e191408.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch9_n24165_e185456.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch10_n22908_e174022.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch11_n22685_e172422.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch12_n21551_e161304.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch13_n21062_e157548.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch14_n20117_e150008.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch15_n20003_e150044.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch16_n19575_e145752.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch17_n19061_e142904.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch18_n18555_e137708.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch19_n18048_e134254.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch20_n17561_e130658.onnx
+  ONNX model exported (static shape): C:\Private\Research\GNX_final\GNX\experiments\baseline\models\graphsage_npu_batch21_n13769_e96832.onnx
   All 22 ONNX models ready (will compile lazily during inference)
 
 Partition Summary:
@@ -70,16 +70,14 @@ Compiling and warming up 22 models (compile → warmup each)...
   Batch 1/22: compiling...   Using HETERO mode: HETERO:NPU,CPU
   OpenVINO model compiled for HETERO:NPU,CPU
 done, warming up... Traceback (most recent call last):
-  File "C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py", line 608, in <module>
+  File "C:\Private\Research\GNX_final\GNX\experiments\baseline\GraphSAGE_batch_4096_baseline.py", line 494, in <module>
     results = run_batch_baseline(
-  File "C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py", line 432, in run_batch_baseline
+  File "C:\Private\Research\GNX_final\GNX\experiments\baseline\GraphSAGE_batch_4096_baseline.py", line 318, in run_batch_baseline
     _ = run_openvino_inference(compiled_models_cache[i], x_np, edge_index_np)
-  File "C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only\cpu_batch_4096_baseline.py", line 315, in run_openvino_inference
+  File "C:\Private\Research\GNX_final\GNX\experiments\baseline\GraphSAGE_batch_4096_baseline.py", line 201, in run_openvino_inference
     infer_request.infer()
   File "C:\Env\Anaconda\envs\MIX\lib\site-packages\openvino\runtime\ie_api.py", line 132, in infer
     return OVDict(super().infer(_data_dispatch(
 RuntimeError: Exception from src\inference\src\cpp\infer_request.cpp:223:
 Exception from src\plugins\intel_npu\src\utils\src\zero\zero_wrappers.cpp:93:
 L0 pfnAppendGraphExecute result: ZE_RESULT_ERROR_INVALID_NATIVE_BINARY, code 0x7800000f - native binary is not supported by the device . elf_parsing_t exception caught: BufferInfo already exists at requested index
-
-(MIX) PS C:\Private\Research\GNX_final\GNX\experiments\baseline\CPU_only>

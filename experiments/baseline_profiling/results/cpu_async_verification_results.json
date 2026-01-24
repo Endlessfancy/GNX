@@ -1,0 +1,242 @@
+[
+  {
+    "model": "graphsage",
+    "nodes": 1000,
+    "edges": 10000,
+    "sync_ms": 17.41478998446837,
+    "async_ms": 12.755130010191351,
+    "async_compute_ms": 13.794519985094666,
+    "diff_percent": 36.531654091757204,
+    "source": "old_1k-10k"
+  },
+  {
+    "model": "graphsage",
+    "nodes": 2000,
+    "edges": 20000,
+    "sync_ms": 25.767119973897934,
+    "async_ms": 22.926459985319525,
+    "async_compute_ms": 22.41567998426035,
+    "diff_percent": 12.39031228718854,
+    "source": "old_1k-10k"
+  },
+  {
+    "model": "graphsage",
+    "nodes": 5000,
+    "edges": 50000,
+    "sync_ms": 84.51991997426376,
+    "async_ms": 69.38029999146238,
+    "async_compute_ms": 65.39684000890702,
+    "diff_percent": 21.82120859186886,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "graphsage",
+    "nodes": 10000,
+    "edges": 100000,
+    "sync_ms": 163.21478998288512,
+    "async_ms": 143.15758000593632,
+    "async_compute_ms": 203.1043800408952,
+    "diff_percent": 14.010581888934617,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "graphsage",
+    "nodes": 20000,
+    "edges": 200000,
+    "sync_ms": 1160.0243099965155,
+    "async_ms": 707.223999989219,
+    "async_compute_ms": 349.9245300190523,
+    "diff_percent": 64.02502036330768,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "graphsage",
+    "nodes": 50000,
+    "edges": 500000,
+    "sync_ms": 994.6973099955358,
+    "async_ms": 1029.9970299704,
+    "async_compute_ms": 1110.68765000673,
+    "diff_percent": -3.427167161431399,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "graphsage",
+    "nodes": 80000,
+    "edges": 800000,
+    "sync_ms": 1682.019199966453,
+    "async_ms": 1452.7520999778062,
+    "async_compute_ms": 2563.6305499705486,
+    "diff_percent": 15.781570716170318,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "graphsage",
+    "nodes": 100000,
+    "edges": 1000000,
+    "sync_ms": 1718.2549800141715,
+    "async_ms": 2428.1401799991727,
+    "async_compute_ms": 4023.499230016023,
+    "diff_percent": -29.235758537846984,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "gcn",
+    "nodes": 1000,
+    "edges": 10000,
+    "sync_ms": 11.046029988210648,
+    "async_ms": 8.790279983077198,
+    "async_compute_ms": 8.449269994162023,
+    "diff_percent": 25.66186753409626,
+    "source": "old_1k-10k"
+  },
+  {
+    "model": "gcn",
+    "nodes": 2000,
+    "edges": 20000,
+    "sync_ms": 19.34655000222847,
+    "async_ms": 17.890200030524284,
+    "async_compute_ms": 17.890239995904267,
+    "diff_percent": 8.140490152258547,
+    "source": "old_1k-10k"
+  },
+  {
+    "model": "gcn",
+    "nodes": 5000,
+    "edges": 50000,
+    "sync_ms": 50.10802000761032,
+    "async_ms": 42.690490011591464,
+    "async_compute_ms": 42.51886997371912,
+    "diff_percent": 17.375134354290203,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "gcn",
+    "nodes": 10000,
+    "edges": 100000,
+    "sync_ms": 102.50060999533162,
+    "async_ms": 88.74445997644216,
+    "async_compute_ms": 81.03080998407677,
+    "diff_percent": 15.500854952006158,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "gcn",
+    "nodes": 20000,
+    "edges": 200000,
+    "sync_ms": 233.49552999716252,
+    "async_ms": 199.1941099986434,
+    "async_compute_ms": 208.48457001848146,
+    "diff_percent": 17.220097521333702,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "gcn",
+    "nodes": 50000,
+    "edges": 500000,
+    "sync_ms": 708.9461699943058,
+    "async_ms": 1462.1008900227025,
+    "async_compute_ms": 1382.4877099948935,
+    "diff_percent": -51.511815988067845,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "gcn",
+    "nodes": 80000,
+    "edges": 800000,
+    "sync_ms": 1205.5513999890536,
+    "async_ms": 1233.977649989538,
+    "async_compute_ms": 2217.7838299889117,
+    "diff_percent": -2.303627622487757,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "gcn",
+    "nodes": 100000,
+    "edges": 1000000,
+    "sync_ms": 1498.1632999842986,
+    "async_ms": 1756.5367399947718,
+    "async_compute_ms": 1540.3279300080612,
+    "diff_percent": -14.709253392060685,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "gat",
+    "nodes": 1000,
+    "edges": 10000,
+    "sync_ms": 11.005490005481988,
+    "async_ms": 10.063480027019978,
+    "async_compute_ms": 8.740750001743436,
+    "diff_percent": 9.360678174277263,
+    "source": "old_1k-10k"
+  },
+  {
+    "model": "gat",
+    "nodes": 2000,
+    "edges": 20000,
+    "sync_ms": 20.215540018398315,
+    "async_ms": 18.553760007489473,
+    "async_compute_ms": 18.170289997942746,
+    "diff_percent": 8.95656734935691,
+    "source": "old_1k-10k"
+  },
+  {
+    "model": "gat",
+    "nodes": 5000,
+    "edges": 50000,
+    "sync_ms": 53.51575998356566,
+    "async_ms": 48.94255002727732,
+    "async_compute_ms": 50.110749958548695,
+    "diff_percent": 9.344036944825177,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "gat",
+    "nodes": 10000,
+    "edges": 100000,
+    "sync_ms": 126.27396002644673,
+    "async_ms": 103.89725001296028,
+    "async_compute_ms": 87.01963003259152,
+    "diff_percent": 21.537345801448204,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "gat",
+    "nodes": 20000,
+    "edges": 200000,
+    "sync_ms": 277.515009988565,
+    "async_ms": 267.6181099843234,
+    "async_compute_ms": 260.63034002436325,
+    "diff_percent": 3.6981428517006414,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "gat",
+    "nodes": 50000,
+    "edges": 500000,
+    "sync_ms": 893.1590900290757,
+    "async_ms": 1187.9301099921577,
+    "async_compute_ms": 937.248069990892,
+    "diff_percent": -24.81383521502186,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "gat",
+    "nodes": 80000,
+    "edges": 800000,
+    "sync_ms": 1245.2788400114514,
+    "async_ms": 2578.9016500348225,
+    "async_compute_ms": 1562.9178200149909,
+    "diff_percent": -51.712821619442664,
+    "source": "new_5k-100k"
+  },
+  {
+    "model": "gat",
+    "nodes": 100000,
+    "edges": 1000000,
+    "sync_ms": 1563.1262499839067,
+    "async_ms": 2551.3124700053595,
+    "async_compute_ms": 1505.0677799852565,
+    "diff_percent": -38.732465412963585,
+    "source": "new_5k-100k"
+  }
+]
