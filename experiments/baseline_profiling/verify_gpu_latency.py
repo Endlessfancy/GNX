@@ -71,6 +71,20 @@ def measure_gpu_method1(compiled_model, inputs, num_warmup=5, num_iterations=20)
     }
 
 
+def get_output_data(result):
+    """Extract output data from OpenVINO result, handling different return types"""
+    output = result[0]
+    # Check if it's already a numpy array
+    if isinstance(output, np.ndarray):
+        return output
+    # Otherwise try to get data or convert to numpy
+    if hasattr(output, 'data'):
+        return output.data
+    if hasattr(output, 'numpy'):
+        return output.numpy()
+    return np.array(output)
+
+
 def measure_gpu_method2(compiled_model, inputs, num_warmup=5, num_iterations=20):
     """
     Method 2: Verified method - access output data
@@ -79,14 +93,14 @@ def measure_gpu_method2(compiled_model, inputs, num_warmup=5, num_iterations=20)
     # Warmup
     for _ in range(num_warmup):
         result = compiled_model(inputs)
-        _ = result[0].data  # Force sync
+        _ = get_output_data(result)  # Force sync
 
     # Measure
     latencies = []
     for _ in range(num_iterations):
         start = time.perf_counter()
         result = compiled_model(inputs)
-        _ = result[0].data  # Force GPU sync by accessing output
+        _ = get_output_data(result)  # Force GPU sync by accessing output
         latencies.append((time.perf_counter() - start) * 1000)
 
     return {
@@ -99,19 +113,21 @@ def measure_gpu_method2(compiled_model, inputs, num_warmup=5, num_iterations=20)
 
 def measure_gpu_method3(compiled_model, inputs, num_warmup=5, num_iterations=20):
     """
-    Method 3: Force numpy conversion - ensures complete D2H transfer
+    Method 3: Force data copy - ensures complete D2H transfer
     """
     # Warmup
     for _ in range(num_warmup):
         result = compiled_model(inputs)
-        _ = result[0].numpy()  # Full D2H transfer
+        output = get_output_data(result)
+        _ = output.sum()  # Force actual data access
 
     # Measure
     latencies = []
     for _ in range(num_iterations):
         start = time.perf_counter()
         result = compiled_model(inputs)
-        output_np = result[0].numpy()  # Force complete D2H transfer
+        output = get_output_data(result)
+        _ = output.sum()  # Force complete data read
         latencies.append((time.perf_counter() - start) * 1000)
 
     return {
