@@ -44,6 +44,7 @@ def generate_block1_input(num_nodes, feature_dim=FEATURE_DIM):
 
 
 def measure_latency_openvino(ir_path, device, dummy_input, num_warmup=10, num_iterations=50):
+    """Measure latency using OpenVINO async API for more accurate timing"""
     try:
         import openvino.runtime as ov
 
@@ -57,15 +58,24 @@ def measure_latency_openvino(ir_path, device, dummy_input, num_warmup=10, num_it
         else:
             inputs = [dummy_input.numpy()]
 
+        # Create infer request for async inference
+        infer_request = compiled_model.create_infer_request()
+
+        # Set input tensors
+        for i in range(len(inputs)):
+            infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
+
         # Warmup
         for _ in range(num_warmup):
-            _ = compiled_model(inputs)
+            infer_request.start_async()
+            infer_request.wait()
 
-        # Measure
+        # Measure using async API
         latencies = []
         for _ in range(num_iterations):
             start = time.perf_counter()
-            _ = compiled_model(inputs)
+            infer_request.start_async()
+            infer_request.wait()
             latencies.append((time.perf_counter() - start) * 1000)
 
         return {
