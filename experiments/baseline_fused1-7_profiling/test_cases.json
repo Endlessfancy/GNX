@@ -1,0 +1,69 @@
+{
+  "description": "PEP3 Profiling test cases - based on real dataset analysis (Flickr, Reddit2, ogbn-products)",
+  "config": {
+    "node_sizes": [5000, 10000, 20000, 50000, 80000, 100000],
+    "edge_ratios": [10, 25, 40, 50, 60, 75, 100],
+    "feature_dim": 500,
+    "num_warmup": 10,
+    "num_iterations": 50
+  },
+  "test_cases": [
+    {"nodes": 5000, "edges": 50000, "ratio": 10, "scenario": "Flickr sparse"},
+    {"nodes": 5000, "edges": 125000, "ratio": 25, "scenario": "medium-sparse"},
+    {"nodes": 5000, "edges": 200000, "ratio": 40, "scenario": "ogbn-products lower"},
+    {"nodes": 5000, "edges": 250000, "ratio": 50, "scenario": "ogbn-products typical"},
+    {"nodes": 5000, "edges": 300000, "ratio": 60, "scenario": "ogbn-products upper"},
+    {"nodes": 5000, "edges": 375000, "ratio": 75, "scenario": "dense"},
+    {"nodes": 5000, "edges": 500000, "ratio": 100, "scenario": "Reddit2 dense"},
+
+    {"nodes": 10000, "edges": 100000, "ratio": 10, "scenario": "Flickr sparse"},
+    {"nodes": 10000, "edges": 250000, "ratio": 25, "scenario": "medium-sparse"},
+    {"nodes": 10000, "edges": 400000, "ratio": 40, "scenario": "ogbn-products lower"},
+    {"nodes": 10000, "edges": 500000, "ratio": 50, "scenario": "ogbn-products typical"},
+    {"nodes": 10000, "edges": 600000, "ratio": 60, "scenario": "ogbn-products upper"},
+    {"nodes": 10000, "edges": 750000, "ratio": 75, "scenario": "dense"},
+    {"nodes": 10000, "edges": 1000000, "ratio": 100, "scenario": "Reddit2 dense"},
+
+    {"nodes": 20000, "edges": 200000, "ratio": 10, "scenario": "Flickr sparse"},
+    {"nodes": 20000, "edges": 500000, "ratio": 25, "scenario": "medium-sparse"},
+    {"nodes": 20000, "edges": 800000, "ratio": 40, "scenario": "ogbn-products lower"},
+    {"nodes": 20000, "edges": 1000000, "ratio": 50, "scenario": "ogbn-products typical"},
+    {"nodes": 20000, "edges": 1200000, "ratio": 60, "scenario": "ogbn-products upper"},
+    {"nodes": 20000, "edges": 1500000, "ratio": 75, "scenario": "dense"},
+    {"nodes": 20000, "edges": 2000000, "ratio": 100, "scenario": "Reddit2 dense"},
+
+    {"nodes": 50000, "edges": 500000, "ratio": 10, "scenario": "Flickr sparse"},
+    {"nodes": 50000, "edges": 1250000, "ratio": 25, "scenario": "medium-sparse"},
+    {"nodes": 50000, "edges": 2000000, "ratio": 40, "scenario": "ogbn-products lower"},
+    {"nodes": 50000, "edges": 2500000, "ratio": 50, "scenario": "ogbn-products typical"},
+    {"nodes": 50000, "edges": 3000000, "ratio": 60, "scenario": "ogbn-products upper"},
+    {"nodes": 50000, "edges": 3750000, "ratio": 75, "scenario": "dense"},
+    {"nodes": 50000, "edges": 5000000, "ratio": 100, "scenario": "Reddit2 dense"},
+
+    {"nodes": 80000, "edges": 800000, "ratio": 10, "scenario": "Flickr sparse"},
+    {"nodes": 80000, "edges": 2000000, "ratio": 25, "scenario": "medium-sparse"},
+    {"nodes": 80000, "edges": 3200000, "ratio": 40, "scenario": "ogbn-products lower"},
+    {"nodes": 80000, "edges": 4000000, "ratio": 50, "scenario": "ogbn-products typical"},
+    {"nodes": 80000, "edges": 4800000, "ratio": 60, "scenario": "ogbn-products upper"},
+    {"nodes": 80000, "edges": 6000000, "ratio": 75, "scenario": "dense"},
+    {"nodes": 80000, "edges": 8000000, "ratio": 100, "scenario": "Reddit2 dense"},
+
+    {"nodes": 100000, "edges": 1000000, "ratio": 10, "scenario": "Flickr sparse"},
+    {"nodes": 100000, "edges": 2500000, "ratio": 25, "scenario": "medium-sparse"},
+    {"nodes": 100000, "edges": 4000000, "ratio": 40, "scenario": "ogbn-products lower"},
+    {"nodes": 100000, "edges": 5000000, "ratio": 50, "scenario": "ogbn-products typical"},
+    {"nodes": 100000, "edges": 6000000, "ratio": 60, "scenario": "ogbn-products upper"},
+    {"nodes": 100000, "edges": 7500000, "ratio": 75, "scenario": "dense"},
+    {"nodes": 100000, "edges": 10000000, "ratio": 100, "scenario": "Reddit2 dense"}
+  ],
+  "comments": {
+    "total_cases": 42,
+    "node_sizes": "6 levels: 5k, 10k, 20k, 50k, 80k, 100k (based on actual subgraph sizes)",
+    "edge_ratios": "7 levels: 10, 25, 40, 50, 60, 75, 100 (covering Flickr~10, ogbn-products~50, Reddit2~100)",
+    "npu_models": "3 stages × 42 sizes = 126 static models",
+    "cpu_gpu_models": "4 stages × 2 devices = 8 dynamic models",
+    "total_measurements": "42 × (2 devices × 4 stages + 1 device × 3 stages) = 42 × 11 = 462 tests",
+    "estimated_time": "~6-8 hours (CPU/GPU ~2h, NPU ~4-6h)",
+    "data_source": "Based on experiments/graphPartition/dummy_data_generation.md analysis"
+  }
+}
