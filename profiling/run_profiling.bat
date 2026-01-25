@@ -1,79 +1,138 @@
 @echo off
 REM ========================================================================
-REM GNN Stage Profiling - Intel AI PC (Windows)
+REM GNN Stage Profiling - Full Test (CPU + GPU + NPU)
 REM ========================================================================
 REM
-REM New architecture: NPU tests run in isolated processes per (nodes, stage)
-REM This prevents DEVICE_LOST errors from cascading and allows finding NPU limits.
+REM This script runs complete profiling on all devices:
+REM   - CPU: All 7 stages
+REM   - GPU: All 7 stages
+REM   - NPU: Stages 1, 2, 5, 6, 7 (skip Stage 3/4 - no scatter_add support)
 REM
 REM Workflow:
-REM   Phase 1: Export all models
-REM   Phase 2: Measure CPU/GPU latencies
-REM   Phase 3: Measure NPU latencies (isolated per nodes/stage)
-REM   Phase 4: Merge results and analyze
+REM   Phase 1: Export all models (CPU, GPU, NPU)
+REM   Phase 2: Measure CPU latencies
+REM   Phase 3: Measure GPU latencies
+REM   Phase 4: Measure NPU latencies (isolated per nodes/stage)
+REM   Phase 5: Merge results and analyze
 
 setlocal EnableDelayedExpansion
 
 echo ========================================================================
-echo GNN Stage Profiling - Intel AI PC
+echo GNN Stage Profiling - Full Test (CPU + GPU + NPU)
 echo ========================================================================
 echo.
 
-REM Activate conda environment
+REM Try multiple conda paths
 echo Activating MIX environment...
-CALL "C:\Env\Anaconda\Scripts\activate.bat" MIX
+if exist "C:\Env\Anaconda\Scripts\activate.bat" (
+    CALL "C:\Env\Anaconda\Scripts\activate.bat" MIX
+) else if exist "%USERPROFILE%\anaconda3\Scripts\activate.bat" (
+    CALL "%USERPROFILE%\anaconda3\Scripts\activate.bat" MIX
+) else if exist "%USERPROFILE%\miniconda3\Scripts\activate.bat" (
+    CALL "%USERPROFILE%\miniconda3\Scripts\activate.bat" MIX
+) else if exist "C:\ProgramData\anaconda3\Scripts\activate.bat" (
+    CALL "C:\ProgramData\anaconda3\Scripts\activate.bat" MIX
+) else (
+    echo WARNING: Could not find conda. Please activate MIX environment manually.
+)
+
+cd /d "%~dp0"
 
 echo.
-echo Environment activated.
-echo.
-echo Test cases: 55 combinations (1k-150k nodes, 5 edge ratios each)
-echo NPU stages: 1, 2, 5, 6, 7 (skip Stage 3/4 - no scatter_add support)
-echo NPU tests: 11 node sizes x 5 stages = 55 isolated processes
+echo Test Configuration:
+echo   Stages: 1-7 (GATHER, MESSAGE, REDUCE_SUM, REDUCE_COUNT, NORMALIZE, TRANSFORM, ACTIVATE)
+echo   CPU: All 7 stages
+echo   GPU: All 7 stages
+echo   NPU: Stages 1, 2, 5, 6, 7 (55 isolated processes)
 echo.
 
 REM ========================================================================
 REM PHASE 1: Export all models
 REM ========================================================================
 echo ========================================================================
-echo PHASE 1: Exporting All Models
+echo PHASE 1: Exporting All Models (CPU + GPU + NPU)
 echo ========================================================================
 echo.
 
-python profile_stages.py --export
-if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Model export failed!
-    pause
-    exit /b 1
+REM Check if CPU/GPU models exist
+if not exist "exported_models\stage1_cpu.xml" (
+    echo CPU/GPU models not found. Exporting...
+    python profile_stages.py --export-cpugpu
+    if errorlevel 1 (
+        echo ERROR: CPU/GPU model export failed!
+        pause
+        exit /b 1
+    )
+) else (
+    echo CPU/GPU models already exist. Skipping export.
 )
 
 echo.
-echo Phase 1 complete: All models exported.
-echo.
 
-REM ========================================================================
-REM PHASE 2: Measure CPU/GPU latencies
-REM ========================================================================
-echo ========================================================================
-echo PHASE 2: Measuring CPU/GPU Latencies
-echo ========================================================================
-echo.
-
-python profile_stages.py --measure
-if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: CPU/GPU measurement failed!
-    pause
-    exit /b 1
+REM Check if NPU models exist
+if not exist "exported_models\stage1_npu_n1000_e2000.xml" (
+    echo NPU models not found. Exporting...
+    python profile_stages.py --export-npu
+    if errorlevel 1 (
+        echo ERROR: NPU model export failed!
+        pause
+        exit /b 1
+    )
+) else (
+    echo NPU models already exist. Skipping export.
 )
 
 echo.
-echo Phase 2 complete: CPU/GPU measurements saved.
+echo Phase 1 complete: All models ready.
 echo.
 
 REM ========================================================================
-REM PHASE 3: Measure NPU latencies (isolated per nodes/stage)
+REM PHASE 2: Measure CPU latencies
 REM ========================================================================
 echo ========================================================================
-echo PHASE 3: Measuring NPU Latencies (Isolated Processes)
+echo PHASE 2: Measuring CPU Latencies (All 7 Stages)
+echo ========================================================================
+echo.
+
+python profile_stages.py --measure-cpu
+if errorlevel 1 (
+    echo.
+    echo WARNING: Some CPU measurements may have failed
+) else (
+    echo.
+    echo CPU measurement completed successfully!
+)
+
+echo.
+echo Phase 2 complete: CPU measurements saved.
+echo.
+
+REM ========================================================================
+REM PHASE 3: Measure GPU latencies
+REM ========================================================================
+echo ========================================================================
+echo PHASE 3: Measuring GPU Latencies (All 7 Stages)
+echo ========================================================================
+echo.
+
+python profile_stages.py --measure-gpu
+if errorlevel 1 (
+    echo.
+    echo WARNING: Some GPU measurements may have failed
+) else (
+    echo.
+    echo GPU measurement completed successfully!
+)
+
+echo.
+echo Phase 3 complete: GPU measurements saved.
+echo.
+
+REM ========================================================================
+REM PHASE 4: Measure NPU latencies (isolated per nodes/stage)
+REM ========================================================================
+echo ========================================================================
+echo PHASE 4: Measuring NPU Latencies (Isolated Processes)
 echo ========================================================================
 echo.
 echo Each (nodes, stage) combination runs in its own Python process.
@@ -129,7 +188,7 @@ for %%n in (%NODE_SIZES%) do (
 
 echo.
 echo ========================================================================
-echo Phase 3 Summary
+echo Phase 4 Summary (NPU)
 echo ========================================================================
 echo   Passed:      %PASSED%
 echo   Failed:      %FAILED%
@@ -138,23 +197,23 @@ echo   Total:       %TOTAL_TESTS%
 echo.
 
 REM ========================================================================
-REM PHASE 4: Merge NPU results and analyze
+REM PHASE 5: Merge results and analyze
 REM ========================================================================
 echo ========================================================================
-echo PHASE 4: Merging Results and Analyzing
+echo PHASE 5: Merging Results and Analyzing
 echo ========================================================================
 echo.
 
 echo Merging NPU checkpoint files...
 python profile_stages.py --merge-npu
-if %ERRORLEVEL% NEQ 0 (
+if errorlevel 1 (
     echo WARNING: NPU merge had issues, but continuing...
 )
 
 echo.
 echo Generating final analysis...
 python profile_stages.py --analyze
-if %ERRORLEVEL% NEQ 0 (
+if errorlevel 1 (
     echo ERROR: Analysis failed!
     pause
     exit /b 1
@@ -162,18 +221,16 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo.
 echo ========================================================================
-echo Profiling Complete!
+echo Full Profiling Complete!
 echo ========================================================================
 echo.
 echo Results saved in: profiling\results\
-echo   - lookup_table.json      (compute times)
-echo   - bandwidth_table.json   (bandwidth estimates)
-echo   - profiling_report.txt   (summary report)
-echo.
-echo Checkpoints:
-echo   - checkpoint_cpugpu.json (CPU/GPU data)
-echo   - checkpoint_npu.json    (merged NPU data)
-echo   - npu_stage*_n*.json     (individual NPU test results)
+echo   - checkpoint_cpu.json     (CPU data)
+echo   - checkpoint_gpu.json     (GPU data)
+echo   - checkpoint_npu.json     (merged NPU data)
+echo   - lookup_table.json       (compute times)
+echo   - bandwidth_table.json    (bandwidth estimates)
+echo   - profiling_report.txt    (summary report)
 echo.
 echo NPU Test Summary:
 echo   Passed: %PASSED% / %TOTAL_TESTS%
