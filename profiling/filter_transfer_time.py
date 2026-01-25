@@ -2,18 +2,18 @@
 过滤 Profiling 结果：扣除数据传输时间，保留纯计算时间
 
 方法：
-1. 读取 raw_measurements.json（总时间 = 输入传输 + 计算）
-2. 根据每个 stage 的输入大小计算输入传输时间
+1. 读取 raw_measurements.json（总时间 = 输入传输 + 计算 + 输出传输）
+2. 根据每个 stage 的输入/输出大小计算传输时间
 3. 扣除传输时间 = 纯计算时间
 
-重要：之前的 profiling 只测量 start_async + wait，
-不包含 get_output_tensor().data 的输出返回时间。
-所以只扣除输入传输时间。
+旧 profiling 使用同步 API compiled_model(inputs)：
+- 即使不重新 set tensor，数据也会传输（test_transfer_time.py 验证）
+- 同步 API 返回输出，包含 device→host 传输
 
-带宽来源：bandwidth_v2.json (只用输入带宽)
-- CPU: 输入 8.75 GB/s
-- GPU: 输入 5.24 GB/s
-- NPU: 输入 1.27 GB/s
+带宽来源：bandwidth_v2.json
+- CPU: 输入 8.75 GB/s, 输出 3.43 GB/s
+- GPU: 输入 5.24 GB/s, 输出 3.31 GB/s
+- NPU: 输入 1.27 GB/s, 输出 2.25 GB/s
 
 注意事项：
 - 传输和计算可能有重叠（OpenVINO 内部优化）
@@ -88,13 +88,15 @@ def get_io_size(stage_id, num_nodes, num_edges, feature_dim=FEATURE_DIM):
 
 def calc_transfer_time(input_bytes, output_bytes, device):
     """
-    计算输入传输时间 (ms)
+    计算传输时间 (ms)
 
-    注意：之前的 profiling 只测量 start_async + wait，
-    不包含 get_output_tensor().data 的输出返回时间。
-    所以这里只计算输入传输时间。
+    旧 profiling 使用同步 API compiled_model(inputs)：
+    - 即使不重新 set tensor，数据也会传输（test_transfer_time.py 验证）
+    - 同步 API 返回输出，包含 device→host 传输
 
-    transfer_time = input_bytes / input_bw
+    所以：total_time = 输入传输 + 计算 + 输出传输
+
+    transfer_time = input_bytes / input_bw + output_bytes / output_bw
     """
     bw = BANDWIDTH.get(device)
     if not bw:
@@ -102,10 +104,9 @@ def calc_transfer_time(input_bytes, output_bytes, device):
 
     # GB/s = bytes / (ms * 1e6), so ms = bytes / (GB/s * 1e6)
     input_ms = input_bytes / (bw['input'] * 1e6)
-    # 不计算输出传输，因为 profiling 没有测量它
-    # output_ms = output_bytes / (bw['output'] * 1e6)
+    output_ms = output_bytes / (bw['output'] * 1e6)
 
-    return input_ms
+    return input_ms + output_ms
 
 
 def filter_profiling_results(raw_file, output_file):
