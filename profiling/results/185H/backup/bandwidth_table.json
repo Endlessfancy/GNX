@@ -1,0 +1,23 @@
+{
+  "intra_device": {
+    "CPU": 50.0,
+    "GPU": 300.0,
+    "NPU": 100.0
+  },
+  "inter_device": {
+    "CPU_GPU": 15.0,
+    "CPU_NPU": 30.0,
+    "GPU_CPU": 15.0,
+    "GPU_NPU": 10.0,
+    "NPU_CPU": 30.0,
+    "NPU_GPU": 10.0
+  },
+  "device_switch_overhead_ms": {
+    "CPU_GPU": 0.5,
+    "CPU_NPU": 0.2,
+    "GPU_CPU": 0.5,
+    "GPU_NPU": 1.0,
+    "NPU_CPU": 0.2,
+    "NPU_GPU": 1.0
+  }
+}

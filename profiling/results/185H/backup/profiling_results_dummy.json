@@ -1,0 +1,3082 @@
+{
+  "stage_1": {
+    "CPU": {
+      "1000_5000_500": {
+        "latency_ms": 5.14267200191067,
+        "std_ms": 0.32900044560908503,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 9.42280506220414,
+        "std_ms": 0.7641095232916489,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 19.156181598433218,
+        "std_ms": 1.2479805593626965,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 25.741240353906264,
+        "std_ms": 1.314037537701451,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 50.75976697492547,
+        "std_ms": 3.486355758495687,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 95.46387557504829,
+        "std_ms": 7.766680501722352,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 51.1185951495322,
+        "std_ms": 4.519794154143593,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 100.5193818737846,
+        "std_ms": 6.949367568613218,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 201.47703628171095,
+        "std_ms": 14.136350543010142,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 86.04782267892504,
+        "std_ms": 7.680135168821958,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 197.90428634433243,
+        "std_ms": 11.210974804541896,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 407.3211938139558,
+        "std_ms": 30.363566100923094,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 229.47262454114366,
+        "std_ms": 19.6565493781889,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 451.9353472957686,
+        "std_ms": 42.23363283238817,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 997.7219266460179,
+        "std_ms": 60.218106097263636,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 511.9060082121539,
+        "std_ms": 50.96554190161484,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 1020.1633943639674,
+        "std_ms": 72.6241284616336,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 1982.237494549857,
+        "std_ms": 113.47388450443371,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "GPU": {
+      "1000_5000_500": {
+        "latency_ms": 1.1306516186717077,
+        "std_ms": 0.08653381673018139,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 2.0561484431278236,
+        "std_ms": 0.12350988793958731,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 3.3320989071765115,
+        "std_ms": 0.23327089859134123,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 4.5186944739764785,
+        "std_ms": 0.33639166909065454,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 8.421368967472457,
+        "std_ms": 0.5347538927041441,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 16.033897848946463,
+        "std_ms": 1.0009730899208642,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 7.998924590625014,
+        "std_ms": 0.5404333688358656,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 14.847242136756341,
+        "std_ms": 1.1371680340859907,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 31.816120733780448,
+        "std_ms": 2.116703094060269,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 14.47887623199086,
+        "std_ms": 1.2177769752276106,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 28.260622676019185,
+        "std_ms": 2.733220466067944,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 57.92107366033035,
+        "std_ms": 4.283341751738476,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 39.117773611204036,
+        "std_ms": 2.4609850392652097,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 72.08102720612116,
+        "std_ms": 6.720201314894544,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 153.03556439960286,
+        "std_ms": 9.157008522610578,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 73.53167390704021,
+        "std_ms": 5.371600362808769,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 158.4631217793075,
+        "std_ms": 10.457146550969469,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 308.04374534397755,
+        "std_ms": 18.501913565652394,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "NPU": {
+      "1000_5000_500": {
+        "latency_ms": 2.218941254893754,
+        "std_ms": 0.1435100574272601,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 4.2174560539352335,
+        "std_ms": 0.23997117991914987,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 8.171391088591006,
+        "std_ms": 0.6555481920171976,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 10.010344878670221,
+        "std_ms": 0.7571694927249222,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 17.53986521664061,
+        "std_ms": 1.6881020386553596,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 36.78465233035495,
+        "std_ms": 2.3958443390303676,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 18.83063527752337,
+        "std_ms": 1.2076495400281089,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 34.84167017912041,
+        "std_ms": 2.3022132058614506,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 75.64776519530143,
+        "std_ms": 4.870328877497756,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 38.24842488612568,
+        "std_ms": 3.4440184995683123,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 69.77446471016641,
+        "std_ms": 5.043814905034212,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 151.52021346520434,
+        "std_ms": 10.148293412742685,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 84.83751089161204,
+        "std_ms": 6.8130886583613846,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 171.5645638195457,
+        "std_ms": 12.6473517106243,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 354.7311041202139,
+        "std_ms": 32.15236502450809,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 205.48969006275655,
+        "std_ms": 10.306009235127952,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 361.9293355058237,
+        "std_ms": 30.75151946708191,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 683.4665962188735,
+        "std_ms": 50.63777425039884,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    }
+  },
+  "stage_2": {
+    "CPU": {
+      "1000_5000_500": {
+        "latency_ms": 2871.5304858545937,
+        "std_ms": 144.72752157172712,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 6153.788856916434,
+        "std_ms": 575.0237736821604,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 12852.349292958634,
+        "std_ms": 1120.3786486923284,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 15015.010153952608,
+        "std_ms": 1406.0148022682956,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 34214.233113049864,
+        "std_ms": 3180.688473546942,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 67886.11812895011,
+        "std_ms": 3902.350135920902,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 33763.292189118365,
+        "std_ms": 1810.451952922602,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 60715.01889066455,
+        "std_ms": 3555.7483832894804,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 120585.08422736276,
+        "std_ms": 9246.643120762772,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 64054.97513078386,
+        "std_ms": 4868.881857531384,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 117625.55096580173,
+        "std_ms": 11659.407262982504,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 236181.956968235,
+        "std_ms": 20081.11313197486,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 166224.60778828972,
+        "std_ms": 11861.90522738316,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 309024.10774107196,
+        "std_ms": 30053.183815253575,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 618654.7820199792,
+        "std_ms": 55194.86726260745,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 300366.19395576866,
+        "std_ms": 25185.091644904904,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 581935.3978675986,
+        "std_ms": 36743.852925581625,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 1305459.862527496,
+        "std_ms": 67855.98709150412,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "GPU": {
+      "1000_5000_500": {
+        "latency_ms": 468.26859253793776,
+        "std_ms": 25.273598768027888,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 1002.2736599734355,
+        "std_ms": 79.23763725163039,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 1854.1726265533084,
+        "std_ms": 140.8036069748814,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 2704.010823126753,
+        "std_ms": 217.36724124819617,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 5381.173669325655,
+        "std_ms": 318.6151276438296,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 9708.678645795246,
+        "std_ms": 795.3285323397663,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 4718.274176822773,
+        "std_ms": 445.4510072573965,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 10532.651085289892,
+        "std_ms": 797.5397810171992,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 18357.311184182177,
+        "std_ms": 1092.42350846399,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 10170.505619462476,
+        "std_ms": 614.6588863145168,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 19616.244067134663,
+        "std_ms": 1674.2311138248851,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 39305.924951489644,
+        "std_ms": 2127.269183569302,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 23649.521265936615,
+        "std_ms": 2285.8090409419574,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 47260.300740319515,
+        "std_ms": 3591.733739053517,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 106197.52850149015,
+        "std_ms": 6708.249147797017,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 53168.9341605185,
+        "std_ms": 5222.253063861756,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 105491.59011374853,
+        "std_ms": 8721.82076712296,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 213920.11804161794,
+        "std_ms": 18773.17283197219,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "NPU": {
+      "1000_5000_500": {
+        "latency_ms": 1308.4260430085442,
+        "std_ms": 129.95313067482152,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 2460.8234458590437,
+        "std_ms": 234.67794810160404,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 4729.694236489932,
+        "std_ms": 448.84380596075505,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 6483.458168151011,
+        "std_ms": 567.7213317126492,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 12838.581675345773,
+        "std_ms": 1262.860386066434,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 26250.00337263573,
+        "std_ms": 1771.0624273691974,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 12730.835395827356,
+        "std_ms": 881.9629101938822,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 26519.168338707394,
+        "std_ms": 2290.8970200891713,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 53527.1233116248,
+        "std_ms": 2898.5237737698894,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 26872.001467215174,
+        "std_ms": 1350.0270091932484,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 50385.93035667718,
+        "std_ms": 2814.848965618145,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 107024.84004113098,
+        "std_ms": 9465.003393418927,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 63851.8861749234,
+        "std_ms": 5341.698587309374,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 133607.84251806742,
+        "std_ms": 12053.948570915121,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 235361.17261664968,
+        "std_ms": 20821.94070972727,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 129252.87432840264,
+        "std_ms": 9345.321112850075,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 255884.3911336745,
+        "std_ms": 14758.092586865549,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 471558.82819900394,
+        "std_ms": 23882.00748689244,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    }
+  },
+  "stage_3": {
+    "CPU": {
+      "1000_5000_500": {
+        "latency_ms": 8.802795696347841,
+        "std_ms": 0.7551710631603066,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 18.902292858816946,
+        "std_ms": 1.1795115392536342,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 35.53237550534348,
+        "std_ms": 2.556025461485995,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 42.52824732791363,
+        "std_ms": 3.971953353833838,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 98.64099300429349,
+        "std_ms": 7.287771988186654,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 188.23316926190893,
+        "std_ms": 15.36996808730742,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 102.03732373644434,
+        "std_ms": 8.771504359435596,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 185.274182376159,
+        "std_ms": 10.02517695302486,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 359.27150252361895,
+        "std_ms": 22.177254452335948,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 189.5671803850728,
+        "std_ms": 17.908203949501576,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 382.8056312151518,
+        "std_ms": 30.61921690265814,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 819.272042464556,
+        "std_ms": 81.61079982403233,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 511.4333661943304,
+        "std_ms": 30.160920302518655,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 932.5138510036196,
+        "std_ms": 58.635584642015715,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 1785.251783889038,
+        "std_ms": 141.22583435559665,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 898.856881550319,
+        "std_ms": 59.23222194712176,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 1705.9057369756306,
+        "std_ms": 155.88908931297658,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 3845.779348729207,
+        "std_ms": 332.7811919275248,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "GPU": {
+      "1000_5000_500": {
+        "latency_ms": 2.0190174157607053,
+        "std_ms": 0.12094954786299557,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 3.2216716307324185,
+        "std_ms": 0.20041066049820172,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 6.448993067986604,
+        "std_ms": 0.3239393741095128,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 7.443647346950897,
+        "std_ms": 0.667482927415112,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 16.487545484705855,
+        "std_ms": 1.5302485507234447,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 28.333328399213144,
+        "std_ms": 2.7879307776404767,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 16.308844131636153,
+        "std_ms": 1.4058382539972343,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 29.540751339723506,
+        "std_ms": 2.1467611472241575,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 57.82173334835327,
+        "std_ms": 5.768581538674262,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 30.380765553822307,
+        "std_ms": 2.404660740218995,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 63.5702609586316,
+        "std_ms": 5.054362480975469,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 113.28013669807494,
+        "std_ms": 8.76417680099315,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 82.42208844215651,
+        "std_ms": 5.664103908973593,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 163.38603515416972,
+        "std_ms": 8.806343356879452,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 286.650944235102,
+        "std_ms": 14.337409112186243,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 161.1539989703083,
+        "std_ms": 12.948662843198916,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 308.0086623739721,
+        "std_ms": 18.470884494194365,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 643.8699184626138,
+        "std_ms": 41.399111604241796,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "NPU": {
+      "1000_5000_500": {
+        "latency_ms": 3.6650669511496385,
+        "std_ms": 0.29063617506768347,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 7.3726268688125565,
+        "std_ms": 0.5699542079322139,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 16.521483453078947,
+        "std_ms": 1.119289230750912,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 18.75225305535489,
+        "std_ms": 1.1486857189795052,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 40.282824966154564,
+        "std_ms": 2.412605403632845,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 69.091749496405,
+        "std_ms": 4.19591519476992,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 38.776792554022,
+        "std_ms": 3.8059452001570926,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 74.42364953151915,
+        "std_ms": 4.982327353310814,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 139.59083417674714,
+        "std_ms": 7.7579920866622905,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 77.09111024551538,
+        "std_ms": 5.422933417037684,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 146.12075574839224,
+        "std_ms": 8.03942968583536,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 310.9818707833159,
+        "std_ms": 22.939455699547175,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 174.51474497689853,
+        "std_ms": 11.891579322000318,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 371.2302310556596,
+        "std_ms": 36.724476436149814,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 811.9951478800671,
+        "std_ms": 49.9656270306533,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 358.4893438872811,
+        "std_ms": 35.053573428280416,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 679.5345390637412,
+        "std_ms": 36.57492347643305,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 1536.7677460223256,
+        "std_ms": 89.66127050136178,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    }
+  },
+  "stage_4": {
+    "CPU": {
+      "1000_5000_500": {
+        "latency_ms": 2.9128794559536293,
+        "std_ms": 0.1805998943447087,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 5.818477238022311,
+        "std_ms": 0.32647530909277933,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 11.81614747106197,
+        "std_ms": 1.0253576882934743,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 15.904617879625278,
+        "std_ms": 1.3127674871106896,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 30.02290921260222,
+        "std_ms": 2.5566213849619386,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 64.66549703734849,
+        "std_ms": 4.25476550200745,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 32.724779347494575,
+        "std_ms": 2.501422281894668,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 62.18093769216857,
+        "std_ms": 4.056802030983014,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 132.41026034234383,
+        "std_ms": 7.444977061256455,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 65.07920845247526,
+        "std_ms": 4.138022696674776,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 124.50825344425846,
+        "std_ms": 12.064858112155457,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 257.02489152456485,
+        "std_ms": 24.638160828805194,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 148.50393833821877,
+        "std_ms": 10.670868334600815,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 282.3398880634041,
+        "std_ms": 14.91329180726385,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 567.3888052219196,
+        "std_ms": 45.468488783244105,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 308.3579449447437,
+        "std_ms": 20.933832158092414,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 579.2763467594276,
+        "std_ms": 35.90763549286718,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 1349.9084295435339,
+        "std_ms": 81.8391950000471,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "GPU": {
+      "1000_5000_500": {
+        "latency_ms": 1.0048441717811332,
+        "std_ms": 0.08409784197123137,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 1.4569703702399839,
+        "std_ms": 0.10966532672792731,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 2.3405115001648094,
+        "std_ms": 0.22765935837912774,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 3.0160512270496844,
+        "std_ms": 0.20094660587535895,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 5.543576837648918,
+        "std_ms": 0.530757787415991,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 11.096939878900976,
+        "std_ms": 0.9256471883529295,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 5.651119172925255,
+        "std_ms": 0.3946307477110471,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 11.373598025966915,
+        "std_ms": 1.0852264322193195,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 20.974377422592724,
+        "std_ms": 1.4376962627335825,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 11.45115354778569,
+        "std_ms": 0.7418209582308343,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 20.898479152775973,
+        "std_ms": 1.5928489818836342,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 38.692767597856246,
+        "std_ms": 2.5611408165082774,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 23.6925393580977,
+        "std_ms": 1.97334322086206,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 54.926947018728896,
+        "std_ms": 3.7843385210065343,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 100.37681632109967,
+        "std_ms": 8.7475310536932,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 46.03737712513365,
+        "std_ms": 2.50734870250472,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 106.23373737330884,
+        "std_ms": 10.123929454931432,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 215.51683299863572,
+        "std_ms": 18.34041145231099,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "NPU": {
+      "1000_5000_500": {
+        "latency_ms": 1.4066382465330578,
+        "std_ms": 0.10256463176009946,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 2.9151188823762246,
+        "std_ms": 0.20100532616015146,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 5.039853674381535,
+        "std_ms": 0.3056839257936277,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 6.525877451016213,
+        "std_ms": 0.4880304597694846,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 12.74606825572809,
+        "std_ms": 0.917344699418561,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 26.621420249535735,
+        "std_ms": 1.7603453188785048,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 12.081293981632689,
+        "std_ms": 0.9446207267818015,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 26.245156721606012,
+        "std_ms": 1.7689711173447242,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 54.299590240829,
+        "std_ms": 5.4208962216889365,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 26.151398609226664,
+        "std_ms": 1.6266137605738107,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 55.01909505818224,
+        "std_ms": 3.4566359710821453,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 101.06465492998753,
+        "std_ms": 9.322119525430532,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 66.34795532986892,
+        "std_ms": 4.0361821787717655,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 121.19849427645461,
+        "std_ms": 10.299006219663703,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 241.60075360916645,
+        "std_ms": 21.939227394116205,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 136.58624411842078,
+        "std_ms": 9.11065800369498,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 243.7982298102858,
+        "std_ms": 23.074343164943897,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 481.6707714106104,
+        "std_ms": 28.632541551922284,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    }
+  },
+  "stage_5": {
+    "CPU": {
+      "1000_5000_500": {
+        "latency_ms": 0.6521631072543622,
+        "std_ms": 0.03921070980893071,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 0.5992634714055662,
+        "std_ms": 0.05630873609198614,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 0.6060099057275504,
+        "std_ms": 0.05498673011360049,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 2.698896923178746,
+        "std_ms": 0.15802729945627564,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 2.717007319254042,
+        "std_ms": 0.25729976020034245,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 2.56446098371667,
+        "std_ms": 0.2120132588653574,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 5.223299497119018,
+        "std_ms": 0.47135610792367294,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 5.588252269560738,
+        "std_ms": 0.34993381727887607,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 4.61006017508577,
+        "std_ms": 0.3271378965403591,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 9.84107682880485,
+        "std_ms": 0.945450620315075,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 9.743277573925962,
+        "std_ms": 0.6639951163616672,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 10.660002136425048,
+        "std_ms": 0.7609240811250667,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 27.04531671432311,
+        "std_ms": 2.610255359997203,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 26.78660318185703,
+        "std_ms": 1.6365175652154322,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 24.786928125381806,
+        "std_ms": 2.3959259076557116,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 50.70493053876327,
+        "std_ms": 4.905890226702232,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 48.89266254234489,
+        "std_ms": 4.881122445539862,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 47.49759246290155,
+        "std_ms": 4.248912891591403,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "GPU": {
+      "1000_5000_500": {
+        "latency_ms": 0.5281317962922858,
+        "std_ms": 0.04991489601699076,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 0.6255449656516167,
+        "std_ms": 0.03798785224440255,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 0.5942982979494768,
+        "std_ms": 0.05824179312303154,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 0.8863181879336764,
+        "std_ms": 0.07579166364524248,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 0.9123824436894908,
+        "std_ms": 0.05700443462004524,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 0.8414824129555228,
+        "std_ms": 0.05872445473233006,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 1.3332547877596064,
+        "std_ms": 0.11475286200066027,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 1.263560354749779,
+        "std_ms": 0.11643928301418742,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 1.2224247343877848,
+        "std_ms": 0.075930587108226,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 2.0912085388193935,
+        "std_ms": 0.14470694044938015,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 2.0251262541673967,
+        "std_ms": 0.1022668862818718,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 2.2065348974846084,
+        "std_ms": 0.191587541387444,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 4.495601774404538,
+        "std_ms": 0.3203068037665972,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 4.933808285380563,
+        "std_ms": 0.418940206866921,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 4.456860918206966,
+        "std_ms": 0.30148105779651074,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 8.083195163579806,
+        "std_ms": 0.6097551244458354,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 8.594393609888089,
+        "std_ms": 0.4868511489339025,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 8.668646473289913,
+        "std_ms": 0.7131827666727175,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "NPU": {
+      "1000_5000_500": {
+        "latency_ms": 0.5212962668644674,
+        "std_ms": 0.05138275958409054,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 0.46159579085057845,
+        "std_ms": 0.03782113957569227,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 0.524308781612126,
+        "std_ms": 0.04604059055675745,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 1.1787060979540915,
+        "std_ms": 0.10575096435829145,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 1.399029553332295,
+        "std_ms": 0.11642928836846492,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 1.241525541555328,
+        "std_ms": 0.1097129454848419,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 2.390628320697937,
+        "std_ms": 0.13486811926575268,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 2.2658094027936393,
+        "std_ms": 0.22435009526523605,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 2.314385565389005,
+        "std_ms": 0.21699596374034372,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 4.127740567134672,
+        "std_ms": 0.37301120947154864,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 4.07244930872606,
+        "std_ms": 0.40295884694214723,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 4.195131587536147,
+        "std_ms": 0.221571734935021,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 10.888837012696008,
+        "std_ms": 0.5843096452150853,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 9.34798184015927,
+        "std_ms": 0.6247243567292073,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 10.08750032437387,
+        "std_ms": 0.7812788131724364,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 19.330066662190628,
+        "std_ms": 1.682090187801436,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 21.215711173038127,
+        "std_ms": 1.9604557997271164,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 21.38848243054996,
+        "std_ms": 1.2069834318735315,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    }
+  },
+  "stage_6": {
+    "CPU": {
+      "1000_5000_500": {
+        "latency_ms": 768.7981122178641,
+        "std_ms": 73.88702995735017,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 767.7996760299967,
+        "std_ms": 71.34262325417603,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 846.604706999065,
+        "std_ms": 54.41980917022004,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 4151.244050311235,
+        "std_ms": 267.1226697688115,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 4251.0417824235965,
+        "std_ms": 376.66392973612733,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 3836.5094616570427,
+        "std_ms": 244.98481474904912,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 8415.143418553971,
+        "std_ms": 525.958342960578,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 7297.857238669746,
+        "std_ms": 431.9788387307515,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 7257.961536075946,
+        "std_ms": 537.459780324009,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 15388.833616412274,
+        "std_ms": 911.658008466752,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 15124.377011637303,
+        "std_ms": 1361.499756961742,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 15731.293548184603,
+        "std_ms": 1252.9140746559963,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 36212.35717530401,
+        "std_ms": 3468.588092362834,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 39469.468932317475,
+        "std_ms": 2885.53592313,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 35863.89714616296,
+        "std_ms": 2903.87861218345,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 76212.53021645437,
+        "std_ms": 4266.232594959458,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 71358.84355337819,
+        "std_ms": 4197.509047971222,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 83613.48567896381,
+        "std_ms": 4971.675318434668,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "GPU": {
+      "1000_5000_500": {
+        "latency_ms": 130.6961145892202,
+        "std_ms": 10.043611958669187,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 136.5052822121942,
+        "std_ms": 7.461220787699512,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 132.7312541033186,
+        "std_ms": 12.234618982707895,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 605.38679155579,
+        "std_ms": 50.192150932385964,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 668.5793140906168,
+        "std_ms": 47.550959954320994,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 664.1511749371693,
+        "std_ms": 52.462766958564764,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 1330.9371923376718,
+        "std_ms": 122.26618510353809,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 1284.9505409933415,
+        "std_ms": 118.5592089867453,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 1130.02578159177,
+        "std_ms": 79.60221051758019,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 2297.596733584134,
+        "std_ms": 131.31464842841996,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 2578.8169538925604,
+        "std_ms": 165.18059793959543,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 2405.1625552492787,
+        "std_ms": 172.0375120311953,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 6269.8233598122115,
+        "std_ms": 499.76223872546626,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 6375.823221777217,
+        "std_ms": 380.373922298732,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 6621.911977434622,
+        "std_ms": 456.6106628269504,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 12359.790363550272,
+        "std_ms": 798.4061134752734,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 11617.326601655195,
+        "std_ms": 1069.4109222339273,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 12536.510523905923,
+        "std_ms": 1240.2045549622674,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "NPU": {
+      "1000_5000_500": {
+        "latency_ms": 329.32679261281174,
+        "std_ms": 31.076579304015933,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 299.4160066590492,
+        "std_ms": 24.113685072154013,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 305.66397546857417,
+        "std_ms": 19.34659545268018,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 1699.6573819487287,
+        "std_ms": 105.25708237905042,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 1411.1857720425235,
+        "std_ms": 131.21531619881682,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 1542.8651911294621,
+        "std_ms": 151.95040583429534,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 2892.723222671002,
+        "std_ms": 167.6745459728514,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 3321.57407184322,
+        "std_ms": 316.1221464073222,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 2983.7305039444,
+        "std_ms": 191.49197736870605,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 6831.957810852266,
+        "std_ms": 423.89122677820075,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 6872.919371664762,
+        "std_ms": 561.5423125107458,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 5872.25729009099,
+        "std_ms": 387.10738009597907,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 15191.127300667013,
+        "std_ms": 947.8728679656122,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 16653.132370002262,
+        "std_ms": 1081.8521497150236,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 14413.666498538681,
+        "std_ms": 1249.502674337636,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 33985.45308845016,
+        "std_ms": 3227.745838375795,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 31438.926328344,
+        "std_ms": 3124.523997622231,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 33883.174019569415,
+        "std_ms": 1791.1509867808393,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    }
+  },
+  "stage_7": {
+    "CPU": {
+      "1000_5000_500": {
+        "latency_ms": 0.42075308065113537,
+        "std_ms": 0.03031309850174405,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 0.40899124635146517,
+        "std_ms": 0.031788613761305866,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 0.4450813503547399,
+        "std_ms": 0.03520128152127212,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 1.6531500332174076,
+        "std_ms": 0.12304634749280609,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 1.5237135636355978,
+        "std_ms": 0.1042424975833301,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 1.6863937495276617,
+        "std_ms": 0.13178253860666378,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 3.4546068373824173,
+        "std_ms": 0.3292203551863684,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 3.279186073675874,
+        "std_ms": 0.22875014146623895,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 2.9141754255786334,
+        "std_ms": 0.1978785660340632,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 6.5976824207196145,
+        "std_ms": 0.34920940681911905,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 6.304501702943478,
+        "std_ms": 0.35648510054247934,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 6.08605945768058,
+        "std_ms": 0.4361114775114665,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 14.317571718684563,
+        "std_ms": 1.30376383922121,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 16.516896586959355,
+        "std_ms": 1.3514977729850368,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 14.703613085720017,
+        "std_ms": 1.2272345304017644,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 32.26266308429329,
+        "std_ms": 2.855931606329663,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 32.05012167132146,
+        "std_ms": 2.9901432497677227,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 29.638631836037902,
+        "std_ms": 1.921745050773882,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "GPU": {
+      "1000_5000_500": {
+        "latency_ms": 0.5450890883582892,
+        "std_ms": 0.03505261448096051,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 0.5531632646855656,
+        "std_ms": 0.04977867944181116,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 0.5485375504600571,
+        "std_ms": 0.03609190300981323,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 0.7448332916089477,
+        "std_ms": 0.044070114916950585,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 0.6847071826678877,
+        "std_ms": 0.04909535062779114,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 0.7872577579696426,
+        "std_ms": 0.06167190913716364,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 0.9157449884738246,
+        "std_ms": 0.04940075596981369,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 1.0646312705218977,
+        "std_ms": 0.07955673536797657,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 0.9371001702414691,
+        "std_ms": 0.052988342119170834,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 1.390226718177603,
+        "std_ms": 0.13120039784418638,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 1.4375720954813946,
+        "std_ms": 0.0971547058856734,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 1.3712567128342708,
+        "std_ms": 0.0938353855205645,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 3.214178852481051,
+        "std_ms": 0.26945381524929735,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 3.005496554646032,
+        "std_ms": 0.1606601273480756,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 3.1696788219777994,
+        "std_ms": 0.27389979893613753,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 4.990270734500024,
+        "std_ms": 0.4113209699267158,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 4.967093108161656,
+        "std_ms": 0.25949856141055355,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 5.986508233270501,
+        "std_ms": 0.5868404871815189,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    },
+    "NPU": {
+      "1000_5000_500": {
+        "latency_ms": 0.43266845557511857,
+        "std_ms": 0.04067688882867235,
+        "num_nodes": 1000,
+        "num_edges": 5000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_10000_500": {
+        "latency_ms": 0.38893211259255167,
+        "std_ms": 0.02521826790582508,
+        "num_nodes": 1000,
+        "num_edges": 10000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "1000_20000_500": {
+        "latency_ms": 0.4672877883859249,
+        "std_ms": 0.0365448072679865,
+        "num_nodes": 1000,
+        "num_edges": 20000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_25000_500": {
+        "latency_ms": 0.8653143922066211,
+        "std_ms": 0.07335653023133698,
+        "num_nodes": 5000,
+        "num_edges": 25000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_50000_500": {
+        "latency_ms": 0.9173013581228417,
+        "std_ms": 0.05346503362681227,
+        "num_nodes": 5000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "5000_100000_500": {
+        "latency_ms": 0.9777196693128433,
+        "std_ms": 0.0801906809602091,
+        "num_nodes": 5000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_50000_500": {
+        "latency_ms": 1.4146358685342848,
+        "std_ms": 0.11928488225892045,
+        "num_nodes": 10000,
+        "num_edges": 50000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_100000_500": {
+        "latency_ms": 1.46818790547496,
+        "std_ms": 0.13477384932360867,
+        "num_nodes": 10000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "10000_200000_500": {
+        "latency_ms": 1.5117246456795512,
+        "std_ms": 0.1188419105759959,
+        "num_nodes": 10000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_100000_500": {
+        "latency_ms": 2.9005618956870816,
+        "std_ms": 0.21523823518581345,
+        "num_nodes": 20000,
+        "num_edges": 100000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_200000_500": {
+        "latency_ms": 2.743174367624535,
+        "std_ms": 0.19720126783720934,
+        "num_nodes": 20000,
+        "num_edges": 200000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "20000_400000_500": {
+        "latency_ms": 2.6235809647598027,
+        "std_ms": 0.24107566336522926,
+        "num_nodes": 20000,
+        "num_edges": 400000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_250000_500": {
+        "latency_ms": 5.949548491861633,
+        "std_ms": 0.32266350145473066,
+        "num_nodes": 50000,
+        "num_edges": 250000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_500000_500": {
+        "latency_ms": 6.136894161347987,
+        "std_ms": 0.417590982483365,
+        "num_nodes": 50000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "50000_1000000_500": {
+        "latency_ms": 6.873508308801104,
+        "std_ms": 0.47968230179025906,
+        "num_nodes": 50000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_500000_500": {
+        "latency_ms": 13.576391625921488,
+        "std_ms": 1.332155773578339,
+        "num_nodes": 100000,
+        "num_edges": 500000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_1000000_500": {
+        "latency_ms": 12.631661106933109,
+        "std_ms": 1.1240502579672982,
+        "num_nodes": 100000,
+        "num_edges": 1000000,
+        "num_features": 500,
+        "num_iterations": 10
+      },
+      "100000_2000000_500": {
+        "latency_ms": 13.894698883556027,
+        "std_ms": 0.8189419908862987,
+        "num_nodes": 100000,
+        "num_edges": 2000000,
+        "num_features": 500,
+        "num_iterations": 10
+      }
+    }
+  }
+}

@@ -1,0 +1,407 @@
+{
+  "fused0_7,5000,50000,GPU": {
+    "mean": 11.889476091196032,
+    "median": 11.86964992666617,
+    "std": 0.1766006062315657,
+    "min": 11.658700066618621,
+    "max": 12.377200066111982,
+    "raw_mean": 12.158398001920432,
+    "outliers_removed": 4,
+    "failed": false
+  },
+  "fused0_7,5000,125000,GPU": {
+    "mean": 24.628260873926237,
+    "median": 24.59899993846193,
+    "std": 0.3009784049733721,
+    "min": 24.075499968603253,
+    "max": 25.441000005230308,
+    "raw_mean": 24.800806005951017,
+    "outliers_removed": 4,
+    "failed": false
+  },
+  "fused0_7,5000,200000,GPU": {
+    "mean": 37.6076000082025,
+    "median": 37.56470000371337,
+    "std": 0.4705581451768875,
+    "min": 37.00559993740171,
+    "max": 39.075099979527295,
+    "raw_mean": 38.21742200758308,
+    "outliers_removed": 7,
+    "failed": false
+  },
+  "fused0_7,5000,250000,GPU": {
+    "mean": 46.593116662864176,
+    "median": 46.11905000638217,
+    "std": 1.303191463493816,
+    "min": 45.61219993047416,
+    "max": 51.360700046643615,
+    "raw_mean": 47.537635997869074,
+    "outliers_removed": 8,
+    "failed": false
+  },
+  "fused0_7,5000,300000,GPU": {
+    "mean": 60.74393054910211,
+    "median": 60.61360001331195,
+    "std": 0.47280293917307425,
+    "min": 60.14549999963492,
+    "max": 61.98600004427135,
+    "raw_mean": 59.76979399798438,
+    "outliers_removed": 14,
+    "failed": false
+  },
+  "fused0_7,5000,375000,GPU": {
+    "mean": 76.55751816822554,
+    "median": 76.46730000851676,
+    "std": 0.39238602760687513,
+    "min": 76.03220001328737,
+    "max": 77.56220002193004,
+    "raw_mean": 76.36917598545551,
+    "outliers_removed": 6,
+    "failed": false
+  },
+  "fused0_7,5000,500000,GPU": {
+    "mean": 99.66832448785402,
+    "median": 99.61369994562119,
+    "std": 0.5673834190247748,
+    "min": 98.73440000228584,
+    "max": 101.28359997179359,
+    "raw_mean": 99.88007999723777,
+    "outliers_removed": 1,
+    "failed": false
+  },
+  "fused0_7,10000,100000,GPU": {
+    "mean": 24.093627908028836,
+    "median": 24.034699890762568,
+    "std": 0.36431477846869537,
+    "min": 23.54550000745803,
+    "max": 25.345400092191994,
+    "raw_mean": 24.559647999703884,
+    "outliers_removed": 7,
+    "failed": false
+  },
+  "fused0_7,10000,250000,GPU": {
+    "mean": 53.284873475548714,
+    "median": 51.265800022520125,
+    "std": 3.1515661718467016,
+    "min": 50.22019997704774,
+    "max": 62.869600020349026,
+    "raw_mean": 53.51975000696257,
+    "outliers_removed": 1,
+    "failed": false
+  },
+  "fused0_7,10000,400000,GPU": {
+    "mean": 85.84093334567216,
+    "median": 85.7380999950692,
+    "std": 0.6672430889183036,
+    "min": 84.67530005145818,
+    "max": 87.36710005905479,
+    "raw_mean": 86.26751801231876,
+    "outliers_removed": 5,
+    "failed": false
+  },
+  "fused0_7,10000,500000,GPU": {
+    "mean": 105.15860222642206,
+    "median": 105.14020000118762,
+    "std": 0.5137035224671568,
+    "min": 104.33929995633662,
+    "max": 106.60559998359531,
+    "raw_mean": 105.54815000621602,
+    "outliers_removed": 5,
+    "failed": false
+  },
+  "fused0_7,10000,600000,GPU": {
+    "mean": 125.31657953778367,
+    "median": 124.95235004462302,
+    "std": 1.3834547436343583,
+    "min": 123.34110005758703,
+    "max": 128.65219998639077,
+    "raw_mean": 127.09804599871859,
+    "outliers_removed": 6,
+    "failed": false
+  },
+  "fused0_7,10000,750000,GPU": {
+    "mean": 153.9884863595944,
+    "median": 153.89180002966896,
+    "std": 0.8702242105318823,
+    "min": 152.66350004822016,
+    "max": 156.5758999204263,
+    "raw_mean": 154.7994659957476,
+    "outliers_removed": 6,
+    "failed": false
+  },
+  "fused0_7,10000,1000000,GPU": {
+    "mean": 207.26181554815008,
+    "median": 205.54759993683547,
+    "std": 3.9831083461784287,
+    "min": 202.61199993547052,
+    "max": 218.34189991932362,
+    "raw_mean": 210.72934199590236,
+    "outliers_removed": 5,
+    "failed": false
+  },
+  "fused0_7,20000,200000,GPU": {
+    "mean": 51.68788600014523,
+    "median": 51.94105004193261,
+    "std": 3.5623012677122436,
+    "min": 47.47490002773702,
+    "max": 61.52350001502782,
+    "raw_mean": 51.68788600014523,
+    "outliers_removed": 0,
+    "failed": false
+  },
+  "fused0_7,20000,500000,GPU": {
+    "mean": 115.8110108757999,
+    "median": 115.29684998095036,
+    "std": 2.753543352423943,
+    "min": 111.45940003916621,
+    "max": 122.82240006607026,
+    "raw_mean": 116.88540000468493,
+    "outliers_removed": 4,
+    "failed": false
+  },
+  "fused0_7,20000,800000,GPU": {
+    "mean": 173.85244468336015,
+    "median": 173.0368999997154,
+    "std": 3.373329707087441,
+    "min": 169.03570003341883,
+    "max": 182.37189995124936,
+    "raw_mean": 174.79964799946174,
+    "outliers_removed": 3,
+    "failed": false
+  },
+  "fused0_7,20000,1000000,GPU": {
+    "mean": 218.87529316749848,
+    "median": 217.85474999342114,
+    "std": 3.990017566057771,
+    "min": 213.22299994062632,
+    "max": 230.75639992021024,
+    "raw_mean": 222.16491198865697,
+    "outliers_removed": 6,
+    "failed": false
+  },
+  "fused0_7,20000,1200000,GPU": {
+    "mean": 257.6002956585675,
+    "median": 256.40534999547526,
+    "std": 4.124717550260919,
+    "min": 252.34379991889,
+    "max": 267.6547000883147,
+    "raw_mean": 260.4356860066764,
+    "outliers_removed": 4,
+    "failed": false
+  },
+  "fused0_7,20000,1500000,GPU": {
+    "mean": 326.6378920036368,
+    "median": 320.927050022874,
+    "std": 15.322918362856447,
+    "min": 307.66339995898306,
+    "max": 359.41270005423576,
+    "raw_mean": 326.6378920036368,
+    "outliers_removed": 0,
+    "failed": false
+  },
+  "fused0_7,20000,2000000,GPU": {
+    "mean": 409.3095122001747,
+    "median": 409.19070004019886,
+    "std": 1.750458874983969,
+    "min": 406.645999988541,
+    "max": 413.7239999836311,
+    "raw_mean": 412.93169000186026,
+    "outliers_removed": 9,
+    "failed": false
+  },
+  "fused0_7,50000,500000,GPU": {
+    "mean": 136.57081701812592,
+    "median": 136.09879999421537,
+    "std": 2.8665921610772305,
+    "min": 132.12040008511394,
+    "max": 143.02419999148697,
+    "raw_mean": 138.72901999624446,
+    "outliers_removed": 3,
+    "failed": false
+  },
+  "fused0_7,50000,1250000,GPU": {
+    "mean": 286.5345266570027,
+    "median": 286.48080001585186,
+    "std": 1.7788914978365913,
+    "min": 283.14200008753687,
+    "max": 291.10060003586113,
+    "raw_mean": 287.72476399317384,
+    "outliers_removed": 5,
+    "failed": false
+  },
+  "fused0_7,50000,2000000,GPU": {
+    "mean": 435.3119977801624,
+    "median": 433.1306000240147,
+    "std": 5.359223225488041,
+    "min": 430.0292000407353,
+    "max": 451.209899969399,
+    "raw_mean": 440.2532079978846,
+    "outliers_removed": 5,
+    "failed": false
+  },
+  "fused0_7,50000,2500000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,50000,3000000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 6000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,50000,3750000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 7500000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,50000,5000000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,80000,800000,GPU": {
+    "mean": 213.21877391765946,
+    "median": 212.39939995575696,
+    "std": 4.140525034683701,
+    "min": 207.2065999964252,
+    "max": 224.61030003614724,
+    "raw_mean": 214.94587800465524,
+    "outliers_removed": 4,
+    "failed": false
+  },
+  "fused0_7,80000,2000000,GPU": {
+    "mean": 454.64311136377296,
+    "median": 454.1311500361189,
+    "std": 3.5151904683261272,
+    "min": 448.66160000674427,
+    "max": 464.06849997583777,
+    "raw_mean": 458.2456579967402,
+    "outliers_removed": 6,
+    "failed": false
+  },
+  "fused0_7,80000,3200000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 6400000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,80000,4000000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 8000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,80000,4800000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 4800000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,80000,6000000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 6000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,80000,8000000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 8000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,100000,1000000,GPU": {
+    "mean": 264.3570083431162,
+    "median": 264.62090003769845,
+    "std": 2.5334440018327657,
+    "min": 258.8639999739826,
+    "max": 269.4938000058755,
+    "raw_mean": 264.9635980091989,
+    "outliers_removed": 2,
+    "failed": false
+  },
+  "fused0_7,100000,2500000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,100000,4000000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 8000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,100000,5000000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 5000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,100000,6000000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 6000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,100000,7500000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 7500000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  },
+  "fused0_7,100000,10000000,GPU": {
+    "mean": -1,
+    "median": -1,
+    "std": -1,
+    "min": -1,
+    "max": -1,
+    "failed": true,
+    "error": "Exception from src\\inference\\src\\cpp\\infer_request.cpp:245:\nException from ..\\pyopenvino/core/infer_request.hpp:54:\nCaught exception: Check '!exceed_allocatable_mem_size' failed at src\\plugins\\intel_gpu\\src\\runtime\\ocl\\ocl_engine.cpp:146:\n[GPU] Exceeded max size of memory object allocation: requested 10000000000 bytes, but max alloc size supported by device is 4294959104 bytes.Please try to reduce batch size or use lower precision.\n\n\n"
+  }
+}

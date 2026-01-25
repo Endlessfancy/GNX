@@ -1,0 +1,43 @@
+================================================================================
+GNX Stage Profiling Report (精简版)
+================================================================================
+
+Test Configuration:
+  - Test cases: 18
+  - Node sizes: [1000, 5000, 10000, 20000, 50000, 100000]
+  - Edge sizes: [1000, 5000, 10000, 50000, 100000, 200000, 500000, 1000000]
+  - Total measurements: 342
+
+Average Compute Time by Stage (ms):
+--------------------------------------------------------------------------------
+Stage      CPU             GPU             NPU            
+--------------------------------------------------------------------------------
+Stage 1   3.71            1.41            125.45         
+Stage 2   0.34            4.19            0.00           
+Stage 3   25.62           5.31            0.00           
+Stage 4   0.07            0.64            0.00           
+Stage 5   0.06            0.28            0.22           
+Stage 6   8.54            1.28            7.71           
+Stage 7   0.21            0.30            0.70           
+
+Estimated Bandwidth by Stage (MB/s):
+--------------------------------------------------------------------------------
+Stage 1: CPU=2938.9 | GPU=2730.2 | NPU=inf
+Stage 2: CPU=6500.5 | GPU=4192.2 | NPU=inf
+Stage 3: CPU=1235.8 | GPU=3891.7 | NPU=0.0
+Stage 4: CPU=944.0 | GPU=6678.6 | NPU=0.0
+Stage 5: CPU=6062.0 | GPU=3090.6 | NPU=33901.2
+Stage 6: CPU=1466.7 | GPU=4130.9 | NPU=3147.4
+Stage 7: CPU=5216.6 | GPU=3744.1 | NPU=33873.7
+
+Speedup Analysis (GPU vs CPU, NPU vs CPU):
+--------------------------------------------------------------------------------
+Stage 1: GPU speedup = 2.64x, NPU speedup = 0.03x
+Stage 2: GPU speedup = 0.08x, NPU speedup = 242.95x
+Stage 3: GPU speedup = 4.83x
+Stage 4: GPU speedup = 0.10x
+Stage 5: GPU speedup = 0.20x, NPU speedup = 0.25x
+Stage 6: GPU speedup = 6.65x, NPU speedup = 1.11x
+Stage 7: GPU speedup = 0.71x, NPU speedup = 0.30x
+
+================================================================================
