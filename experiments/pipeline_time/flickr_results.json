@@ -274,6 +274,385 @@
       "npu": 0.36498540700214865
     }
   },
+  "K=3": {
+    "k": 3,
+    "num_partitions": 3,
+    "optimal_order": [
+      1,
+      2,
+      0
+    ],
+    "makespan_ms": 1461.8658999176284,
+    "cycle_times": [
+      410.2878400626142,
+      408.1551444688784,
+      407.93720832826926,
+      235.48570705786662
+    ],
+    "cycle_device_times": [
+      {
+        "cycle_time": 410.2878400626142,
+        "stage1_subgraph_id": 1,
+        "stage2_subgraph_id": -1,
+        "dp_split_ratio": 0.4751171875,
+        "cpu": {
+          "compute": 360.65990202478133,
+          "transfer": 49.62793803783285,
+          "transfer_in": {
+            "time_ms": 25.147635976640032,
+            "size_bytes": 61812358.39812499
+          },
+          "transfer_out": {
+            "time_ms": 24.480302061192813,
+            "size_bytes": 60172065.720468745
+          },
+          "total": 410.2878400626142,
+          "utilization": 1.0
+        },
+        "gpu": {
+          "compute": 312.69381999387406,
+          "transfer": 50.31525053130929,
+          "transfer_in": {
+            "time_ms": 25.495913279133763,
+            "size_bytes": 68286825.601875
+          },
+          "transfer_out": {
+            "time_ms": 24.819337252175526,
+            "size_bytes": 66474722.279531255
+          },
+          "total": 363.00907052518335,
+          "utilization": 0.8847668272834612
+        },
+        "npu": {
+          "compute": 0.0,
+          "transfer": 0.0,
+          "transfer_in": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "transfer_out": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "total": 0.0,
+          "utilization": 0.0
+        }
+      },
+      {
+        "cycle_time": 408.1551444688784,
+        "stage1_subgraph_id": 2,
+        "stage2_subgraph_id": 1,
+        "dp_split_ratio": 0.46746093749999995,
+        "cpu": {
+          "compute": 360.65990202478133,
+          "transfer": 47.49524244409709,
+          "transfer_in": {
+            "time_ms": 24.088206524853014,
+            "size_bytes": 59208303.168749996
+          },
+          "transfer_out": {
+            "time_ms": 23.407035919244077,
+            "size_bytes": 57534000.19874999
+          },
+          "total": 408.1551444688784,
+          "utilization": 1.0
+        },
+        "gpu": {
+          "compute": 312.69381999387406,
+          "transfer": 49.655579007259306,
+          "transfer_in": {
+            "time_ms": 25.18386643979909,
+            "size_bytes": 67451056.83125001
+          },
+          "transfer_out": {
+            "time_ms": 24.47171256746022,
+            "size_bytes": 65543663.80125001
+          },
+          "total": 362.34939900113335,
+          "utilization": 0.8877736907436243
+        },
+        "npu": {
+          "compute": 184.39490200136788,
+          "transfer": 130.89481901767917,
+          "transfer_in": {
+            "time_ms": 87.29228103710649,
+            "size_bytes": 253040788
+          },
+          "transfer_out": {
+            "time_ms": 43.60253798057268,
+            "size_bytes": 126394000
+          },
+          "total": 315.2897210190471,
+          "utilization": 0.7724751857025478
+        }
+      },
+      {
+        "cycle_time": 407.93720832826926,
+        "stage1_subgraph_id": 0,
+        "stage2_subgraph_id": 2,
+        "dp_split_ratio": 0.4942578125,
+        "cpu": {
+          "compute": 360.65990202478133,
+          "transfer": 47.27730630348793,
+          "transfer_in": {
+            "time_ms": 23.979574527823324,
+            "size_bytes": 58941288.013125
+          },
+          "transfer_out": {
+            "time_ms": 23.297731775664612,
+            "size_bytes": 57265332.92109375
+          },
+          "total": 407.93720832826926,
+          "utilization": 1.0
+        },
+        "gpu": {
+          "compute": 312.69381999387406,
+          "transfer": 44.39562370568684,
+          "transfer_in": {
+            "time_ms": 22.51795312799317,
+            "size_bytes": 60310823.986875
+          },
+          "transfer_out": {
+            "time_ms": 21.877670577693667,
+            "size_bytes": 58595927.07890625
+          },
+          "total": 357.0894436995609,
+          "utilization": 0.8753539427376997
+        },
+        "npu": {
+          "compute": 115.73818800621666,
+          "transfer": 127.20597820766469,
+          "transfer_in": {
+            "time_ms": 84.8322346341588,
+            "size_bytes": 245909664
+          },
+          "transfer_out": {
+            "time_ms": 42.373743573505884,
+            "size_bytes": 122832000
+          },
+          "total": 242.94416621388135,
+          "utilization": 0.5955430425419367
+        }
+      },
+      {
+        "cycle_time": 235.48570705786662,
+        "stage1_subgraph_id": -1,
+        "stage2_subgraph_id": 0,
+        "dp_split_ratio": 0.0,
+        "cpu": {
+          "compute": 0.0,
+          "transfer": 0.0,
+          "transfer_in": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "transfer_out": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "total": 0.0,
+          "utilization": 0.0
+        },
+        "gpu": {
+          "compute": 0.0,
+          "transfer": 0.0,
+          "transfer_in": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "transfer_out": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "total": 0.0,
+          "utilization": 0.0
+        },
+        "npu": {
+          "compute": 115.73818800621666,
+          "transfer": 119.74751905164996,
+          "transfer_in": {
+            "time_ms": 79.85827219900173,
+            "size_bytes": 231491260
+          },
+          "transfer_out": {
+            "time_ms": 39.88924685264822,
+            "size_bytes": 115630000
+          },
+          "total": 235.48570705786662,
+          "utilization": 1.0
+        }
+      }
+    ],
+    "subgraphs": [
+      {
+        "id": 0,
+        "total_nodes": 57815,
+        "internal_edges": 226382,
+        "stage1": {
+          "time": 407.93720832826926,
+          "compute": 360.65990202478133,
+          "transfer": 47.27730630348793
+        },
+        "stage2": {
+          "time": 235.48570705786662,
+          "compute": 115.73818800621666,
+          "transfer": 119.74751905164996
+        },
+        "dp_split": {
+          "ratio": 0.4942578125,
+          "cpu": {
+            "compute": 360.65990202478133,
+            "transfer": 47.27730630348793,
+            "transfer_in": {
+              "time_ms": 23.979574527823324,
+              "size_bytes": 58941288.013125
+            },
+            "transfer_out": {
+              "time_ms": 23.297731775664612,
+              "size_bytes": 57265332.92109375
+            },
+            "total": 407.93720832826926
+          },
+          "gpu": {
+            "compute": 312.69381999387406,
+            "transfer": 44.39562370568684,
+            "transfer_in": {
+              "time_ms": 22.51795312799317,
+              "size_bytes": 60310823.986875
+            },
+            "transfer_out": {
+              "time_ms": 21.877670577693667,
+              "size_bytes": 58595927.07890625
+            },
+            "total": 357.0894436995609
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 79.85827219900173,
+              "size_bytes": 231491260
+            },
+            "transfer_out": {
+              "time_ms": 39.88924685264822,
+              "size_bytes": 115630000
+            }
+          }
+        }
+      },
+      {
+        "id": 1,
+        "total_nodes": 63197,
+        "internal_edges": 231574,
+        "stage1": {
+          "time": 410.2878400626142,
+          "compute": 360.65990202478133,
+          "transfer": 50.31525053130929
+        },
+        "stage2": {
+          "time": 315.2897210190471,
+          "compute": 184.39490200136788,
+          "transfer": 130.89481901767917
+        },
+        "dp_split": {
+          "ratio": 0.4751171875,
+          "cpu": {
+            "compute": 360.65990202478133,
+            "transfer": 49.62793803783285,
+            "transfer_in": {
+              "time_ms": 25.147635976640032,
+              "size_bytes": 61812358.39812499
+            },
+            "transfer_out": {
+              "time_ms": 24.480302061192813,
+              "size_bytes": 60172065.720468745
+            },
+            "total": 410.2878400626142
+          },
+          "gpu": {
+            "compute": 312.69381999387406,
+            "transfer": 50.31525053130929,
+            "transfer_in": {
+              "time_ms": 25.495913279133763,
+              "size_bytes": 68286825.601875
+            },
+            "transfer_out": {
+              "time_ms": 24.819337252175526,
+              "size_bytes": 66474722.279531255
+            },
+            "total": 363.00907052518335
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 87.29228103710649,
+              "size_bytes": 253040788
+            },
+            "transfer_out": {
+              "time_ms": 43.60253798057268,
+              "size_bytes": 126394000
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "total_nodes": 61416,
+        "internal_edges": 239210,
+        "stage1": {
+          "time": 408.1551444688784,
+          "compute": 360.65990202478133,
+          "transfer": 49.655579007259306
+        },
+        "stage2": {
+          "time": 242.94416621388135,
+          "compute": 115.73818800621666,
+          "transfer": 127.20597820766469
+        },
+        "dp_split": {
+          "ratio": 0.46746093749999995,
+          "cpu": {
+            "compute": 360.65990202478133,
+            "transfer": 47.49524244409709,
+            "transfer_in": {
+              "time_ms": 24.088206524853014,
+              "size_bytes": 59208303.168749996
+            },
+            "transfer_out": {
+              "time_ms": 23.407035919244077,
+              "size_bytes": 57534000.19874999
+            },
+            "total": 408.1551444688784
+          },
+          "gpu": {
+            "compute": 312.69381999387406,
+            "transfer": 49.655579007259306,
+            "transfer_in": {
+              "time_ms": 25.18386643979909,
+              "size_bytes": 67451056.83125001
+            },
+            "transfer_out": {
+              "time_ms": 24.47171256746022,
+              "size_bytes": 65543663.80125001
+            },
+            "total": 362.34939900113335
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 84.8322346341588,
+              "size_bytes": 245909664
+            },
+            "transfer_out": {
+              "time_ms": 42.373743573505884,
+              "size_bytes": 122832000
+            }
+          }
+        }
+      }
+    ],
+    "avg_utilization": {
+      "cpu": 0.838914289558888,
+      "gpu": 0.7404563669532684,
+      "npu": 0.5429496606600638
+    }
+  },
   "K=4": {
     "k": 4,
     "num_partitions": 4,
@@ -755,6 +1134,593 @@
       "cpu": 0.7184659900208554,
       "gpu": 0.8066481380570946,
       "npu": 0.6952287522128137
+    }
+  },
+  "K=5": {
+    "k": 5,
+    "num_partitions": 5,
+    "optimal_order": [
+      1,
+      3,
+      4,
+      2,
+      0
+    ],
+    "makespan_ms": 1253.7845648212297,
+    "cycle_times": [
+      188.74239942882818,
+      236.46520250028004,
+      245.0186566872706,
+      211.55666918479966,
+      214.68292850590274,
+      157.31870851414862
+    ],
+    "cycle_device_times": [
+      {
+        "cycle_time": 188.74239942882818,
+        "stage1_subgraph_id": 1,
+        "stage2_subgraph_id": -1,
+        "dp_split_ratio": 0.4827734375,
+        "cpu": {
+          "compute": 114.27833001478575,
+          "transfer": 35.57068859694505,
+          "transfer_in": {
+            "time_ms": 17.930398731997865,
+            "size_bytes": 44072541.596875
+          },
+          "transfer_out": {
+            "time_ms": 17.64028986494718,
+            "size_bytes": 43359460.12546875
+          },
+          "total": 149.8490186117308,
+          "utilization": 0.7939340554385425
+        },
+        "gpu": {
+          "compute": 153.76870399923064,
+          "transfer": 34.973695429597534,
+          "transfer_in": {
+            "time_ms": 17.62946765776113,
+            "size_bytes": 47217778.403125
+          },
+          "transfer_out": {
+            "time_ms": 17.344227771836405,
+            "size_bytes": 46453807.87453125
+          },
+          "total": 188.74239942882818,
+          "utilization": 1.0
+        },
+        "npu": {
+          "compute": 0.0,
+          "transfer": 0.0,
+          "transfer_in": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "transfer_out": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "total": 0.0,
+          "utilization": 0.0
+        }
+      },
+      {
+        "cycle_time": 236.46520250028004,
+        "stage1_subgraph_id": 3,
+        "stage2_subgraph_id": 1,
+        "dp_split_ratio": 0.4636328125,
+        "cpu": {
+          "compute": 195.2888499875553,
+          "transfer": 41.176352512724755,
+          "transfer_in": {
+            "time_ms": 20.747629588809847,
+            "size_bytes": 50997235.575
+          },
+          "transfer_out": {
+            "time_ms": 20.428722923914908,
+            "size_bytes": 50213369.724375
+          },
+          "total": 236.46520250028004,
+          "utilization": 1.0
+        },
+        "gpu": {
+          "compute": 170.08796001318842,
+          "transfer": 43.716733919599484,
+          "transfer_in": {
+            "time_ms": 22.027657790138473,
+            "size_bytes": 58997644.425
+          },
+          "transfer_out": {
+            "time_ms": 21.68907612946101,
+            "size_bytes": 58090806.275625
+          },
+          "total": 213.8046939327879,
+          "utilization": 0.9041697961142282
+        },
+        "npu": {
+          "compute": 114.11761600174941,
+          "transfer": 92.82581616081978,
+          "transfer_in": {
+            "time_ms": 61.90449165688248,
+            "size_bytes": 179447268
+          },
+          "transfer_out": {
+            "time_ms": 30.921324503937303,
+            "size_bytes": 89634000
+          },
+          "total": 206.9434321625692,
+          "utilization": 0.8751538491686705
+        }
+      },
+      {
+        "cycle_time": 245.0186566872706,
+        "stage1_subgraph_id": 4,
+        "stage2_subgraph_id": 3,
+        "dp_split_ratio": 0.4636328125,
+        "cpu": {
+          "compute": 172.25695999804884,
+          "transfer": 35.54342048365463,
+          "transfer_in": {
+            "time_ms": 17.965208246758486,
+            "size_bytes": 44158102.649375
+          },
+          "transfer_out": {
+            "time_ms": 17.578212236896142,
+            "size_bytes": 43206874.62609375
+          },
+          "total": 207.80038048170348,
+          "utilization": 0.8481002356768667
+        },
+        "gpu": {
+          "compute": 182.8439080005046,
+          "transfer": 37.73627728187402,
+          "transfer_in": {
+            "time_ms": 19.073574535069092,
+            "size_bytes": 51085593.350625
+          },
+          "transfer_out": {
+            "time_ms": 18.662702746804925,
+            "size_bytes": 49985137.37390625
+          },
+          "total": 220.5801852823786,
+          "utilization": 0.9002587323948803
+        },
+        "npu": {
+          "compute": 133.08170399977826,
+          "transfer": 111.93695268749235,
+          "transfer_in": {
+            "time_ms": 74.64949343116578,
+            "size_bytes": 216392176
+          },
+          "transfer_out": {
+            "time_ms": 37.287459256326564,
+            "size_bytes": 108088000
+          },
+          "total": 245.0186566872706,
+          "utilization": 1.0
+        }
+      },
+      {
+        "cycle_time": 211.55666918479966,
+        "stage1_subgraph_id": 2,
+        "stage2_subgraph_id": 4,
+        "dp_split_ratio": 0.4636328125,
+        "cpu": {
+          "compute": 172.25695999804884,
+          "transfer": 36.93382309120355,
+          "transfer_in": {
+            "time_ms": 18.62568960558267,
+            "size_bytes": 45781551.8875
+          },
+          "transfer_out": {
+            "time_ms": 18.308133485620875,
+            "size_bytes": 45001005.6478125
+          },
+          "total": 209.1907830892524,
+          "utilization": 0.9888167737530382
+        },
+        "gpu": {
+          "compute": 170.08796001318842,
+          "transfer": 39.21246099233136,
+          "transfer_in": {
+            "time_ms": 19.774804392999062,
+            "size_bytes": 52963728.1125
+          },
+          "transfer_out": {
+            "time_ms": 19.437656599332296,
+            "size_bytes": 52060730.3521875
+          },
+          "total": 209.30042100551978,
+          "utilization": 0.9893350174779458
+        },
+        "npu": {
+          "compute": 115.23877800675109,
+          "transfer": 96.31789117804857,
+          "transfer_in": {
+            "time_ms": 64.23331716803905,
+            "size_bytes": 186198012
+          },
+          "transfer_out": {
+            "time_ms": 32.08457401000951,
+            "size_bytes": 93006000
+          },
+          "total": 211.55666918479966,
+          "utilization": 1.0
+        }
+      },
+      {
+        "cycle_time": 214.68292850590274,
+        "stage1_subgraph_id": 0,
+        "stage2_subgraph_id": 2,
+        "dp_split_ratio": 0.46746093749999995,
+        "cpu": {
+          "compute": 172.25695999804884,
+          "transfer": 30.45381865077818,
+          "transfer_in": {
+            "time_ms": 15.4341514868227,
+            "size_bytes": 37936818.560624994
+          },
+          "transfer_out": {
+            "time_ms": 15.019667163955482,
+            "size_bytes": 36918024.844218746
+          },
+          "total": 202.71077864882702,
+          "utilization": 0.9442333401151338
+        },
+        "gpu": {
+          "compute": 182.8439080005046,
+          "transfer": 31.839020505398135,
+          "transfer_in": {
+            "time_ms": 16.136178891306695,
+            "size_bytes": 43218237.439375006
+          },
+          "transfer_out": {
+            "time_ms": 15.70284161409144,
+            "size_bytes": 42057611.155781254
+          },
+          "total": 214.68292850590274,
+          "utilization": 1.0
+        },
+        "npu": {
+          "compute": 95.58154600788839,
+          "transfer": 100.31741481877738,
+          "transfer_in": {
+            "time_ms": 66.90055445276226,
+            "size_bytes": 193929736
+          },
+          "transfer_out": {
+            "time_ms": 33.416860366015115,
+            "size_bytes": 96868000
+          },
+          "total": 195.89896082666576,
+          "utilization": 0.9125036731613221
+        }
+      },
+      {
+        "cycle_time": 157.31870851414862,
+        "stage1_subgraph_id": -1,
+        "stage2_subgraph_id": 0,
+        "dp_split_ratio": 0.0,
+        "cpu": {
+          "compute": 0.0,
+          "transfer": 0.0,
+          "transfer_in": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "transfer_out": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "total": 0.0,
+          "utilization": 0.0
+        },
+        "gpu": {
+          "compute": 0.0,
+          "transfer": 0.0,
+          "transfer_in": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "transfer_out": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "total": 0.0,
+          "utilization": 0.0
+        },
+        "npu": {
+          "compute": 75.6940440100152,
+          "transfer": 81.6246645041334,
+          "transfer_in": {
+            "time_ms": 54.43456973260329,
+            "size_bytes": 157793636
+          },
+          "transfer_out": {
+            "time_ms": 27.190094771530116,
+            "size_bytes": 78818000
+          },
+          "total": 157.31870851414862,
+          "utilization": 1.0
+        }
+      }
+    ],
+    "subgraphs": [
+      {
+        "id": 0,
+        "total_nodes": 39409,
+        "internal_edges": 146066,
+        "stage1": {
+          "time": 214.68292850590274,
+          "compute": 182.8439080005046,
+          "transfer": 31.839020505398135
+        },
+        "stage2": {
+          "time": 157.31870851414862,
+          "compute": 75.6940440100152,
+          "transfer": 81.6246645041334
+        },
+        "dp_split": {
+          "ratio": 0.46746093749999995,
+          "cpu": {
+            "compute": 172.25695999804884,
+            "transfer": 30.45381865077818,
+            "transfer_in": {
+              "time_ms": 15.4341514868227,
+              "size_bytes": 37936818.560624994
+            },
+            "transfer_out": {
+              "time_ms": 15.019667163955482,
+              "size_bytes": 36918024.844218746
+            },
+            "total": 202.71077864882702
+          },
+          "gpu": {
+            "compute": 182.8439080005046,
+            "transfer": 31.839020505398135,
+            "transfer_in": {
+              "time_ms": 16.136178891306695,
+              "size_bytes": 43218237.439375006
+            },
+            "transfer_out": {
+              "time_ms": 15.70284161409144,
+              "size_bytes": 42057611.155781254
+            },
+            "total": 214.68292850590274
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 54.43456973260329,
+              "size_bytes": 157793636
+            },
+            "transfer_out": {
+              "time_ms": 27.190094771530116,
+              "size_bytes": 78818000
+            }
+          }
+        }
+      },
+      {
+        "id": 1,
+        "total_nodes": 44817,
+        "internal_edges": 103520,
+        "stage1": {
+          "time": 188.74239942882818,
+          "compute": 153.76870399923064,
+          "transfer": 35.57068859694505
+        },
+        "stage2": {
+          "time": 206.9434321625692,
+          "compute": 114.11761600174941,
+          "transfer": 92.82581616081978
+        },
+        "dp_split": {
+          "ratio": 0.4827734375,
+          "cpu": {
+            "compute": 114.27833001478575,
+            "transfer": 35.57068859694505,
+            "transfer_in": {
+              "time_ms": 17.930398731997865,
+              "size_bytes": 44072541.596875
+            },
+            "transfer_out": {
+              "time_ms": 17.64028986494718,
+              "size_bytes": 43359460.12546875
+            },
+            "total": 149.8490186117308
+          },
+          "gpu": {
+            "compute": 153.76870399923064,
+            "transfer": 34.973695429597534,
+            "transfer_in": {
+              "time_ms": 17.62946765776113,
+              "size_bytes": 47217778.403125
+            },
+            "transfer_out": {
+              "time_ms": 17.344227771836405,
+              "size_bytes": 46453807.87453125
+            },
+            "total": 188.74239942882818
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 61.90449165688248,
+              "size_bytes": 179447268
+            },
+            "transfer_out": {
+              "time_ms": 30.921324503937303,
+              "size_bytes": 89634000
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "total_nodes": 48434,
+        "internal_edges": 117330,
+        "stage1": {
+          "time": 209.30042100551978,
+          "compute": 172.25695999804884,
+          "transfer": 39.21246099233136
+        },
+        "stage2": {
+          "time": 195.89896082666576,
+          "compute": 95.58154600788839,
+          "transfer": 100.31741481877738
+        },
+        "dp_split": {
+          "ratio": 0.4636328125,
+          "cpu": {
+            "compute": 172.25695999804884,
+            "transfer": 36.93382309120355,
+            "transfer_in": {
+              "time_ms": 18.62568960558267,
+              "size_bytes": 45781551.8875
+            },
+            "transfer_out": {
+              "time_ms": 18.308133485620875,
+              "size_bytes": 45001005.6478125
+            },
+            "total": 209.1907830892524
+          },
+          "gpu": {
+            "compute": 170.08796001318842,
+            "transfer": 39.21246099233136,
+            "transfer_in": {
+              "time_ms": 19.774804392999062,
+              "size_bytes": 52963728.1125
+            },
+            "transfer_out": {
+              "time_ms": 19.437656599332296,
+              "size_bytes": 52060730.3521875
+            },
+            "total": 209.30042100551978
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 66.90055445276226,
+              "size_bytes": 193929736
+            },
+            "transfer_out": {
+              "time_ms": 33.416860366015115,
+              "size_bytes": 96868000
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "total_nodes": 54044,
+        "internal_edges": 119180,
+        "stage1": {
+          "time": 236.46520250028004,
+          "compute": 195.2888499875553,
+          "transfer": 43.716733919599484
+        },
+        "stage2": {
+          "time": 245.0186566872706,
+          "compute": 133.08170399977826,
+          "transfer": 111.93695268749235
+        },
+        "dp_split": {
+          "ratio": 0.4636328125,
+          "cpu": {
+            "compute": 195.2888499875553,
+            "transfer": 41.176352512724755,
+            "transfer_in": {
+              "time_ms": 20.747629588809847,
+              "size_bytes": 50997235.575
+            },
+            "transfer_out": {
+              "time_ms": 20.428722923914908,
+              "size_bytes": 50213369.724375
+            },
+            "total": 236.46520250028004
+          },
+          "gpu": {
+            "compute": 170.08796001318842,
+            "transfer": 43.716733919599484,
+            "transfer_in": {
+              "time_ms": 22.027657790138473,
+              "size_bytes": 58997644.425
+            },
+            "transfer_out": {
+              "time_ms": 21.68907612946101,
+              "size_bytes": 58090806.275625
+            },
+            "total": 213.8046939327879
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 74.64949343116578,
+              "size_bytes": 216392176
+            },
+            "transfer_out": {
+              "time_ms": 37.287459256326564,
+              "size_bytes": 108088000
+            }
+          }
+        }
+      },
+      {
+        "id": 4,
+        "total_nodes": 46503,
+        "internal_edges": 139856,
+        "stage1": {
+          "time": 220.5801852823786,
+          "compute": 182.8439080005046,
+          "transfer": 37.73627728187402
+        },
+        "stage2": {
+          "time": 211.55666918479966,
+          "compute": 115.23877800675109,
+          "transfer": 96.31789117804857
+        },
+        "dp_split": {
+          "ratio": 0.4636328125,
+          "cpu": {
+            "compute": 172.25695999804884,
+            "transfer": 35.54342048365463,
+            "transfer_in": {
+              "time_ms": 17.965208246758486,
+              "size_bytes": 44158102.649375
+            },
+            "transfer_out": {
+              "time_ms": 17.578212236896142,
+              "size_bytes": 43206874.62609375
+            },
+            "total": 207.80038048170348
+          },
+          "gpu": {
+            "compute": 182.8439080005046,
+            "transfer": 37.73627728187402,
+            "transfer_in": {
+              "time_ms": 19.073574535069092,
+              "size_bytes": 51085593.350625
+            },
+            "transfer_out": {
+              "time_ms": 18.662702746804925,
+              "size_bytes": 49985137.37390625
+            },
+            "total": 220.5801852823786
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 64.23331716803905,
+              "size_bytes": 186198012
+            },
+            "transfer_out": {
+              "time_ms": 32.08457401000951,
+              "size_bytes": 93006000
+            }
+          }
+        }
+      }
+    ],
+    "avg_utilization": {
+      "cpu": 0.8023835924916144,
+      "gpu": 0.8351599290143749,
+      "npu": 0.8109339163227175
     }
   },
   "K=6": {
@@ -1446,6 +2412,801 @@
       "cpu": 0.762141343547062,
       "gpu": 0.7469190810892761,
       "npu": 0.804111674520176
+    }
+  },
+  "K=7": {
+    "k": 7,
+    "num_partitions": 7,
+    "optimal_order": [
+      5,
+      6,
+      2,
+      3,
+      1,
+      4,
+      0
+    ],
+    "makespan_ms": 1337.6744324946026,
+    "cycle_times": [
+      143.9962571617568,
+      177.42284346835277,
+      178.2326900470814,
+      170.11558328995235,
+      181.69991043785302,
+      172.18473094250962,
+      209.20129349836222,
+      104.82112364873424
+    ],
+    "cycle_device_times": [
+      {
+        "cycle_time": 143.9962571617568,
+        "stage1_subgraph_id": 5,
+        "stage2_subgraph_id": -1,
+        "dp_split_ratio": 0.4483203125,
+        "cpu": {
+          "compute": 114.27833001478575,
+          "transfer": 29.579201831042127,
+          "transfer_in": {
+            "time_ms": 14.892349590788324,
+            "size_bytes": 36605080.936875
+          },
+          "transfer_out": {
+            "time_ms": 14.686852240253804,
+            "size_bytes": 36099972.78703125
+          },
+          "total": 143.85753184582788,
+          "utilization": 0.9990366047099885
+        },
+        "gpu": {
+          "compute": 110.59238399844617,
+          "transfer": 33.403873163310635,
+          "transfer_in": {
+            "time_ms": 16.817970940389223,
+            "size_bytes": 45044311.06312501
+          },
+          "transfer_out": {
+            "time_ms": 16.585902222921412,
+            "size_bytes": 44422751.21296876
+          },
+          "total": 143.9962571617568,
+          "utilization": 1.0
+        },
+        "npu": {
+          "compute": 0.0,
+          "transfer": 0.0,
+          "transfer_in": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "transfer_out": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "total": 0.0,
+          "utilization": 0.0
+        }
+      },
+      {
+        "cycle_time": 177.42284346835277,
+        "stage1_subgraph_id": 6,
+        "stage2_subgraph_id": 5,
+        "dp_split_ratio": 0.4483203125,
+        "cpu": {
+          "compute": 114.27833001478575,
+          "transfer": 29.88918315223969,
+          "transfer_in": {
+            "time_ms": 15.05941363202921,
+            "size_bytes": 37015720.82374999
+          },
+          "transfer_out": {
+            "time_ms": 14.82976952021048,
+            "size_bytes": 36451260.44437499
+          },
+          "total": 144.16751316702545,
+          "utilization": 0.8125645511522921
+        },
+        "gpu": {
+          "compute": 110.59238399844617,
+          "transfer": 33.753935913327524,
+          "transfer_in": {
+            "time_ms": 17.006636817029083,
+            "size_bytes": 45549623.17625001
+          },
+          "transfer_out": {
+            "time_ms": 16.747299096298438,
+            "size_bytes": 44855027.55562501
+          },
+          "total": 144.3463199117737,
+          "utilization": 0.8135723511697692
+        },
+        "npu": {
+          "compute": 94.19919799547642,
+          "transfer": 83.22364547287636,
+          "transfer_in": {
+            "time_ms": 55.5009121374745,
+            "size_bytes": 160884724
+          },
+          "transfer_out": {
+            "time_ms": 27.722733335401852,
+            "size_bytes": 80362000
+          },
+          "total": 177.42284346835277,
+          "utilization": 1.0
+        }
+      },
+      {
+        "cycle_time": 178.2326900470814,
+        "stage1_subgraph_id": 2,
+        "stage2_subgraph_id": 6,
+        "dp_split_ratio": 0.3717578125,
+        "cpu": {
+          "compute": 122.85642601666041,
+          "transfer": 22.369515475594035,
+          "transfer_in": {
+            "time_ms": 11.260151414111107,
+            "size_bytes": 27677214.489375003
+          },
+          "transfer_out": {
+            "time_ms": 11.109364061482928,
+            "size_bytes": 27306582.359531254
+          },
+          "total": 145.22594149225444,
+          "utilization": 0.8148109163021217
+        },
+        "gpu": {
+          "compute": 110.59238399844617,
+          "transfer": 34.69248168898882,
+          "transfer_in": {
+            "time_ms": 17.463167549404304,
+            "size_bytes": 46772369.51062499
+          },
+          "transfer_out": {
+            "time_ms": 17.229314139584517,
+            "size_bytes": 46146029.64046874
+          },
+          "total": 145.284865687435,
+          "utilization": 0.8151415189270665
+        },
+        "npu": {
+          "compute": 94.19919799547642,
+          "transfer": 84.03349205160498,
+          "transfer_in": {
+            "time_ms": 56.04098970263596,
+            "size_bytes": 162450288
+          },
+          "transfer_out": {
+            "time_ms": 27.992502348969012,
+            "size_bytes": 81144000
+          },
+          "total": 178.2326900470814,
+          "utilization": 1.0
+        }
+      },
+      {
+        "cycle_time": 170.11558328995235,
+        "stage1_subgraph_id": 3,
+        "stage2_subgraph_id": 2,
+        "dp_split_ratio": 0.4521484375,
+        "cpu": {
+          "compute": 114.27833001478575,
+          "transfer": 31.340168808474406,
+          "transfer_in": {
+            "time_ms": 15.766669879168857,
+            "size_bytes": 38754141.75
+          },
+          "transfer_out": {
+            "time_ms": 15.573498929305549,
+            "size_bytes": 38279331.6328125
+          },
+          "total": 145.61849882326015,
+          "utilization": 0.8559974107431515
+        },
+        "gpu": {
+          "compute": 110.59238399844617,
+          "transfer": 34.84937545272212,
+          "transfer_in": {
+            "time_ms": 17.532088024672873,
+            "size_bytes": 46956962.25
+          },
+          "transfer_out": {
+            "time_ms": 17.317287428049248,
+            "size_bytes": 46381652.3671875
+          },
+          "total": 145.44175945116828,
+          "utilization": 0.8549584737529369
+        },
+        "npu": {
+          "compute": 94.19919799547642,
+          "transfer": 75.91638529447593,
+          "transfer_in": {
+            "time_ms": 50.62778259811486,
+            "size_bytes": 146758612
+          },
+          "transfer_out": {
+            "time_ms": 25.288602696361068,
+            "size_bytes": 73306000
+          },
+          "total": 170.11558328995235,
+          "utilization": 1.0
+        }
+      },
+      {
+        "cycle_time": 181.69991043785302,
+        "stage1_subgraph_id": 1,
+        "stage2_subgraph_id": 3,
+        "dp_split_ratio": 0.3755859375,
+        "cpu": {
+          "compute": 122.85642601666041,
+          "transfer": 23.22397676911994,
+          "transfer_in": {
+            "time_ms": 11.69430506037599,
+            "size_bytes": 28744354.987500004
+          },
+          "transfer_out": {
+            "time_ms": 11.52967170874395,
+            "size_bytes": 28339689.684375003
+          },
+          "total": 146.08040278578034,
+          "utilization": 0.8039651887211268
+        },
+        "gpu": {
+          "compute": 110.59238399844617,
+          "transfer": 35.43331117128634,
+          "transfer_in": {
+            "time_ms": 17.842247874068693,
+            "size_bytes": 47787677.0125
+          },
+          "transfer_out": {
+            "time_ms": 17.591063297217648,
+            "size_bytes": 47114918.315625
+          },
+          "total": 146.0256951697325,
+          "utilization": 0.803664100977517
+        },
+        "npu": {
+          "compute": 94.19919799547642,
+          "transfer": 87.50071244237661,
+          "transfer_in": {
+            "time_ms": 58.35323994325049,
+            "size_bytes": 169152984
+          },
+          "transfer_out": {
+            "time_ms": 29.14747249912612,
+            "size_bytes": 84492000
+          },
+          "total": 181.69991043785302,
+          "utilization": 1.0
+        }
+      },
+      {
+        "cycle_time": 172.18473094250962,
+        "stage1_subgraph_id": 4,
+        "stage2_subgraph_id": 1,
+        "dp_split_ratio": 0.4521484375,
+        "cpu": {
+          "compute": 114.27833001478575,
+          "transfer": 31.97564111823652,
+          "transfer_in": {
+            "time_ms": 16.09174863454771,
+            "size_bytes": 39553178.46875
+          },
+          "transfer_out": {
+            "time_ms": 15.883892483688811,
+            "size_bytes": 39042272.4375
+          },
+          "total": 146.25397113302228,
+          "utilization": 0.8494015138999444
+        },
+        "gpu": {
+          "compute": 110.59238399844617,
+          "transfer": 35.55600256912489,
+          "transfer_in": {
+            "time_ms": 17.893566345582165,
+            "size_bytes": 47925125.53125
+          },
+          "transfer_out": {
+            "time_ms": 17.662436223542727,
+            "size_bytes": 47306079.5625
+          },
+          "total": 146.14838656757107,
+          "utilization": 0.8487883087401532
+        },
+        "npu": {
+          "compute": 94.19919799547642,
+          "transfer": 77.98553294703319,
+          "transfer_in": {
+            "time_ms": 52.00767387073966,
+            "size_bytes": 150758608
+          },
+          "transfer_out": {
+            "time_ms": 25.977859076293534,
+            "size_bytes": 75304000
+          },
+          "total": 172.18473094250962,
+          "utilization": 1.0
+        }
+      },
+      {
+        "cycle_time": 209.20129349836222,
+        "stage1_subgraph_id": 0,
+        "stage2_subgraph_id": 4,
+        "dp_split_ratio": 0.3755859375,
+        "cpu": {
+          "compute": 192.6137779839337,
+          "transfer": 16.58751551442853,
+          "transfer_in": {
+            "time_ms": 8.421634406995327,
+            "size_bytes": 20700199.603125002
+          },
+          "transfer_out": {
+            "time_ms": 8.165881107433203,
+            "size_bytes": 20071563.391406253
+          },
+          "total": 209.20129349836222,
+          "utilization": 1.0
+        },
+        "gpu": {
+          "compute": 182.8439080005046,
+          "transfer": 25.307922266043434,
+          "transfer_in": {
+            "time_ms": 12.849065234626693,
+            "size_bytes": 34414216.396875
+          },
+          "transfer_out": {
+            "time_ms": 12.45885703141674,
+            "size_bytes": 33369104.60859375
+          },
+          "total": 208.15183026654802,
+          "utilization": 0.9949834763721362
+        },
+        "npu": {
+          "compute": 94.19919799547642,
+          "transfer": 89.24467873211957,
+          "transfer_in": {
+            "time_ms": 59.5162714262836,
+            "size_bytes": 172524352
+          },
+          "transfer_out": {
+            "time_ms": 29.728407305835965,
+            "size_bytes": 86176000
+          },
+          "total": 183.44387672759598,
+          "utilization": 0.8768773541499738
+        }
+      },
+      {
+        "cycle_time": 104.82112364873424,
+        "stage1_subgraph_id": -1,
+        "stage2_subgraph_id": 0,
+        "dp_split_ratio": 0.0,
+        "cpu": {
+          "compute": 0.0,
+          "transfer": 0.0,
+          "transfer_in": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "transfer_out": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "total": 0.0,
+          "utilization": 0.0
+        },
+        "gpu": {
+          "compute": 0.0,
+          "transfer": 0.0,
+          "transfer_in": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "transfer_out": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "total": 0.0,
+          "utilization": 0.0
+        },
+        "npu": {
+          "compute": 49.58793000434525,
+          "transfer": 55.23319364438899,
+          "transfer_in": {
+            "time_ms": 36.834394962047554,
+            "size_bytes": 106774668
+          },
+          "transfer_out": {
+            "time_ms": 18.398798682341436,
+            "size_bytes": 53334000
+          },
+          "total": 104.82112364873424,
+          "utilization": 1.0
+        }
+      }
+    ],
+    "subgraphs": [
+      {
+        "id": 0,
+        "total_nodes": 26667,
+        "internal_edges": 111276,
+        "stage1": {
+          "time": 209.20129349836222,
+          "compute": 192.6137779839337,
+          "transfer": 25.307922266043434
+        },
+        "stage2": {
+          "time": 104.82112364873424,
+          "compute": 49.58793000434525,
+          "transfer": 55.23319364438899
+        },
+        "dp_split": {
+          "ratio": 0.3755859375,
+          "cpu": {
+            "compute": 192.6137779839337,
+            "transfer": 16.58751551442853,
+            "transfer_in": {
+              "time_ms": 8.421634406995327,
+              "size_bytes": 20700199.603125002
+            },
+            "transfer_out": {
+              "time_ms": 8.165881107433203,
+              "size_bytes": 20071563.391406253
+            },
+            "total": 209.20129349836222
+          },
+          "gpu": {
+            "compute": 182.8439080005046,
+            "transfer": 25.307922266043434,
+            "transfer_in": {
+              "time_ms": 12.849065234626693,
+              "size_bytes": 34414216.396875
+            },
+            "transfer_out": {
+              "time_ms": 12.45885703141674,
+              "size_bytes": 33369104.60859375
+            },
+            "total": 208.15183026654802
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 36.834394962047554,
+              "size_bytes": 106774668
+            },
+            "transfer_out": {
+              "time_ms": 18.398798682341436,
+              "size_bytes": 53334000
+            }
+          }
+        }
+      },
+      {
+        "id": 1,
+        "total_nodes": 37652,
+        "internal_edges": 76752,
+        "stage1": {
+          "time": 146.08040278578034,
+          "compute": 122.85642601666041,
+          "transfer": 35.43331117128634
+        },
+        "stage2": {
+          "time": 172.18473094250962,
+          "compute": 94.19919799547642,
+          "transfer": 77.98553294703319
+        },
+        "dp_split": {
+          "ratio": 0.3755859375,
+          "cpu": {
+            "compute": 122.85642601666041,
+            "transfer": 23.22397676911994,
+            "transfer_in": {
+              "time_ms": 11.69430506037599,
+              "size_bytes": 28744354.987500004
+            },
+            "transfer_out": {
+              "time_ms": 11.52967170874395,
+              "size_bytes": 28339689.684375003
+            },
+            "total": 146.08040278578034
+          },
+          "gpu": {
+            "compute": 110.59238399844617,
+            "transfer": 35.43331117128634,
+            "transfer_in": {
+              "time_ms": 17.842247874068693,
+              "size_bytes": 47787677.0125
+            },
+            "transfer_out": {
+              "time_ms": 17.591063297217648,
+              "size_bytes": 47114918.315625
+            },
+            "total": 146.0256951697325
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 52.00767387073966,
+              "size_bytes": 150758608
+            },
+            "transfer_out": {
+              "time_ms": 25.977859076293534,
+              "size_bytes": 75304000
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "total_nodes": 36653,
+        "internal_edges": 71474,
+        "stage1": {
+          "time": 145.284865687435,
+          "compute": 122.85642601666041,
+          "transfer": 34.69248168898882
+        },
+        "stage2": {
+          "time": 170.11558328995235,
+          "compute": 94.19919799547642,
+          "transfer": 75.91638529447593
+        },
+        "dp_split": {
+          "ratio": 0.3717578125,
+          "cpu": {
+            "compute": 122.85642601666041,
+            "transfer": 22.369515475594035,
+            "transfer_in": {
+              "time_ms": 11.260151414111107,
+              "size_bytes": 27677214.489375003
+            },
+            "transfer_out": {
+              "time_ms": 11.109364061482928,
+              "size_bytes": 27306582.359531254
+            },
+            "total": 145.22594149225444
+          },
+          "gpu": {
+            "compute": 110.59238399844617,
+            "transfer": 34.69248168898882,
+            "transfer_in": {
+              "time_ms": 17.463167549404304,
+              "size_bytes": 46772369.51062499
+            },
+            "transfer_out": {
+              "time_ms": 17.229314139584517,
+              "size_bytes": 46146029.64046874
+            },
+            "total": 145.284865687435
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 50.62778259811486,
+              "size_bytes": 146758612
+            },
+            "transfer_out": {
+              "time_ms": 25.288602696361068,
+              "size_bytes": 73306000
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "total_nodes": 42246,
+        "internal_edges": 76194,
+        "stage1": {
+          "time": 145.61849882326015,
+          "compute": 114.27833001478575,
+          "transfer": 34.84937545272212
+        },
+        "stage2": {
+          "time": 181.69991043785302,
+          "compute": 94.19919799547642,
+          "transfer": 87.50071244237661
+        },
+        "dp_split": {
+          "ratio": 0.4521484375,
+          "cpu": {
+            "compute": 114.27833001478575,
+            "transfer": 31.340168808474406,
+            "transfer_in": {
+              "time_ms": 15.766669879168857,
+              "size_bytes": 38754141.75
+            },
+            "transfer_out": {
+              "time_ms": 15.573498929305549,
+              "size_bytes": 38279331.6328125
+            },
+            "total": 145.61849882326015
+          },
+          "gpu": {
+            "compute": 110.59238399844617,
+            "transfer": 34.84937545272212,
+            "transfer_in": {
+              "time_ms": 17.532088024672873,
+              "size_bytes": 46956962.25
+            },
+            "transfer_out": {
+              "time_ms": 17.317287428049248,
+              "size_bytes": 46381652.3671875
+            },
+            "total": 145.44175945116828
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 58.35323994325049,
+              "size_bytes": 169152984
+            },
+            "transfer_out": {
+              "time_ms": 29.14747249912612,
+              "size_bytes": 84492000
+            }
+          }
+        }
+      },
+      {
+        "id": 4,
+        "total_nodes": 43088,
+        "internal_edges": 81394,
+        "stage1": {
+          "time": 146.25397113302228,
+          "compute": 114.27833001478575,
+          "transfer": 35.55600256912489
+        },
+        "stage2": {
+          "time": 183.44387672759598,
+          "compute": 94.19919799547642,
+          "transfer": 89.24467873211957
+        },
+        "dp_split": {
+          "ratio": 0.4521484375,
+          "cpu": {
+            "compute": 114.27833001478575,
+            "transfer": 31.97564111823652,
+            "transfer_in": {
+              "time_ms": 16.09174863454771,
+              "size_bytes": 39553178.46875
+            },
+            "transfer_out": {
+              "time_ms": 15.883892483688811,
+              "size_bytes": 39042272.4375
+            },
+            "total": 146.25397113302228
+          },
+          "gpu": {
+            "compute": 110.59238399844617,
+            "transfer": 35.55600256912489,
+            "transfer_in": {
+              "time_ms": 17.893566345582165,
+              "size_bytes": 47925125.53125
+            },
+            "transfer_out": {
+              "time_ms": 17.662436223542727,
+              "size_bytes": 47306079.5625
+            },
+            "total": 146.14838656757107
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 59.5162714262836,
+              "size_bytes": 172524352
+            },
+            "transfer_out": {
+              "time_ms": 29.728407305835965,
+              "size_bytes": 86176000
+            }
+          }
+        }
+      },
+      {
+        "id": 5,
+        "total_nodes": 40181,
+        "internal_edges": 80462,
+        "stage1": {
+          "time": 143.9962571617568,
+          "compute": 114.27833001478575,
+          "transfer": 33.403873163310635
+        },
+        "stage2": {
+          "time": 177.42284346835277,
+          "compute": 94.19919799547642,
+          "transfer": 83.22364547287636
+        },
+        "dp_split": {
+          "ratio": 0.4483203125,
+          "cpu": {
+            "compute": 114.27833001478575,
+            "transfer": 29.579201831042127,
+            "transfer_in": {
+              "time_ms": 14.892349590788324,
+              "size_bytes": 36605080.936875
+            },
+            "transfer_out": {
+              "time_ms": 14.686852240253804,
+              "size_bytes": 36099972.78703125
+            },
+            "total": 143.85753184582788
+          },
+          "gpu": {
+            "compute": 110.59238399844617,
+            "transfer": 33.403873163310635,
+            "transfer_in": {
+              "time_ms": 16.817970940389223,
+              "size_bytes": 45044311.06312501
+            },
+            "transfer_out": {
+              "time_ms": 16.585902222921412,
+              "size_bytes": 44422751.21296876
+            },
+            "total": 143.9962571617568
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 55.5009121374745,
+              "size_bytes": 160884724
+            },
+            "transfer_out": {
+              "time_ms": 27.722733335401852,
+              "size_bytes": 80362000
+            }
+          }
+        }
+      },
+      {
+        "id": 6,
+        "total_nodes": 40572,
+        "internal_edges": 88834,
+        "stage1": {
+          "time": 144.3463199117737,
+          "compute": 114.27833001478575,
+          "transfer": 33.753935913327524
+        },
+        "stage2": {
+          "time": 178.2326900470814,
+          "compute": 94.19919799547642,
+          "transfer": 84.03349205160498
+        },
+        "dp_split": {
+          "ratio": 0.4483203125,
+          "cpu": {
+            "compute": 114.27833001478575,
+            "transfer": 29.88918315223969,
+            "transfer_in": {
+              "time_ms": 15.05941363202921,
+              "size_bytes": 37015720.82374999
+            },
+            "transfer_out": {
+              "time_ms": 14.82976952021048,
+              "size_bytes": 36451260.44437499
+            },
+            "total": 144.16751316702545
+          },
+          "gpu": {
+            "compute": 110.59238399844617,
+            "transfer": 33.753935913327524,
+            "transfer_in": {
+              "time_ms": 17.006636817029083,
+              "size_bytes": 45549623.17625001
+            },
+            "transfer_out": {
+              "time_ms": 16.747299096298438,
+              "size_bytes": 44855027.55562501
+            },
+            "total": 144.3463199117737
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 56.04098970263596,
+              "size_bytes": 162450288
+            },
+            "transfer_out": {
+              "time_ms": 27.992502348969012,
+              "size_bytes": 81144000
+            }
+          }
+        }
+      }
+    ],
+    "avg_utilization": {
+      "cpu": 0.8076742191526429,
+      "gpu": 0.8069191486324836,
+      "npu": 0.8730979154502095
     }
   },
   "K=8": {
@@ -2345,6 +4106,1009 @@
       "cpu": 0.7963941731433338,
       "gpu": 0.8426554155868169,
       "npu": 0.8569827939868307
+    }
+  },
+  "K=9": {
+    "k": 9,
+    "num_partitions": 9,
+    "optimal_order": [
+      1,
+      6,
+      0,
+      3,
+      8,
+      5,
+      4,
+      7,
+      2
+    ],
+    "makespan_ms": 1410.6562366800563,
+    "cycle_times": [
+      107.9002343953143,
+      137.27188314381326,
+      120.02959577714265,
+      141.38325260359923,
+      143.89924680295977,
+      166.3376800684664,
+      146.9806666274723,
+      150.05751723714258,
+      206.86917127985518,
+      89.9269887442905
+    ],
+    "cycle_device_times": [
+      {
+        "cycle_time": 107.9002343953143,
+        "stage1_subgraph_id": 1,
+        "stage2_subgraph_id": -1,
+        "dp_split_ratio": 0.43683593749999994,
+        "cpu": {
+          "compute": 85.6231960048899,
+          "transfer": 22.277038390424387,
+          "transfer_in": {
+            "time_ms": 11.203495633374075,
+            "size_bytes": 27537955.776249997
+          },
+          "transfer_out": {
+            "time_ms": 11.073542757050314,
+            "size_bytes": 27218534.349374995
+          },
+          "total": 107.9002343953143,
+          "utilization": 1.0
+        },
+        "gpu": {
+          "compute": 81.40551798511297,
+          "transfer": 26.3563838900563,
+          "transfer_in": {
+            "time_ms": 13.255066793380486,
+            "size_bytes": 35501628.22375001
+          },
+          "transfer_out": {
+            "time_ms": 13.101317096675816,
+            "size_bytes": 35089833.650625005
+          },
+          "total": 107.76190187516926,
+          "utilization": 0.998717959039475
+        },
+        "npu": {
+          "compute": 0.0,
+          "transfer": 0.0,
+          "transfer_in": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "transfer_out": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "total": 0.0,
+          "utilization": 0.0
+        }
+      },
+      {
+        "cycle_time": 137.27188314381326,
+        "stage1_subgraph_id": 6,
+        "stage2_subgraph_id": 1,
+        "dp_split_ratio": 0.43683593749999994,
+        "cpu": {
+          "compute": 85.6231960048899,
+          "transfer": 23.184960455048465,
+          "transfer_in": {
+            "time_ms": 11.646636619329984,
+            "size_bytes": 28627186.965624996
+          },
+          "transfer_out": {
+            "time_ms": 11.538323835718481,
+            "size_bytes": 28360956.429843746
+          },
+          "total": 108.80815645993837,
+          "utilization": 0.7926470735885893
+        },
+        "gpu": {
+          "compute": 81.40551798511297,
+          "transfer": 27.43056359285604,
+          "transfer_in": {
+            "time_ms": 13.779355244052288,
+            "size_bytes": 36905853.034375
+          },
+          "transfer_out": {
+            "time_ms": 13.651208348803753,
+            "size_bytes": 36562631.57015625
+          },
+          "total": 108.836081577969,
+          "utilization": 0.7928505028516771
+        },
+        "npu": {
+          "compute": 72.87354599335231,
+          "transfer": 64.39833715046095,
+          "transfer_in": {
+            "time_ms": 42.94652597442466,
+            "size_bytes": 124492368
+          },
+          "transfer_out": {
+            "time_ms": 21.451811176036294,
+            "size_bytes": 62184000
+          },
+          "total": 137.27188314381326,
+          "utilization": 1.0
+        }
+      },
+      {
+        "cycle_time": 120.02959577714265,
+        "stage1_subgraph_id": 0,
+        "stage2_subgraph_id": 6,
+        "dp_split_ratio": 0.43683593749999994,
+        "cpu": {
+          "compute": 85.6231960048899,
+          "transfer": 23.67376593939354,
+          "transfer_in": {
+            "time_ms": 11.893257327051034,
+            "size_bytes": 29233375.459374998
+          },
+          "transfer_out": {
+            "time_ms": 11.780508612342507,
+            "size_bytes": 28956241.498593748
+          },
+          "total": 109.29696194428345,
+          "utilization": 0.9105834376649378
+        },
+        "gpu": {
+          "compute": 81.40551798511297,
+          "transfer": 28.00887857203665,
+          "transfer_in": {
+            "time_ms": 14.07113685047657,
+            "size_bytes": 37687344.540625006
+          },
+          "transfer_out": {
+            "time_ms": 13.937741721560078,
+            "size_bytes": 37330066.50140626
+          },
+          "total": 109.41439655714962,
+          "utilization": 0.9115618181394018
+        },
+        "npu": {
+          "compute": 52.928317999467254,
+          "transfer": 67.10127777767539,
+          "transfer_in": {
+            "time_ms": 44.749086645871465,
+            "size_bytes": 129717588
+          },
+          "transfer_out": {
+            "time_ms": 22.352191131803934,
+            "size_bytes": 64794000
+          },
+          "total": 120.02959577714265,
+          "utilization": 1.0
+        }
+      },
+      {
+        "cycle_time": 141.38325260359923,
+        "stage1_subgraph_id": 3,
+        "stage2_subgraph_id": 0,
+        "dp_split_ratio": 0.43683593749999994,
+        "cpu": {
+          "compute": 85.6231960048899,
+          "transfer": 23.88221915663395,
+          "transfer_in": {
+            "time_ms": 11.999850476476043,
+            "size_bytes": 29495379.170624997
+          },
+          "transfer_out": {
+            "time_ms": 11.882368680157906,
+            "size_bytes": 29206611.395156246
+          },
+          "total": 109.50541516152386,
+          "utilization": 0.7745289003114655
+        },
+        "gpu": {
+          "compute": 81.40551798511297,
+          "transfer": 28.25550350127622,
+          "transfer_in": {
+            "time_ms": 14.197249214115688,
+            "size_bytes": 38025116.829375006
+          },
+          "transfer_out": {
+            "time_ms": 14.058254287160532,
+            "size_bytes": 37652840.60484376
+          },
+          "total": 109.66102148638919,
+          "utilization": 0.775629499724761
+        },
+        "npu": {
+          "compute": 72.87354599335231,
+          "transfer": 68.50970661024692,
+          "transfer_in": {
+            "time_ms": 45.68835197658705,
+            "size_bytes": 132440308
+          },
+          "transfer_out": {
+            "time_ms": 22.821354633659865,
+            "size_bytes": 66154000
+          },
+          "total": 141.38325260359923,
+          "utilization": 1.0
+        }
+      },
+      {
+        "cycle_time": 143.89924680295977,
+        "stage1_subgraph_id": 8,
+        "stage2_subgraph_id": 3,
+        "dp_split_ratio": 0.3679296875,
+        "cpu": {
+          "compute": 122.85642601666041,
+          "transfer": 21.042820786299348,
+          "transfer_in": {
+            "time_ms": 10.595007440744014,
+            "size_bytes": 26042304.643125
+          },
+          "transfer_out": {
+            "time_ms": 10.447813345555334,
+            "size_bytes": 25680504.66421875
+          },
+          "total": 143.89924680295977,
+          "utilization": 1.0
+        },
+        "gpu": {
+          "compute": 110.59238399844617,
+          "transfer": 33.1754112516995,
+          "transfer_in": {
+            "time_ms": 16.70373628284431,
+            "size_bytes": 44738351.356875
+          },
+          "transfer_out": {
+            "time_ms": 16.471674968855186,
+            "size_bytes": 44116811.33578125
+          },
+          "total": 143.76779525014567,
+          "utilization": 0.9990865028432422
+        },
+        "npu": {
+          "compute": 72.87354599335231,
+          "transfer": 69.10207520747552,
+          "transfer_in": {
+            "time_ms": 46.08339592450566,
+            "size_bytes": 133585452
+          },
+          "transfer_out": {
+            "time_ms": 23.01867928296986,
+            "size_bytes": 66726000
+          },
+          "total": 141.97562120082785,
+          "utilization": 0.9866321357139143
+        }
+      },
+      {
+        "cycle_time": 166.3376800684664,
+        "stage1_subgraph_id": 5,
+        "stage2_subgraph_id": 8,
+        "dp_split_ratio": 0.3679296875,
+        "cpu": {
+          "compute": 122.85642601666041,
+          "transfer": 21.266747890493683,
+          "transfer_in": {
+            "time_ms": 10.704344269650452,
+            "size_bytes": 26311052.260625
+          },
+          "transfer_out": {
+            "time_ms": 10.562403620843229,
+            "size_bytes": 25962165.14203125
+          },
+          "total": 144.1231739071541,
+          "utilization": 0.866449344777632
+        },
+        "gpu": {
+          "compute": 110.59238399844617,
+          "transfer": 33.52844727512493,
+          "transfer_in": {
+            "time_ms": 16.87611309015379,
+            "size_bytes": 45200035.739375
+          },
+          "transfer_out": {
+            "time_ms": 16.652334184971142,
+            "size_bytes": 44600678.85796875
+          },
+          "total": 144.1208312735711,
+          "utilization": 0.8664352611762374
+        },
+        "npu": {
+          "compute": 94.19919799547642,
+          "transfer": 72.13848207298999,
+          "transfer_in": {
+            "time_ms": 48.108341475724835,
+            "size_bytes": 139455316
+          },
+          "transfer_out": {
+            "time_ms": 24.030140597265152,
+            "size_bytes": 69658000
+          },
+          "total": 166.3376800684664,
+          "utilization": 1.0
+        }
+      },
+      {
+        "cycle_time": 146.9806666274723,
+        "stage1_subgraph_id": 4,
+        "stage2_subgraph_id": 5,
+        "dp_split_ratio": 0.3947265625,
+        "cpu": {
+          "compute": 122.85642601666041,
+          "transfer": 24.124240610811878,
+          "transfer_in": {
+            "time_ms": 12.131538497633635,
+            "size_bytes": 29819065.546875
+          },
+          "transfer_out": {
+            "time_ms": 11.992702113178243,
+            "size_bytes": 29477808.64453125
+          },
+          "total": 146.9806666274723,
+          "utilization": 1.0
+        },
+        "gpu": {
+          "compute": 110.59238399844617,
+          "transfer": 33.94850953138088,
+          "transfer_in": {
+            "time_ms": 17.07194257267728,
+            "size_bytes": 45724534.453125
+          },
+          "transfer_out": {
+            "time_ms": 16.8765669587036,
+            "size_bytes": 45201251.35546875
+          },
+          "total": 144.54089352982703,
+          "utilization": 0.9834007209680921
+        },
+        "npu": {
+          "compute": 72.87354599335231,
+          "transfer": 72.92968768187575,
+          "transfer_in": {
+            "time_ms": 48.63598758797976,
+            "size_bytes": 140984844
+          },
+          "transfer_out": {
+            "time_ms": 24.293700093895986,
+            "size_bytes": 70422000
+          },
+          "total": 145.80323367522806,
+          "utilization": 0.9919891984486063
+        }
+      },
+      {
+        "cycle_time": 150.05751723714258,
+        "stage1_subgraph_id": 7,
+        "stage2_subgraph_id": 4,
+        "dp_split_ratio": 0.40238281249999996,
+        "cpu": {
+          "compute": 122.85642601666041,
+          "transfer": 23.197616156884685,
+          "transfer_in": {
+            "time_ms": 11.668780071035924,
+            "size_bytes": 28681615.102499995
+          },
+          "transfer_out": {
+            "time_ms": 11.528836085848763,
+            "size_bytes": 28337635.740937497
+          },
+          "total": 146.0540421735451,
+          "utilization": 0.9733203964898965
+        },
+        "gpu": {
+          "compute": 110.59238399844617,
+          "transfer": 31.618321653749895,
+          "transfer_in": {
+            "time_ms": 15.904532564799023,
+            "size_bytes": 42597808.8975
+          },
+          "transfer_out": {
+            "time_ms": 15.713789088950874,
+            "size_bytes": 42086932.2590625
+          },
+          "total": 142.21070565219605,
+          "utilization": 0.947707974052737
+        },
+        "npu": {
+          "compute": 72.87354599335231,
+          "transfer": 77.18397124379028,
+          "transfer_in": {
+            "time_ms": 51.47312139575888,
+            "size_bytes": 149209060
+          },
+          "transfer_out": {
+            "time_ms": 25.710849848031405,
+            "size_bytes": 74530000
+          },
+          "total": 150.05751723714258,
+          "utilization": 1.0
+        }
+      },
+      {
+        "cycle_time": 206.86917127985518,
+        "stage1_subgraph_id": 2,
+        "stage2_subgraph_id": 7,
+        "dp_split_ratio": 0.4406640625,
+        "cpu": {
+          "compute": 192.6137779839337,
+          "transfer": 14.255393295921488,
+          "transfer_in": {
+            "time_ms": 7.2581501071787775,
+            "size_bytes": 17840379.75375
+          },
+          "transfer_out": {
+            "time_ms": 6.9972431887427105,
+            "size_bytes": 17199076.055625
+          },
+          "total": 206.86917127985518,
+          "utilization": 1.0
+        },
+        "gpu": {
+          "compute": 124.7150620026514,
+          "transfer": 16.605658078868352,
+          "transfer_in": {
+            "time_ms": 8.45479015997373,
+            "size_bytes": 22644836.24625
+          },
+          "transfer_out": {
+            "time_ms": 8.150867918894622,
+            "size_bytes": 21830827.944375
+          },
+          "total": 141.32072008151974,
+          "utilization": 0.6831405530712903
+        },
+        "npu": {
+          "compute": 72.87354599335231,
+          "transfer": 72.78677357974716,
+          "transfer_in": {
+            "time_ms": 48.54067978236303,
+            "size_bytes": 140708568
+          },
+          "transfer_out": {
+            "time_ms": 24.246093797384134,
+            "size_bytes": 70284000
+          },
+          "total": 145.66031957309946,
+          "utilization": 0.7041180600856586
+        }
+      },
+      {
+        "cycle_time": 89.9269887442905,
+        "stage1_subgraph_id": -1,
+        "stage2_subgraph_id": 2,
+        "dp_split_ratio": 0.0,
+        "cpu": {
+          "compute": 0.0,
+          "transfer": 0.0,
+          "transfer_in": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "transfer_out": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "total": 0.0,
+          "utilization": 0.0
+        },
+        "gpu": {
+          "compute": 0.0,
+          "transfer": 0.0,
+          "transfer_in": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "transfer_out": {
+            "time_ms": 0.0,
+            "size_bytes": 0.0
+          },
+          "total": 0.0,
+          "utilization": 0.0
+        },
+        "npu": {
+          "compute": 49.58793000434525,
+          "transfer": 40.339058739945244,
+          "transfer_in": {
+            "time_ms": 26.901664089730307,
+            "size_bytes": 77981904
+          },
+          "transfer_out": {
+            "time_ms": 13.437394650214939,
+            "size_bytes": 38952000
+          },
+          "total": 89.9269887442905,
+          "utilization": 1.0
+        }
+      }
+    ],
+    "subgraphs": [
+      {
+        "id": 0,
+        "total_nodes": 33077,
+        "internal_edges": 47920,
+        "stage1": {
+          "time": 109.41439655714962,
+          "compute": 85.6231960048899,
+          "transfer": 28.00887857203665
+        },
+        "stage2": {
+          "time": 141.38325260359923,
+          "compute": 72.87354599335231,
+          "transfer": 68.50970661024692
+        },
+        "dp_split": {
+          "ratio": 0.43683593749999994,
+          "cpu": {
+            "compute": 85.6231960048899,
+            "transfer": 23.67376593939354,
+            "transfer_in": {
+              "time_ms": 11.893257327051034,
+              "size_bytes": 29233375.459374998
+            },
+            "transfer_out": {
+              "time_ms": 11.780508612342507,
+              "size_bytes": 28956241.498593748
+            },
+            "total": 109.29696194428345
+          },
+          "gpu": {
+            "compute": 81.40551798511297,
+            "transfer": 28.00887857203665,
+            "transfer_in": {
+              "time_ms": 14.07113685047657,
+              "size_bytes": 37687344.540625006
+            },
+            "transfer_out": {
+              "time_ms": 13.937741721560078,
+              "size_bytes": 37330066.50140626
+            },
+            "total": 109.41439655714962
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 45.68835197658705,
+              "size_bytes": 132440308
+            },
+            "transfer_out": {
+              "time_ms": 22.821354633659865,
+              "size_bytes": 66154000
+            }
+          }
+        }
+      },
+      {
+        "id": 1,
+        "total_nodes": 31092,
+        "internal_edges": 53474,
+        "stage1": {
+          "time": 107.9002343953143,
+          "compute": 85.6231960048899,
+          "transfer": 26.3563838900563
+        },
+        "stage2": {
+          "time": 137.27188314381326,
+          "compute": 72.87354599335231,
+          "transfer": 64.39833715046095
+        },
+        "dp_split": {
+          "ratio": 0.43683593749999994,
+          "cpu": {
+            "compute": 85.6231960048899,
+            "transfer": 22.277038390424387,
+            "transfer_in": {
+              "time_ms": 11.203495633374075,
+              "size_bytes": 27537955.776249997
+            },
+            "transfer_out": {
+              "time_ms": 11.073542757050314,
+              "size_bytes": 27218534.349374995
+            },
+            "total": 107.9002343953143
+          },
+          "gpu": {
+            "compute": 81.40551798511297,
+            "transfer": 26.3563838900563,
+            "transfer_in": {
+              "time_ms": 13.255066793380486,
+              "size_bytes": 35501628.22375001
+            },
+            "transfer_out": {
+              "time_ms": 13.101317096675816,
+              "size_bytes": 35089833.650625005
+            },
+            "total": 107.76190187516926
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 42.94652597442466,
+              "size_bytes": 124492368
+            },
+            "transfer_out": {
+              "time_ms": 21.451811176036294,
+              "size_bytes": 62184000
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "total_nodes": 19476,
+        "internal_edges": 95826,
+        "stage1": {
+          "time": 206.86917127985518,
+          "compute": 192.6137779839337,
+          "transfer": 16.605658078868352
+        },
+        "stage2": {
+          "time": 89.9269887442905,
+          "compute": 49.58793000434525,
+          "transfer": 40.339058739945244
+        },
+        "dp_split": {
+          "ratio": 0.4406640625,
+          "cpu": {
+            "compute": 192.6137779839337,
+            "transfer": 14.255393295921488,
+            "transfer_in": {
+              "time_ms": 7.2581501071787775,
+              "size_bytes": 17840379.75375
+            },
+            "transfer_out": {
+              "time_ms": 6.9972431887427105,
+              "size_bytes": 17199076.055625
+            },
+            "total": 206.86917127985518
+          },
+          "gpu": {
+            "compute": 124.7150620026514,
+            "transfer": 16.605658078868352,
+            "transfer_in": {
+              "time_ms": 8.45479015997373,
+              "size_bytes": 22644836.24625
+            },
+            "transfer_out": {
+              "time_ms": 8.150867918894622,
+              "size_bytes": 21830827.944375
+            },
+            "total": 141.32072008151974
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 26.901664089730307,
+              "size_bytes": 77981904
+            },
+            "transfer_out": {
+              "time_ms": 13.437394650214939,
+              "size_bytes": 38952000
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "total_nodes": 33363,
+        "internal_edges": 49656,
+        "stage1": {
+          "time": 109.66102148638919,
+          "compute": 85.6231960048899,
+          "transfer": 28.25550350127622
+        },
+        "stage2": {
+          "time": 141.97562120082785,
+          "compute": 72.87354599335231,
+          "transfer": 69.10207520747552
+        },
+        "dp_split": {
+          "ratio": 0.43683593749999994,
+          "cpu": {
+            "compute": 85.6231960048899,
+            "transfer": 23.88221915663395,
+            "transfer_in": {
+              "time_ms": 11.999850476476043,
+              "size_bytes": 29495379.170624997
+            },
+            "transfer_out": {
+              "time_ms": 11.882368680157906,
+              "size_bytes": 29206611.395156246
+            },
+            "total": 109.50541516152386
+          },
+          "gpu": {
+            "compute": 81.40551798511297,
+            "transfer": 28.25550350127622,
+            "transfer_in": {
+              "time_ms": 14.197249214115688,
+              "size_bytes": 38025116.829375006
+            },
+            "transfer_out": {
+              "time_ms": 14.058254287160532,
+              "size_bytes": 37652840.60484376
+            },
+            "total": 109.66102148638919
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 46.08339592450566,
+              "size_bytes": 133585452
+            },
+            "transfer_out": {
+              "time_ms": 23.01867928296986,
+              "size_bytes": 66726000
+            }
+          }
+        }
+      },
+      {
+        "id": 4,
+        "total_nodes": 37265,
+        "internal_edges": 63350,
+        "stage1": {
+          "time": 146.9806666274723,
+          "compute": 122.85642601666041,
+          "transfer": 33.94850953138088
+        },
+        "stage2": {
+          "time": 150.05751723714258,
+          "compute": 72.87354599335231,
+          "transfer": 77.18397124379028
+        },
+        "dp_split": {
+          "ratio": 0.3947265625,
+          "cpu": {
+            "compute": 122.85642601666041,
+            "transfer": 24.124240610811878,
+            "transfer_in": {
+              "time_ms": 12.131538497633635,
+              "size_bytes": 29819065.546875
+            },
+            "transfer_out": {
+              "time_ms": 11.992702113178243,
+              "size_bytes": 29477808.64453125
+            },
+            "total": 146.9806666274723
+          },
+          "gpu": {
+            "compute": 110.59238399844617,
+            "transfer": 33.94850953138088,
+            "transfer_in": {
+              "time_ms": 17.07194257267728,
+              "size_bytes": 45724534.453125
+            },
+            "transfer_out": {
+              "time_ms": 16.8765669587036,
+              "size_bytes": 45201251.35546875
+            },
+            "total": 144.54089352982703
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 51.47312139575888,
+              "size_bytes": 149209060
+            },
+            "transfer_out": {
+              "time_ms": 25.710849848031405,
+              "size_bytes": 74530000
+            }
+          }
+        }
+      },
+      {
+        "id": 5,
+        "total_nodes": 35211,
+        "internal_edges": 68068,
+        "stage1": {
+          "time": 144.1231739071541,
+          "compute": 122.85642601666041,
+          "transfer": 33.52844727512493
+        },
+        "stage2": {
+          "time": 145.80323367522806,
+          "compute": 72.87354599335231,
+          "transfer": 72.92968768187575
+        },
+        "dp_split": {
+          "ratio": 0.3679296875,
+          "cpu": {
+            "compute": 122.85642601666041,
+            "transfer": 21.266747890493683,
+            "transfer_in": {
+              "time_ms": 10.704344269650452,
+              "size_bytes": 26311052.260625
+            },
+            "transfer_out": {
+              "time_ms": 10.562403620843229,
+              "size_bytes": 25962165.14203125
+            },
+            "total": 144.1231739071541
+          },
+          "gpu": {
+            "compute": 110.59238399844617,
+            "transfer": 33.52844727512493,
+            "transfer_in": {
+              "time_ms": 16.87611309015379,
+              "size_bytes": 45200035.739375
+            },
+            "transfer_out": {
+              "time_ms": 16.652334184971142,
+              "size_bytes": 44600678.85796875
+            },
+            "total": 144.1208312735711
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 48.63598758797976,
+              "size_bytes": 140984844
+            },
+            "transfer_out": {
+              "time_ms": 24.293700093895986,
+              "size_bytes": 70422000
+            }
+          }
+        }
+      },
+      {
+        "id": 6,
+        "total_nodes": 32397,
+        "internal_edges": 46190,
+        "stage1": {
+          "time": 108.836081577969,
+          "compute": 85.6231960048899,
+          "transfer": 27.43056359285604
+        },
+        "stage2": {
+          "time": 120.02959577714265,
+          "compute": 52.928317999467254,
+          "transfer": 67.10127777767539
+        },
+        "dp_split": {
+          "ratio": 0.43683593749999994,
+          "cpu": {
+            "compute": 85.6231960048899,
+            "transfer": 23.184960455048465,
+            "transfer_in": {
+              "time_ms": 11.646636619329984,
+              "size_bytes": 28627186.965624996
+            },
+            "transfer_out": {
+              "time_ms": 11.538323835718481,
+              "size_bytes": 28360956.429843746
+            },
+            "total": 108.80815645993837
+          },
+          "gpu": {
+            "compute": 81.40551798511297,
+            "transfer": 27.43056359285604,
+            "transfer_in": {
+              "time_ms": 13.779355244052288,
+              "size_bytes": 36905853.034375
+            },
+            "transfer_out": {
+              "time_ms": 13.651208348803753,
+              "size_bytes": 36562631.57015625
+            },
+            "total": 108.836081577969
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 44.749086645871465,
+              "size_bytes": 129717588
+            },
+            "transfer_out": {
+              "time_ms": 22.352191131803934,
+              "size_bytes": 64794000
+            }
+          }
+        }
+      },
+      {
+        "id": 7,
+        "total_nodes": 35142,
+        "internal_edges": 62214,
+        "stage1": {
+          "time": 146.0540421735451,
+          "compute": 122.85642601666041,
+          "transfer": 31.618321653749895
+        },
+        "stage2": {
+          "time": 145.66031957309946,
+          "compute": 72.87354599335231,
+          "transfer": 72.78677357974716
+        },
+        "dp_split": {
+          "ratio": 0.40238281249999996,
+          "cpu": {
+            "compute": 122.85642601666041,
+            "transfer": 23.197616156884685,
+            "transfer_in": {
+              "time_ms": 11.668780071035924,
+              "size_bytes": 28681615.102499995
+            },
+            "transfer_out": {
+              "time_ms": 11.528836085848763,
+              "size_bytes": 28337635.740937497
+            },
+            "total": 146.0540421735451
+          },
+          "gpu": {
+            "compute": 110.59238399844617,
+            "transfer": 31.618321653749895,
+            "transfer_in": {
+              "time_ms": 15.904532564799023,
+              "size_bytes": 42597808.8975
+            },
+            "transfer_out": {
+              "time_ms": 15.713789088950874,
+              "size_bytes": 42086932.2590625
+            },
+            "total": 142.21070565219605
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 48.54067978236303,
+              "size_bytes": 140708568
+            },
+            "transfer_out": {
+              "time_ms": 24.246093797384134,
+              "size_bytes": 70284000
+            }
+          }
+        }
+      },
+      {
+        "id": 8,
+        "total_nodes": 34829,
+        "internal_edges": 70166,
+        "stage1": {
+          "time": 143.89924680295977,
+          "compute": 122.85642601666041,
+          "transfer": 33.1754112516995
+        },
+        "stage2": {
+          "time": 166.3376800684664,
+          "compute": 94.19919799547642,
+          "transfer": 72.13848207298999
+        },
+        "dp_split": {
+          "ratio": 0.3679296875,
+          "cpu": {
+            "compute": 122.85642601666041,
+            "transfer": 21.042820786299348,
+            "transfer_in": {
+              "time_ms": 10.595007440744014,
+              "size_bytes": 26042304.643125
+            },
+            "transfer_out": {
+              "time_ms": 10.447813345555334,
+              "size_bytes": 25680504.66421875
+            },
+            "total": 143.89924680295977
+          },
+          "gpu": {
+            "compute": 110.59238399844617,
+            "transfer": 33.1754112516995,
+            "transfer_in": {
+              "time_ms": 16.70373628284431,
+              "size_bytes": 44738351.356875
+            },
+            "transfer_out": {
+              "time_ms": 16.471674968855186,
+              "size_bytes": 44116811.33578125
+            },
+            "total": 143.76779525014567
+          },
+          "npu": {
+            "transfer_in": {
+              "time_ms": 48.108341475724835,
+              "size_bytes": 139455316
+            },
+            "transfer_out": {
+              "time_ms": 24.030140597265152,
+              "size_bytes": 69658000
+            }
+          }
+        }
+      }
+    ],
+    "avg_utilization": {
+      "cpu": 0.8672822172688751,
+      "gpu": 0.8163819911180338,
+      "npu": 0.8779219627159213
     }
   },
   "K=10": {
