@@ -234,14 +234,16 @@ def export_block07_model():
 # Measurement Functions
 # ============================================================================
 
-def measure_detailed(ir_path, device, dummy_input, set_every_iter=True,
+def measure_detailed(ir_path, device, dummy_input, mode='set_every_iter',
                      num_warmup=NUM_WARMUP, num_iterations=NUM_ITERATIONS):
     """
     详细测量传输时间
 
     Args:
-        set_every_iter: True = 每次循环都 set_input_tensor (包含传输)
-                        False = 只 set 一次 (可能用 GPU cache)
+        mode:
+            'set_every_iter' = 同一份数据，每次循环都 set_input_tensor
+            'set_once'       = 同一份数据，只 set 一次
+            'new_data'       = 每次生成新随机数据 + set_tensor (强制传输)
 
     Returns:
         dict:
@@ -263,6 +265,10 @@ def measure_detailed(ir_path, device, dummy_input, set_every_iter=True,
         else:
             inputs = [dummy_input.numpy()]
 
+        # 保存 shape 和 dtype 用于生成新数据
+        input_shapes = [inp.shape for inp in inputs]
+        input_dtypes = [inp.dtype for inp in inputs]
+
         infer_request = compiled_model.create_infer_request()
 
         # Warmup (always set tensor)
@@ -273,8 +279,8 @@ def measure_detailed(ir_path, device, dummy_input, set_every_iter=True,
             infer_request.wait()
             _ = infer_request.get_output_tensor(0).data
 
-        # 如果 set_every_iter=False，在测量前只设置一次
-        if not set_every_iter:
+        # 如果 mode='set_once'，在测量前只设置一次
+        if mode == 'set_once':
             for i in range(len(inputs)):
                 infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
 
@@ -283,11 +289,22 @@ def measure_detailed(ir_path, device, dummy_input, set_every_iter=True,
         output_times = []
         total_times = []
 
-        for _ in range(num_iterations):
-            # 根据参数决定是否每次都 set tensor
-            if set_every_iter:
+        for iter_idx in range(num_iterations):
+            if mode == 'set_every_iter':
+                # 同一份数据，每次都 set
                 for i in range(len(inputs)):
                     infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
+            elif mode == 'new_data':
+                # 每次生成新随机数据（相同 shape），强制传输
+                for i in range(len(inputs)):
+                    if input_dtypes[i] == np.int64:
+                        # edge_index 等整数类型
+                        new_data = np.random.randint(0, max(input_shapes[i]), input_shapes[i], dtype=input_dtypes[i])
+                    else:
+                        # float 类型
+                        new_data = np.random.randn(*input_shapes[i]).astype(input_dtypes[i])
+                    infer_request.set_input_tensor(i, ov.Tensor(new_data))
+            # mode == 'set_once': 不做任何事
 
             t_start = time.perf_counter()
             infer_request.start_async()
@@ -316,28 +333,45 @@ def measure_detailed(ir_path, device, dummy_input, set_every_iter=True,
         return {'failed': True, 'error': str(e)}
 
 
-def print_result(name, result_set, result_cache):
-    """打印对比结果"""
+def print_result(name, result_set, result_cache, result_new=None):
+    """打印对比结果（三种模式）"""
     if result_set['failed']:
         print(f"  {name}: FAILED - {result_set.get('error', '')[:60]}")
         return
 
     print(f"\n  {name}:")
-    print(f"    [每次set tensor] 输入+计算: {result_set['compute_ms']:7.2f}ms, "
-          f"输出传回: {result_set['output_ms']:6.3f}ms, "
+    print(f"    [A] 同数据+每次set:  输入+计算: {result_set['compute_ms']:7.2f}ms, "
+          f"输出: {result_set['output_ms']:6.3f}ms, "
           f"总计: {result_set['total_ms']:7.2f}ms")
-    print(f"    [只set一次]     输入+计算: {result_cache['compute_ms']:7.2f}ms, "
-          f"输出传回: {result_cache['output_ms']:6.3f}ms, "
+    print(f"    [B] 同数据+只set1次: 输入+计算: {result_cache['compute_ms']:7.2f}ms, "
+          f"输出: {result_cache['output_ms']:6.3f}ms, "
           f"总计: {result_cache['total_ms']:7.2f}ms")
 
-    diff = result_set['compute_ms'] - result_cache['compute_ms']
-    pct = diff / result_set['compute_ms'] * 100 if result_set['compute_ms'] > 0 else 0
-    print(f"    → compute 差异: {diff:+.2f}ms ({pct:+.1f}%)")
+    if result_new and not result_new['failed']:
+        print(f"    [C] 新数据+每次set:  输入+计算: {result_new['compute_ms']:7.2f}ms, "
+              f"输出: {result_new['output_ms']:6.3f}ms, "
+              f"总计: {result_new['total_ms']:7.2f}ms")
 
-    if diff > 1.0:
-        print(f"    → 结论: 每次 set 确实触发了 CPU→GPU 数据传输")
-    else:
-        print(f"    → 结论: 差异小，可能 GPU 有缓存机制")
+    # 分析
+    diff_ab = result_set['compute_ms'] - result_cache['compute_ms']
+    pct_ab = diff_ab / result_set['compute_ms'] * 100 if result_set['compute_ms'] > 0 else 0
+
+    print(f"\n    分析:")
+    print(f"    A vs B (同数据): {diff_ab:+.2f}ms ({pct_ab:+.1f}%)")
+
+    if result_new and not result_new['failed']:
+        diff_ca = result_new['compute_ms'] - result_set['compute_ms']
+        pct_ca = diff_ca / result_set['compute_ms'] * 100 if result_set['compute_ms'] > 0 else 0
+        print(f"    C vs A (新数据vs同数据): {diff_ca:+.2f}ms ({pct_ca:+.1f}%)")
+
+        # 结论
+        if abs(pct_ab) < 5 and pct_ca > 10:
+            print(f"    → 结论: 相同数据被优化跳过传输，新数据触发真实传输")
+            print(f"    → 传输时间估算: ~{diff_ca:.2f}ms")
+        elif abs(pct_ab) < 5 and abs(pct_ca) < 5:
+            print(f"    → 结论: 传输时间很小，或被计算完全掩盖")
+        else:
+            print(f"    → 结论: 需要进一步分析")
 
 
 # ============================================================================
@@ -392,9 +426,10 @@ def main():
         # Test Stage 3 (scatter_add - GPU bottleneck)
         if stage3_path.exists():
             dummy_input = generate_stage3_input(nodes, edges)
-            result_set = measure_detailed(stage3_path, 'GPU', dummy_input, set_every_iter=True)
-            result_cache = measure_detailed(stage3_path, 'GPU', dummy_input, set_every_iter=False)
-            print_result("Stage 3 (REDUCE_SUM/scatter_add) - GPU瓶颈", result_set, result_cache)
+            result_set = measure_detailed(stage3_path, 'GPU', dummy_input, mode='set_every_iter')
+            result_cache = measure_detailed(stage3_path, 'GPU', dummy_input, mode='set_once')
+            result_new = measure_detailed(stage3_path, 'GPU', dummy_input, mode='new_data')
+            print_result("Stage 3 (REDUCE_SUM/scatter_add) - GPU瓶颈", result_set, result_cache, result_new)
         else:
             print(f"\n  Stage 3: IR not found at {stage3_path}")
             print(f"           Run with --export to create")
@@ -402,9 +437,10 @@ def main():
         # Test Stage 6 (matmul - GPU擅长)
         if stage6_path.exists():
             dummy_input = generate_stage6_input(nodes)
-            result_set = measure_detailed(stage6_path, 'GPU', dummy_input, set_every_iter=True)
-            result_cache = measure_detailed(stage6_path, 'GPU', dummy_input, set_every_iter=False)
-            print_result("Stage 6 (TRANSFORM/matmul) - GPU擅长", result_set, result_cache)
+            result_set = measure_detailed(stage6_path, 'GPU', dummy_input, mode='set_every_iter')
+            result_cache = measure_detailed(stage6_path, 'GPU', dummy_input, mode='set_once')
+            result_new = measure_detailed(stage6_path, 'GPU', dummy_input, mode='new_data')
+            print_result("Stage 6 (TRANSFORM/matmul) - GPU擅长", result_set, result_cache, result_new)
         else:
             print(f"\n  Stage 6: IR not found at {stage6_path}")
             print(f"           Run with --export to create")
@@ -412,9 +448,10 @@ def main():
         # Test Fused Block 0 (stages 1-4)
         if block0_path.exists():
             dummy_input = generate_block0_input(nodes, edges)
-            result_set = measure_detailed(block0_path, 'GPU', dummy_input, set_every_iter=True)
-            result_cache = measure_detailed(block0_path, 'GPU', dummy_input, set_every_iter=False)
-            print_result("Fused 1-4 (Block0)", result_set, result_cache)
+            result_set = measure_detailed(block0_path, 'GPU', dummy_input, mode='set_every_iter')
+            result_cache = measure_detailed(block0_path, 'GPU', dummy_input, mode='set_once')
+            result_new = measure_detailed(block0_path, 'GPU', dummy_input, mode='new_data')
+            print_result("Fused 1-4 (Block0)", result_set, result_cache, result_new)
         else:
             print(f"\n  Fused 1-4: IR not found at {block0_path}")
             print(f"             Run with --export to create")
@@ -422,9 +459,10 @@ def main():
         # Test Fused Block 0-7 (stages 1-7)
         if block07_path.exists():
             dummy_input = generate_block07_input(nodes, edges)
-            result_set = measure_detailed(block07_path, 'GPU', dummy_input, set_every_iter=True)
-            result_cache = measure_detailed(block07_path, 'GPU', dummy_input, set_every_iter=False)
-            print_result("Fused 1-7 (Block0_7)", result_set, result_cache)
+            result_set = measure_detailed(block07_path, 'GPU', dummy_input, mode='set_every_iter')
+            result_cache = measure_detailed(block07_path, 'GPU', dummy_input, mode='set_once')
+            result_new = measure_detailed(block07_path, 'GPU', dummy_input, mode='new_data')
+            print_result("Fused 1-7 (Block0_7)", result_set, result_cache, result_new)
         else:
             print(f"\n  Fused 1-7: IR not found at {block07_path}")
             print(f"             Run with --export to create")
@@ -434,25 +472,23 @@ def main():
     print("解释")
     print(f"{'='*70}")
     print("""
-1. compute_ms = start_async() + wait()
-   - 包含: CPU→GPU 输入传输 + GPU 计算
-   - 不包含: GPU→CPU 输出传输
+测试三种模式:
+  [A] 同数据 + 每次 set_tensor  - 相同 numpy 数组，每次创建新 ov.Tensor
+  [B] 同数据 + 只 set 一次     - 相同 numpy 数组，warmup 后不再 set
+  [C] 新数据 + 每次 set_tensor  - 每次生成新随机数据（相同 shape）
 
-2. output_ms = get_output_tensor().data
-   - GPU→CPU 输出传输时间
+分析逻辑:
+  - A ≈ B, C > A  → OpenVINO 检测到相同数据，跳过传输；新数据触发真实传输
+  - A ≈ B ≈ C     → 传输时间很小，或被 GPU 计算完全掩盖
+  - A > B, C > A  → 每次 set 都有开销，新数据开销更大
 
-3. 每次set vs 只set一次:
-   - 差异大 → 每次 set 确实触发了数据传输
-   - 差异小 → GPU 可能缓存了输入数据
+时间组成:
+  - compute_ms = start_async() + wait() = CPU→GPU传输 + GPU计算
+  - output_ms  = get_output_tensor().data = GPU→CPU传输
 
-4. 为什么测试 Stage 3 (scatter_add):
-   - Stage 3 使用 scatter_add，GPU 需要原子操作，计算慢
-   - 计算时间短，数据传输时间占比更明显
-   - Stage 6 (matmul) GPU 擅长，计算快，传输被掩盖
-
-5. Pipeline 实际场景:
-   - 每个 stage 的输入都是新数据
-   - 应该用 "每次set" 的结果作为参考
+Pipeline 实际场景:
+  - 每个 stage 的输入都是新数据
+  - 应该参考 [C] 新数据模式的结果
 """)
 
 
