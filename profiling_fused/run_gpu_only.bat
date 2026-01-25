@@ -23,9 +23,21 @@ echo GPU Only Testing - FusedBlock0 (Stages 1-4)
 echo ========================================================================
 echo.
 
-REM Activate conda environment
+REM Try multiple conda paths
 echo Activating MIX environment...
-CALL "C:\Env\Anaconda\Scripts\activate.bat" MIX
+if exist "C:\Env\Anaconda\Scripts\activate.bat" (
+    CALL "C:\Env\Anaconda\Scripts\activate.bat" MIX
+) else if exist "%USERPROFILE%\anaconda3\Scripts\activate.bat" (
+    CALL "%USERPROFILE%\anaconda3\Scripts\activate.bat" MIX
+) else if exist "%USERPROFILE%\miniconda3\Scripts\activate.bat" (
+    CALL "%USERPROFILE%\miniconda3\Scripts\activate.bat" MIX
+) else if exist "C:\ProgramData\anaconda3\Scripts\activate.bat" (
+    CALL "C:\ProgramData\anaconda3\Scripts\activate.bat" MIX
+) else (
+    echo WARNING: Could not find conda. Please activate MIX environment manually.
+)
+
+cd /d "%~dp0"
 
 echo.
 echo Block 0 Configuration:
