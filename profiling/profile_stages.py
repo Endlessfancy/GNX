@@ -820,6 +820,8 @@ def main():
     parser.add_argument('--export-npu', action='store_true', help='Export NPU static models only')
     parser.add_argument('--measure', action='store_true', help='Measure CPU/GPU latencies only')
     parser.add_argument('--measure-cpugpu', action='store_true', help='Measure CPU/GPU latencies only (alias)')
+    parser.add_argument('--measure-gpu', action='store_true', help='Measure GPU latencies only')
+    parser.add_argument('--measure-cpu', action='store_true', help='Measure CPU latencies only')
     parser.add_argument('--merge-npu', action='store_true', help='Merge NPU results from profile_npu.py outputs')
     parser.add_argument('--analyze', action='store_true', help='Analyze and generate results only')
 
@@ -919,6 +921,38 @@ def main():
 
         if args.measure and not args.all:
             return
+
+    # ========================================================================
+    # Handle --measure-gpu (Measure GPU only)
+    # ========================================================================
+    if args.measure_gpu:
+        print("\n" + "=" * 70)
+        print("Measuring GPU Latencies Only")
+        print("=" * 70)
+
+        gpu_results = measure_all_latencies(test_cases, config, pu_list=['GPU'])
+        save_checkpoint(gpu_results, 'gpu')
+
+        print("\n✓ GPU measurements completed and saved!")
+        print(f"  Total: {len(gpu_results)} entries")
+        print("  Checkpoint: results/checkpoint_gpu.json")
+        return
+
+    # ========================================================================
+    # Handle --measure-cpu (Measure CPU only)
+    # ========================================================================
+    if args.measure_cpu:
+        print("\n" + "=" * 70)
+        print("Measuring CPU Latencies Only")
+        print("=" * 70)
+
+        cpu_results = measure_all_latencies(test_cases, config, pu_list=['CPU'])
+        save_checkpoint(cpu_results, 'cpu')
+
+        print("\n✓ CPU measurements completed and saved!")
+        print(f"  Total: {len(cpu_results)} entries")
+        print("  Checkpoint: results/checkpoint_cpu.json")
+        return
 
     # ========================================================================
     # Handle --analyze (Generate final results)
