@@ -51,9 +51,9 @@ def generate_dummy_input(num_nodes, num_edges, feature_dim=500):
 
 
 def measure_latency_openvino(ir_path, pu, dummy_input, num_warmup=10, num_iterations=50):
-    """Measure latency using OpenVINO"""
+    """Measure latency using OpenVINO async API (includes CPU↔GPU data transfer time)"""
     try:
-        import openvino.runtime as ov
+        import openvino as ov
 
         core = ov.Core()
         model = core.read_model(str(ir_path))
@@ -63,15 +63,26 @@ def measure_latency_openvino(ir_path, pu, dummy_input, num_warmup=10, num_iterat
         inputs = [t.numpy() if isinstance(t, torch.Tensor) else np.array(t)
                   for t in dummy_input]
 
-        # Warmup
-        for _ in range(num_warmup):
-            _ = compiled_model(inputs)
+        # Create infer request for async inference
+        infer_request = compiled_model.create_infer_request()
 
-        # Measure
+        # Warmup (set tensor each time to simulate real scenario)
+        for _ in range(num_warmup):
+            for i in range(len(inputs)):
+                infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
+            infer_request.start_async()
+            infer_request.wait()
+
+        # Measure using async API (set tensor each time to include CPU→GPU transfer)
         latencies = []
         for _ in range(num_iterations):
+            # Re-set input tensors to trigger data transfer
+            for i in range(len(inputs)):
+                infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
+
             start = time.perf_counter()
-            _ = compiled_model(inputs)
+            infer_request.start_async()
+            infer_request.wait()
             latencies.append((time.perf_counter() - start) * 1000)
 
         return {

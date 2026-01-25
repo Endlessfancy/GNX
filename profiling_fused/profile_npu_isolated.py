@@ -54,9 +54,9 @@ def remove_outliers_iqr(data, k=1.5):
 
 
 def measure_latency_openvino(ir_path, device, dummy_input, num_warmup=10, num_iterations=50):
-    """Measure latency using OpenVINO async API for more accurate timing"""
+    """Measure latency using OpenVINO async API (includes CPU↔NPU data transfer time)"""
     try:
-        import openvino.runtime as ov
+        import openvino as ov
 
         core = ov.Core()
         model = core.read_model(str(ir_path))
@@ -71,18 +71,20 @@ def measure_latency_openvino(ir_path, device, dummy_input, num_warmup=10, num_it
         # Create infer request for async inference
         infer_request = compiled_model.create_infer_request()
 
-        # Set input tensors
-        for i in range(len(inputs)):
-            infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
-
-        # Warmup
+        # Warmup (set tensor each time to simulate real scenario)
         for _ in range(num_warmup):
+            for i in range(len(inputs)):
+                infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
             infer_request.start_async()
             infer_request.wait()
 
-        # Measure using async API
+        # Measure using async API (set tensor each time to include CPU→NPU transfer)
         latencies = []
         for _ in range(num_iterations):
+            # Re-set input tensors to trigger data transfer
+            for i in range(len(inputs)):
+                infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
+
             start = time.perf_counter()
             infer_request.start_async()
             infer_request.wait()

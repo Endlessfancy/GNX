@@ -426,9 +426,9 @@ def measure_latency_pytorch(model, dummy_input, num_warmup=10, num_iterations=50
     }
 
 def measure_latency_openvino(ir_path, pu, dummy_input, num_warmup=10, num_iterations=50):
-    """使用OpenVINO测量延迟"""
+    """使用OpenVINO异步API测量延迟（包含完整的CPU↔GPU数据传输时间）"""
     try:
-        import openvino.runtime as ov
+        import openvino as ov
 
         core = ov.Core()
         model = core.read_model(str(ir_path))
@@ -442,15 +442,26 @@ def measure_latency_openvino(ir_path, pu, dummy_input, num_warmup=10, num_iterat
             inputs = [dummy_input.numpy() if isinstance(dummy_input, torch.Tensor)
                      else np.array(dummy_input)]
 
-        # 预热
-        for _ in range(num_warmup):
-            _ = compiled_model(inputs)
+        # 创建推理请求
+        infer_request = compiled_model.create_infer_request()
 
-        # 测量
+        # 预热（每次都重新设置tensor，模拟真实场景）
+        for _ in range(num_warmup):
+            for i in range(len(inputs)):
+                infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
+            infer_request.start_async()
+            infer_request.wait()
+
+        # 测量（每次都重新设置tensor，确保包含CPU→GPU传输时间）
         latencies = []
         for _ in range(num_iterations):
+            # 重新设置输入tensor，触发数据传输
+            for i in range(len(inputs)):
+                infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
+
             start = time.perf_counter()
-            _ = compiled_model(inputs)
+            infer_request.start_async()
+            infer_request.wait()
             latencies.append((time.perf_counter() - start) * 1000)  # ms
 
         return {
