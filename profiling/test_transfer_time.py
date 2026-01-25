@@ -44,6 +44,18 @@ NUM_ITERATIONS = 30
 # Input Generation
 # ============================================================================
 
+def generate_stage3_input(num_nodes, num_edges, feature_dim=FEATURE_DIM):
+    """Generate input for Stage 3 (REDUCE_SUM / scatter_add): messages, edge_index, num_nodes
+
+    Note: Stage 3 uses scatter_add which is a GPU bottleneck operation.
+    This makes transfer time more visible relative to compute time.
+    """
+    torch.manual_seed(42)
+    messages = torch.randn(num_edges, feature_dim)
+    edge_index = torch.randint(0, num_nodes, (2, num_edges))
+    return (messages, edge_index, torch.tensor(num_nodes))
+
+
 def generate_stage6_input(num_nodes, feature_dim=FEATURE_DIM):
     """Generate input for Stage 6 (TRANSFORM): mean_agg, x"""
     torch.manual_seed(42)
@@ -71,6 +83,42 @@ def generate_block07_input(num_nodes, num_edges, feature_dim=FEATURE_DIM):
 # ============================================================================
 # Model Export (if needed)
 # ============================================================================
+
+def export_stage3_model():
+    """Export Stage 3 model for GPU (scatter_add - GPU bottleneck)"""
+    from models.Model_sage import Stage3_ReduceSum
+
+    MODELS_DIR = PROFILING_DIR / 'exported_models'
+    MODELS_DIR.mkdir(parents=True, exist_ok=True)
+
+    model = Stage3_ReduceSum()
+    model.eval()
+
+    dummy_input = generate_stage3_input(5000, 50000)
+    onnx_path = MODELS_DIR / "stage3_gpu.onnx"
+
+    print(f"Exporting Stage 3 (scatter_add) to {onnx_path}...")
+    with torch.no_grad():
+        torch.onnx.export(
+            model, dummy_input, str(onnx_path),
+            input_names=['messages', 'edge_index', 'num_nodes'],
+            output_names=['output'],
+            dynamic_axes={
+                'messages': {0: 'num_edges'},
+                'edge_index': {1: 'num_edges'},
+                'output': {0: 'num_nodes'}
+            },
+            opset_version=17
+        )
+
+    ir_path = MODELS_DIR / "stage3_gpu.xml"
+    from openvino.tools import mo
+    from openvino import save_model
+    ov_model = mo.convert_model(str(onnx_path))
+    save_model(ov_model, str(ir_path))
+    print(f"  Exported to {ir_path}")
+    return ir_path
+
 
 def export_stage6_model():
     """Export Stage 6 model for GPU"""
@@ -312,6 +360,10 @@ def main():
     if args.export:
         print("\n--- Exporting Models ---")
         try:
+            export_stage3_model()
+        except Exception as e:
+            print(f"  Stage 3 export failed: {e}")
+        try:
             export_stage6_model()
         except Exception as e:
             print(f"  Stage 6 export failed: {e}")
@@ -325,6 +377,7 @@ def main():
             print(f"  Block 0-7 export failed: {e}")
 
     # Model paths
+    stage3_path = PROFILING_DIR / "exported_models" / "stage3_gpu.xml"
     stage6_path = PROFILING_DIR / "exported_models" / "stage6_gpu.xml"
     block0_path = PROFILING_FUSED_DIR / "exported_models" / "block0_fused_gpu.xml"
     block07_path = BASELINE_FUSED_DIR / "exported_models" / "fused_block0_7_gpu.xml"
@@ -336,12 +389,22 @@ def main():
         print(f"测试: {test_case['name']}")
         print(f"{'='*70}")
 
-        # Test Stage 6
+        # Test Stage 3 (scatter_add - GPU bottleneck)
+        if stage3_path.exists():
+            dummy_input = generate_stage3_input(nodes, edges)
+            result_set = measure_detailed(stage3_path, 'GPU', dummy_input, set_every_iter=True)
+            result_cache = measure_detailed(stage3_path, 'GPU', dummy_input, set_every_iter=False)
+            print_result("Stage 3 (REDUCE_SUM/scatter_add) - GPU瓶颈", result_set, result_cache)
+        else:
+            print(f"\n  Stage 3: IR not found at {stage3_path}")
+            print(f"           Run with --export to create")
+
+        # Test Stage 6 (matmul - GPU擅长)
         if stage6_path.exists():
             dummy_input = generate_stage6_input(nodes)
             result_set = measure_detailed(stage6_path, 'GPU', dummy_input, set_every_iter=True)
             result_cache = measure_detailed(stage6_path, 'GPU', dummy_input, set_every_iter=False)
-            print_result("Stage 6 (TRANSFORM)", result_set, result_cache)
+            print_result("Stage 6 (TRANSFORM/matmul) - GPU擅长", result_set, result_cache)
         else:
             print(f"\n  Stage 6: IR not found at {stage6_path}")
             print(f"           Run with --export to create")
@@ -382,7 +445,12 @@ def main():
    - 差异大 → 每次 set 确实触发了数据传输
    - 差异小 → GPU 可能缓存了输入数据
 
-4. Pipeline 实际场景:
+4. 为什么测试 Stage 3 (scatter_add):
+   - Stage 3 使用 scatter_add，GPU 需要原子操作，计算慢
+   - 计算时间短，数据传输时间占比更明显
+   - Stage 6 (matmul) GPU 擅长，计算快，传输被掩盖
+
+5. Pipeline 实际场景:
    - 每个 stage 的输入都是新数据
    - 应该用 "每次set" 的结果作为参考
 """)

@@ -41,6 +41,7 @@ echo.
 REM Check if models exist
 set NEED_EXPORT=0
 
+if not exist "exported_models\stage3_gpu.xml" set NEED_EXPORT=1
 if not exist "exported_models\stage6_gpu.xml" set NEED_EXPORT=1
 if not exist "..\profiling_fused\exported_models\block0_fused_gpu.xml" set NEED_EXPORT=1
 if not exist "..\experiments\baseline_fused1-7_profiling\exported_models\fused_block0_7_gpu.xml" set NEED_EXPORT=1
