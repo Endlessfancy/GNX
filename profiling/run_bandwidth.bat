@@ -1,12 +1,12 @@
 @echo off
 REM ========================================================================
-REM OpenVINO Bandwidth Measurement - CPU, GPU, NPU
+REM OpenVINO Bandwidth Measurement
 REM ========================================================================
 REM
-REM Measures input/output bandwidth for each device:
-REM   - Slice model: input[N] -> output[1] (input bandwidth)
-REM   - Identity model: input[N] -> output[N] (combined bandwidth)
-REM   - Derive output bandwidth from the two measurements
+REM Method:
+REM   - Identity model with separated timing
+REM   - Input bandwidth: start_async + wait
+REM   - Output bandwidth: get_output_tensor().data (direct measurement)
 
 setlocal EnableDelayedExpansion
 
@@ -32,32 +32,33 @@ if exist "C:\Env\Anaconda\Scripts\activate.bat" (
 cd /d "%~dp0"
 
 echo.
-echo Test Configuration:
-echo   Devices: CPU, GPU, NPU (if available)
-echo   Method: Slice + Identity models
-echo   CPU/GPU: Dynamic shapes (compile once)
-echo   NPU: Static shapes (compile per size)
+echo Method:
+echo   - Identity model with separated timing
+echo   - Input bandwidth: start_async + wait
+echo   - Output bandwidth: get_output_tensor().data (direct!)
 echo.
 
-echo Starting bandwidth measurement...
+echo ========================================================================
+echo Running Bandwidth Test
+echo ========================================================================
 echo.
 
 python measure_bandwidth.py
 
 if errorlevel 1 (
     echo.
-    echo WARNING: Some measurements may have failed
+    echo WARNING: Test completed with some errors
 ) else (
     echo.
-    echo Bandwidth measurement completed successfully!
+    echo Test completed successfully!
 )
 
 echo.
 echo ========================================================================
-echo Bandwidth Measurement Complete!
+echo Bandwidth Test Complete!
 echo ========================================================================
 echo.
-echo Results saved to: profiling\results\bandwidth\bandwidth_async.json
+echo Results saved to: results\bandwidth\bandwidth.json
 echo.
 
 pause
