@@ -44,8 +44,8 @@ NPU_TEST_SIZES = [
     16 * 1024 * 1024,     # 16M elements = 64 MB
 ]
 
-WARMUP_ITERATIONS = 10
-MEASURE_ITERATIONS = 50
+WARMUP_ITERATIONS = 5
+MEASURE_ITERATIONS = 20
 
 
 # =============================================================================
