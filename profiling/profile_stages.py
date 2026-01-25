@@ -247,7 +247,7 @@ def export_dynamic_models():
 
     for stage_id in range(1, 8):
         if stage_id == 2:
-            continue
+                continue
         print(f"\nStage {stage_id}:")
         model = get_stage_model(stage_id)
         model.eval()
@@ -314,6 +314,8 @@ def export_npu_static_models(test_cases):
     count = 0
 
     for stage_id in range(1, 8):
+        if stage_id == 2:
+            continue
         # NPU不支持Stage 3/4 (scatter_add操作不支持)
         if stage_id in [3, 4]:
             continue
@@ -507,6 +509,8 @@ def measure_all_latencies(test_cases, config, pu_list=None):
     if 'CPU' in pu_list or 'GPU' in pu_list:
         dynamic_pus = [pu for pu in ['CPU', 'GPU'] if pu in pu_list]
         for stage_id in range(1, 8):
+            if stage_id == 2:
+                continue
             for pu in dynamic_pus:
                 ir_path = MODELS_DIR / f"stage{stage_id}_{pu.lower()}.xml"
 
@@ -530,6 +534,8 @@ def measure_all_latencies(test_cases, config, pu_list=None):
     if 'NPU' in pu_list:
         for stage_id in range(1, 8):
             # NPU不支持Stage 3/4 (scatter_add操作不支持)
+            if stage_id == 2:
+                continue
             if stage_id in [3, 4]:
                 continue
             for case in test_cases:
@@ -579,6 +585,8 @@ def estimate_bandwidth_and_compute_time(raw_results, feature_dim=500):
         return {}, compute_table
 
     for stage_id in range(1, 8):
+        if stage_id == 2:
+            continue
         for pu in ['CPU', 'GPU', 'NPU']:
             # 收集该(stage, pu)的所有数据点
             data_points = []
@@ -721,6 +729,8 @@ def generate_report(lookup_table, bandwidth_table, test_cases):
     report.append("-" * 80)
 
     for stage_id in range(1, 8):
+        if stage_id == 2:
+                continue
         avgs = {}
         for pu in ['CPU', 'GPU', 'NPU']:
             times = [v['compute_time_ms'] for k, v in lookup_table.items()
@@ -735,6 +745,8 @@ def generate_report(lookup_table, bandwidth_table, test_cases):
     report.append("-" * 80)
 
     for stage_id in range(1, 8):
+        if stage_id == 2:
+                continue
         bws = {}
         for pu in ['CPU', 'GPU', 'NPU']:
             key = f"{pu}_stage{stage_id}"
@@ -749,6 +761,8 @@ def generate_report(lookup_table, bandwidth_table, test_cases):
     report.append("-" * 80)
 
     for stage_id in range(1, 8):
+        if stage_id == 2:
+                continue
         cpu_times = [v['compute_time_ms'] for k, v in lookup_table.items()
                     if k.endswith(f",CPU,{stage_id}")]
         gpu_times = [v['compute_time_ms'] for k, v in lookup_table.items()
