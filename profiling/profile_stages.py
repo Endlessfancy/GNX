@@ -246,6 +246,8 @@ def export_dynamic_models():
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
     for stage_id in range(1, 8):
+        if stage_id == 2:
+            continue
         print(f"\nStage {stage_id}:")
         model = get_stage_model(stage_id)
         model.eval()
