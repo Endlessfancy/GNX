@@ -297,13 +297,18 @@ def measure_detailed(ir_path, device, dummy_input, mode='set_every_iter',
             elif mode == 'new_data':
                 # 每次生成新随机数据（相同 shape），强制传输
                 for i in range(len(inputs)):
-                    if input_dtypes[i] == np.int64:
+                    if len(input_shapes[i]) == 0:
+                        # 标量输入（如 num_nodes），保持不变
+                        infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
+                    elif input_dtypes[i] == np.int64:
                         # edge_index 等整数类型
-                        new_data = np.random.randint(0, max(input_shapes[i]), input_shapes[i], dtype=input_dtypes[i])
+                        high = max(input_shapes[i]) if input_shapes[i] else 1
+                        new_data = np.random.randint(0, high, input_shapes[i], dtype=input_dtypes[i])
+                        infer_request.set_input_tensor(i, ov.Tensor(new_data))
                     else:
                         # float 类型
                         new_data = np.random.randn(*input_shapes[i]).astype(input_dtypes[i])
-                    infer_request.set_input_tensor(i, ov.Tensor(new_data))
+                        infer_request.set_input_tensor(i, ov.Tensor(new_data))
             # mode == 'set_once': 不做任何事
 
             t_start = time.perf_counter()
