@@ -296,27 +296,27 @@ def export_dynamic_models():
 
         print(f"  ✓ Stage {stage_id} dynamic models exported")
 
-    print("\n✓ All dynamic models exported (14 files)")
+    print("\n✓ All dynamic models exported (12 files)")
 
 def export_npu_static_models(test_cases):
     """导出NPU静态模型（每个size一个）
 
-    Note: NPU不支持Stage 3/4 (scatter_add操作)，这些stage会被跳过
+    Note: NPU不支持Stage 3/4 (scatter_add操作)，且脚本跳过Stage 2
     """
     print("\n" + "=" * 70)
     print("=== Exporting NPU Static Models ===")
     print("=" * 70)
-    print(f"Total: 5 stages × {len(test_cases)} sizes = {5 * len(test_cases)} models (skipping Stage 3/4)")
+    print(f"Total: 4 stages × {len(test_cases)} sizes = {4 * len(test_cases)} models (skipping Stage 2/3/4)")
     print()
 
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
-    total = 5 * len(test_cases)
+    total = 4 * len(test_cases)
     count = 0
 
     for stage_id in range(1, 8):
         if stage_id == 2:
             continue
-        # NPU不支持Stage 3/4 (scatter_add操作不支持)
+        # NPU不支持Stage 3/4 (scatter_add操作不支持)，且脚本跳过Stage 2
         if stage_id in [3, 4]:
             continue
         for case in test_cases:
@@ -496,13 +496,13 @@ def measure_all_latencies(test_cases, config, pu_list=None):
 
     results = {}
 
-    # 计算总测量次数 (NPU跳过Stage 3/4)
+    # 计算总测量次数 (CPU/GPU跳过Stage 2, NPU跳过Stage 2/3/4)
     total = 0
     for pu in pu_list:
         if pu == 'NPU':
-            total += 5 * len(test_cases)  # NPU: 5 stages (skip 3/4)
+            total += 4 * len(test_cases)  # NPU: 4 stages (skip 2/3/4)
         else:
-            total += 7 * len(test_cases)  # CPU/GPU: 7 stages
+            total += 6 * len(test_cases)  # CPU/GPU: 6 stages (skip 2)
     count = 0
 
     # 测量CPU/GPU（动态模型）
@@ -530,10 +530,10 @@ def measure_all_latencies(test_cases, config, pu_list=None):
                     results[key] = result
                     print(f"{result['mean']:.2f}ms ±{result['std']:.2f}")
 
-    # 测量NPU（静态模型，每个size一个模型）
+    # 测量NPU（静态模型，每个size一个模型，跳过Stage 2/3/4）
     if 'NPU' in pu_list:
         for stage_id in range(1, 8):
-            # NPU不支持Stage 3/4 (scatter_add操作不支持)
+            # NPU不支持Stage 3/4 (scatter_add操作不支持)，且脚本跳过Stage 2
             if stage_id == 2:
                 continue
             if stage_id in [3, 4]:
