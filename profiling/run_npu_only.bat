@@ -40,23 +40,10 @@ echo NPU stages: 1, 2, 5, 6, 7 (skip Stage 3/4 - no scatter_add support)
 echo NPU tests: 8 node sizes x 5 stages = 40 isolated processes
 echo.
 
-REM Check if NPU models exist
+REM Check and export NPU models if needed
 if not exist "exported_models\stage1_npu_n1000_e2000.xml" (
-    echo WARNING: NPU models not found!
-    echo Run first: python profile_stages.py --export-npu
+    echo NPU models not found. Exporting...
     echo.
-    set /p EXPORT_NOW="Export NPU models now? (Y/N): "
-    if /i "!EXPORT_NOW!"=="N" (
-        echo Aborted.
-        pause
-        exit /b 1
-    )
-)
-
-REM Export if needed (outside the if block to avoid nesting issues)
-if not exist "exported_models\stage1_npu_n1000_e2000.xml" (
-    echo.
-    echo Exporting NPU models...
     python profile_stages.py --export-npu
     if !ERRORLEVEL! NEQ 0 (
         echo ERROR: NPU model export failed!
@@ -65,8 +52,10 @@ if not exist "exported_models\stage1_npu_n1000_e2000.xml" (
     )
     echo.
     echo Export complete. Continuing to NPU tests...
-    echo.
+) else (
+    echo NPU models found. Skipping export.
 )
+echo.
 
 REM ========================================================================
 REM NPU Testing (isolated per nodes/stage)

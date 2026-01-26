@@ -57,23 +57,10 @@ if "%PLATFORM%"=="" (
     set PLATFORM_ARG=--platform %PLATFORM%
 )
 
-REM Check if NPU models exist
+REM Check and export NPU models if needed
 if not exist "gat_exported_models\stage1_npu_n1000_e2000.xml" (
-    echo WARNING: GAT NPU models not found!
-    echo Run first: python gat_profile_stages.py --export-npu
+    echo GAT NPU models not found. Exporting...
     echo.
-    set /p EXPORT_NOW="Export GAT NPU models now? (Y/N): "
-    if /i "!EXPORT_NOW!"=="N" (
-        echo Aborted.
-        pause
-        exit /b 1
-    )
-)
-
-REM Export if needed (outside the if block to avoid nesting issues)
-if not exist "gat_exported_models\stage1_npu_n1000_e2000.xml" (
-    echo.
-    echo Exporting GAT NPU models...
     python gat_profile_stages.py --export-npu
     if !ERRORLEVEL! NEQ 0 (
         echo ERROR: GAT NPU model export failed!
@@ -82,8 +69,10 @@ if not exist "gat_exported_models\stage1_npu_n1000_e2000.xml" (
     )
     echo.
     echo Export complete. Continuing to NPU tests...
-    echo.
+) else (
+    echo GAT NPU models found. Skipping export.
 )
+echo.
 
 REM ========================================================================
 REM NPU Testing (isolated per nodes/stage)

@@ -59,20 +59,14 @@ if exist "gat_exported_models\stage1_npu_n1000_e2000.xml" (
 ) else (
     echo NOT FOUND: NPU models need to be exported
     echo.
-    set /p EXPORT_NOW="Export GAT NPU models now? (Y/N): "
-    if /i "!EXPORT_NOW!"=="Y" (
-        echo.
-        echo Running: python gat_profile_stages.py --export-npu
-        python gat_profile_stages.py --export-npu
-        echo.
-        echo Export exit code: !ERRORLEVEL!
-        if !ERRORLEVEL! NEQ 0 (
-            echo ERROR: NPU model export failed!
-            pause
-            exit /b 1
-        )
-    ) else (
-        echo Skipping export.
+    echo Running: python gat_profile_stages.py --export-npu
+    python gat_profile_stages.py --export-npu
+    echo.
+    echo Export exit code: !ERRORLEVEL!
+    if !ERRORLEVEL! NEQ 0 (
+        echo ERROR: NPU model export failed!
+        pause
+        exit /b 1
     )
 )
 echo.
