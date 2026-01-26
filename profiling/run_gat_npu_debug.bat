@@ -29,13 +29,17 @@ if exist "C:\Env\Anaconda\Scripts\activate.bat" (
 cd /d "%~dp0"
 echo Current directory: %CD%
 echo.
+echo Checking Python...
+where python
+echo.
 pause
 
 REM ========================================================================
 echo.
 echo [Step 2] Checking OpenVINO and available devices...
+echo Running: python -c "import openvino..."
 echo ========================================================================
-python -c "import openvino as ov; core = ov.Core(); print('Available devices:', core.available_devices); print('NPU available:', 'NPU' in core.available_devices)"
+python -c "import openvino as ov; core = ov.Core(); devs = core.available_devices; print('Available devices:', devs); print('NPU available:', 'NPU' in devs)"
 if errorlevel 1 (
     echo ERROR: OpenVINO import failed!
     pause
