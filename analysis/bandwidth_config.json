@@ -1,0 +1,34 @@
+{
+  "description": "\u5e26\u5bbd\u914d\u7f6e (GB/s) - \u7528\u4e8e\u8ba1\u7b97\u6570\u636e\u4f20\u8f93\u65f6\u95f4",
+  "source": "bandwidth_v2.json \u6d4b\u91cf\u7ed3\u679c",
+  "npu_correction": 0.55,
+  "npu_correction_reason": "Stage 6 \u9a8c\u8bc1\u5f97\u51fa\uff0c\u539f\u59cb\u5e26\u5bbd\u4f30\u7b97\u8fc7\u9ad8",
+  "bandwidth_original": {
+    "CPU": {
+      "input": 8.754,
+      "output": 3.434
+    },
+    "GPU": {
+      "input": 5.243,
+      "output": 3.305
+    },
+    "NPU": {
+      "input": 1.272,
+      "output": 2.253
+    }
+  },
+  "bandwidth_corrected": {
+    "CPU": {
+      "input": 8.754,
+      "output": 3.434
+    },
+    "GPU": {
+      "input": 5.243,
+      "output": 3.305
+    },
+    "NPU": {
+      "input": 0.6996000000000001,
+      "output": 1.2391500000000002
+    }
+  }
+}

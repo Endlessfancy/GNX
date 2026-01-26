@@ -169,9 +169,11 @@ class GCNStage4_ReduceSum(torch.nn.Module):
         # Initialize output tensor
         out = torch.zeros(actual_num_nodes, msg.size(1), dtype=msg.dtype, device=msg.device)
 
-        # Aggregate messages to target nodes
+        # Aggregate messages to target nodes using scatter_add
         target_nodes = edge_index[1]
-        out.index_add_(0, target_nodes, msg)
+        # Expand index to match message dimensions for scatter_add
+        index_expanded = target_nodes.unsqueeze(1).expand(-1, msg.size(1))
+        out = out.scatter_add(0, index_expanded, msg)
 
         return out  # [N, F]
 

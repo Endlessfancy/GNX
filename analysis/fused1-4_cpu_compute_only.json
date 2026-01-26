@@ -1,0 +1,248 @@
+{
+  "5000,50000,CPU,block0": {
+    "mean": 69.83627827278957,
+    "std": 0,
+    "original_mean": 71.07,
+    "transfer_time": 1.2337217272104182
+  },
+  "5000,125000,CPU,block0": {
+    "mean": 144.9291980808773,
+    "std": 0,
+    "original_mean": 146.3,
+    "transfer_time": 1.3708019191226868
+  },
+  "5000,200000,CPU,block0": {
+    "mean": 242.98211788896506,
+    "std": 0,
+    "original_mean": 244.49,
+    "transfer_time": 1.5078821110349554
+  },
+  "5000,250000,CPU,block0": {
+    "mean": 330.01073109435686,
+    "std": 0,
+    "original_mean": 331.61,
+    "transfer_time": 1.5992689056431346
+  },
+  "5000,300000,CPU,block0": {
+    "mean": 394.6593442997487,
+    "std": 0,
+    "original_mean": 396.35,
+    "transfer_time": 1.6906557002513136
+  },
+  "5000,500000,CPU,block0": {
+    "mean": 666.6937971213159,
+    "std": 0,
+    "original_mean": 668.75,
+    "transfer_time": 2.0562028786840303
+  },
+  "10000,100000,CPU,block0": {
+    "mean": 111.09255654557917,
+    "std": 0,
+    "original_mean": 113.56,
+    "transfer_time": 2.4674434544208363
+  },
+  "10000,250000,CPU,block0": {
+    "mean": 380.4983961617546,
+    "std": 0,
+    "original_mean": 383.24,
+    "transfer_time": 2.7416038382453736
+  },
+  "10000,400000,CPU,block0": {
+    "mean": 843.78423577793,
+    "std": 0,
+    "original_mean": 846.8,
+    "transfer_time": 3.015764222069911
+  },
+  "10000,500000,CPU,block0": {
+    "mean": 880.4614621887137,
+    "std": 0,
+    "original_mean": 883.66,
+    "transfer_time": 3.1985378112862692
+  },
+  "10000,600000,CPU,block0": {
+    "mean": 1208.8386885994973,
+    "std": 0,
+    "original_mean": 1212.22,
+    "transfer_time": 3.3813114005026272
+  },
+  "10000,750000,CPU,block0": {
+    "mean": 1409.064528215673,
+    "std": 0,
+    "original_mean": 1412.72,
+    "transfer_time": 3.655471784327165
+  },
+  "10000,1000000,CPU,block0": {
+    "mean": 1571.2175942426318,
+    "std": 0,
+    "original_mean": 1575.33,
+    "transfer_time": 4.112405757368061
+  },
+  "20000,200000,CPU,block0": {
+    "mean": 465.03511309115834,
+    "std": 0,
+    "original_mean": 469.97,
+    "transfer_time": 4.934886908841673
+  },
+  "20000,500000,CPU,block0": {
+    "mean": 834.0467923235092,
+    "std": 0,
+    "original_mean": 839.53,
+    "transfer_time": 5.483207676490747
+  },
+  "20000,800000,CPU,block0": {
+    "mean": 1053.0984715558602,
+    "std": 0,
+    "original_mean": 1059.13,
+    "transfer_time": 6.031528444139822
+  },
+  "20000,1000000,CPU,block0": {
+    "mean": 3201.9829243774275,
+    "std": 0,
+    "original_mean": 3208.38,
+    "transfer_time": 6.3970756225725385
+  },
+  "20000,1200000,CPU,block0": {
+    "mean": 1521.9273771989947,
+    "std": 0,
+    "original_mean": 1528.69,
+    "transfer_time": 6.7626228010052545
+  },
+  "20000,1500000,CPU,block0": {
+    "mean": 4105.009056431345,
+    "std": 0,
+    "original_mean": 4112.32,
+    "transfer_time": 7.31094356865433
+  },
+  "20000,2000000,CPU,block0": {
+    "mean": 4587.805188485264,
+    "std": 0,
+    "original_mean": 4596.03,
+    "transfer_time": 8.224811514736121
+  },
+  "50000,500000,CPU,block0": {
+    "mean": 793.6627827278958,
+    "std": 0,
+    "original_mean": 806.0,
+    "transfer_time": 12.337217272104182
+  },
+  "50000,1250000,CPU,block0": {
+    "mean": 1770.4219808087732,
+    "std": 0,
+    "original_mean": 1784.13,
+    "transfer_time": 13.708019191226867
+  },
+  "50000,2000000,CPU,block0": {
+    "mean": 2812.7911788896504,
+    "std": 0,
+    "original_mean": 2827.87,
+    "transfer_time": 15.078821110349555
+  },
+  "50000,2500000,CPU,block0": {
+    "mean": 5180.537310943569,
+    "std": 0,
+    "original_mean": 5196.53,
+    "transfer_time": 15.992689056431345
+  },
+  "50000,3000000,CPU,block0": {
+    "mean": 4492.323442997486,
+    "std": 0,
+    "original_mean": 4509.23,
+    "transfer_time": 16.906557002513136
+  },
+  "50000,3750000,CPU,block0": {
+    "mean": 6866.292641078364,
+    "std": 0,
+    "original_mean": 6884.57,
+    "transfer_time": 18.277358921635823
+  },
+  "50000,5000000,CPU,block0": {
+    "mean": 7854.097971213159,
+    "std": 0,
+    "original_mean": 7874.66,
+    "transfer_time": 20.5620287868403
+  },
+  "80000,800000,CPU,block0": {
+    "mean": 1438.4404523646333,
+    "std": 0,
+    "original_mean": 1458.18,
+    "transfer_time": 19.73954763536669
+  },
+  "80000,2000000,CPU,block0": {
+    "mean": 3660.887169294037,
+    "std": 0,
+    "original_mean": 3682.82,
+    "transfer_time": 21.93283070596299
+  },
+  "80000,3200000,CPU,block0": {
+    "mean": 4320.643886223441,
+    "std": 0,
+    "original_mean": 4344.77,
+    "transfer_time": 24.126113776559286
+  },
+  "80000,4000000,CPU,block0": {
+    "mean": 6835.311697509709,
+    "std": 0,
+    "original_mean": 6860.9,
+    "transfer_time": 25.588302490290154
+  },
+  "80000,4800000,CPU,block0": {
+    "mean": 8013.269508795978,
+    "std": 0,
+    "original_mean": 8040.32,
+    "transfer_time": 27.050491204021018
+  },
+  "80000,6000000,CPU,block0": {
+    "mean": 10735.736225725383,
+    "std": 0,
+    "original_mean": 10764.98,
+    "transfer_time": 29.24377427461732
+  },
+  "80000,8000000,CPU,block0": {
+    "mean": 11773.040753941055,
+    "std": 0,
+    "original_mean": 11805.94,
+    "transfer_time": 32.899246058944485
+  },
+  "100000,1000000,CPU,block0": {
+    "mean": 2085.3255654557915,
+    "std": 0,
+    "original_mean": 2110.0,
+    "transfer_time": 24.674434544208363
+  },
+  "100000,2500000,CPU,block0": {
+    "mean": 3314.0239616175463,
+    "std": 0,
+    "original_mean": 3341.44,
+    "transfer_time": 27.416038382453735
+  },
+  "100000,4000000,CPU,block0": {
+    "mean": 6498.862357779301,
+    "std": 0,
+    "original_mean": 6529.02,
+    "transfer_time": 30.15764222069911
+  },
+  "100000,5000000,CPU,block0": {
+    "mean": 8636.064621887137,
+    "std": 0,
+    "original_mean": 8668.05,
+    "transfer_time": 31.98537811286269
+  },
+  "100000,6000000,CPU,block0": {
+    "mean": 9691.106885994974,
+    "std": 0,
+    "original_mean": 9724.92,
+    "transfer_time": 33.81311400502627
+  },
+  "100000,7500000,CPU,block0": {
+    "mean": 10701.385282156729,
+    "std": 0,
+    "original_mean": 10737.94,
+    "transfer_time": 36.554717843271646
+  },
+  "100000,10000000,CPU,block0": {
+    "mean": 13044.345942426318,
+    "std": 0,
+    "original_mean": 13085.47,
+    "transfer_time": 41.1240575736806
+  }
+}

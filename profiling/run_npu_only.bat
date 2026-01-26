@@ -37,7 +37,7 @@ echo.
 echo Environment activated.
 echo.
 echo NPU stages: 1, 2, 5, 6, 7 (skip Stage 3/4 - no scatter_add support)
-echo NPU tests: 11 node sizes x 5 stages = 55 isolated processes
+echo NPU tests: 8 node sizes x 5 stages = 40 isolated processes
 echo.
 
 REM Check if NPU models exist
@@ -73,7 +73,7 @@ echo If DEVICE_LOST occurs, that test fails but others continue.
 echo.
 
 REM Define node sizes and stages
-set NODE_SIZES=1000 5000 10000 20000 30000 40000 50000 60000 80000 100000 150000
+set NODE_SIZES=1000 2000 5000 10000 20000 50000 80000 100000
 set NPU_STAGES=1 2 5 6 7
 
 REM Count total tests
@@ -83,7 +83,7 @@ for %%n in (%NODE_SIZES%) do (
         set /a TOTAL_TESTS+=1
     )
 )
-echo Total NPU tests: %TOTAL_TESTS% (11 node sizes x 5 stages)
+echo Total NPU tests: %TOTAL_TESTS% (8 node sizes x 5 stages)
 echo.
 
 REM Track progress

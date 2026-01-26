@@ -127,10 +127,12 @@ class SAGEStage3_ReduceSum(torch.nn.Module):
         # Initialize output tensor
         out = torch.zeros(actual_num_nodes, messages.size(1), dtype=messages.dtype, device=messages.device)
 
-        # Aggregate messages to target nodes using index_add_
+        # Aggregate messages to target nodes using scatter_add
         # edge_index[1] contains target node indices
         target_nodes = edge_index[1]
-        out.index_add_(0, target_nodes, messages)
+        # Expand index to match message dimensions for scatter_add
+        index_expanded = target_nodes.unsqueeze(1).expand(-1, messages.size(1))
+        out = out.scatter_add(0, index_expanded, messages)
 
         return out
 

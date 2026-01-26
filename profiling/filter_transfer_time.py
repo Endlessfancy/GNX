@@ -23,11 +23,20 @@
 import json
 from pathlib import Path
 
-# 带宽数据 (GB/s)
+# 带宽数据 (GB/s) - 来自 bandwidth_v2.json
 BANDWIDTH = {
     'CPU': {'input': 8.754, 'output': 3.434},
     'GPU': {'input': 5.243, 'output': 3.305},
     'NPU': {'input': 1.272, 'output': 2.253},
+}
+
+# 校正系数：从 Stage 2 (identity) 验证得出
+# 实际测量/估算 比例，用于减少负数
+# CPU: 测量值比估算低22%，GPU: 测量值和估算接近
+TRANSFER_CORRECTION = {
+    'CPU': 0.78,  # 估算传输时间 * 0.78
+    'GPU': 1.00,  # 不校正
+    'NPU': 1.00,  # 无数据，不校正
 }
 
 # 最大传输时间占比（限制传输时间不超过总时间的这个比例）
@@ -76,9 +85,10 @@ def get_io_size(stage_id, num_nodes, num_edges, feature_dim=FEATURE_DIM):
         output_size = num_nodes * 256 * BYTES_PER_FLOAT  # output is 256
 
     elif stage_id == 7:
-        # Input: out[N,F], Output: activated[N,F]
-        input_size = num_nodes * feature_dim * BYTES_PER_FLOAT
-        output_size = num_nodes * feature_dim * BYTES_PER_FLOAT
+        # Input: out[N,256], Output: activated[N,256]
+        # Stage 7 (ReLU) 的输入是 Stage 6 的输出，维度是 256
+        input_size = num_nodes * 256 * BYTES_PER_FLOAT
+        output_size = num_nodes * 256 * BYTES_PER_FLOAT
 
     else:
         raise ValueError(f"Invalid stage_id: {stage_id}")
@@ -96,7 +106,7 @@ def calc_transfer_time(input_bytes, output_bytes, device):
 
     所以：total_time = 输入传输 + 计算 + 输出传输
 
-    transfer_time = input_bytes / input_bw + output_bytes / output_bw
+    transfer_time = (input_bytes / input_bw + output_bytes / output_bw) * correction
     """
     bw = BANDWIDTH.get(device)
     if not bw:
@@ -106,7 +116,10 @@ def calc_transfer_time(input_bytes, output_bytes, device):
     input_ms = input_bytes / (bw['input'] * 1e6)
     output_ms = output_bytes / (bw['output'] * 1e6)
 
-    return input_ms + output_ms
+    # 应用校正系数（减少负数）
+    correction = TRANSFER_CORRECTION.get(device, 1.0)
+
+    return (input_ms + output_ms) * correction
 
 
 def filter_profiling_results(raw_file, output_file):

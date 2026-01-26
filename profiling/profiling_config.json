@@ -1,0 +1,84 @@
+{
+  "description": "GNN Stage Profiling Configuration - Optimized for speed with realistic coverage",
+  "version": "2.0",
+  "date": "2025-01-25",
+
+  "test_strategy": {
+    "principle": "Small graphs test many ratios (fast), large graphs test fewer ratios (slow)",
+    "small_nodes": {
+      "sizes": [1000, 2000, 5000],
+      "ratios": [5, 10, 20, 40, 60, 80, 120],
+      "description": "Fine-grained coverage, fast execution"
+    },
+    "medium_nodes": {
+      "sizes": [10000, 20000],
+      "ratios": [5, 10, 50, 100],
+      "description": "Transition zone, moderate coverage"
+    },
+    "large_nodes": {
+      "sizes": [50000, 80000, 100000],
+      "ratios": [10, 50],
+      "description": "Sparse coverage, avoid slow combinations"
+    }
+  },
+
+  "node_sizes": [1000, 2000, 5000, 10000, 20000, 50000, 80000, 100000],
+
+  "ratio_reference": {
+    "Flickr": {"ratio": 10, "type": "sparse"},
+    "ogbn-products": {"ratio": 50, "type": "medium"},
+    "Reddit2": {"ratio": 100, "type": "dense"}
+  },
+
+  "inference_config": {
+    "feature_dim": 500,
+    "num_warmup": 10,
+    "num_iterations": 50
+  },
+
+  "model_stages": {
+    "SAGE": {
+      "total_stages": 7,
+      "npu_skip": [3, 4],
+      "npu_supported": [1, 2, 5, 6, 7],
+      "skip_reason": "scatter_add operations"
+    },
+    "GAT": {
+      "total_stages": 7,
+      "npu_skip": [4, 6],
+      "npu_supported": [1, 2, 3, 5, 7],
+      "skip_reason": "scatter_reduce (softmax), scatter_add (reduce)"
+    },
+    "GCN": {
+      "total_stages": 6,
+      "npu_skip": [1, 4],
+      "npu_supported": [2, 3, 5, 6],
+      "skip_reason": "scatter_add (norm), scatter_add (reduce)"
+    }
+  },
+
+  "test_matrix": {
+    "total_cases": 35,
+    "max_edges": 5000000,
+    "breakdown": {
+      "small": "3 sizes × 7 ratios = 21 cases",
+      "medium": "2 sizes × 4 ratios = 8 cases",
+      "large": "3 sizes × 2 ratios = 6 cases"
+    }
+  },
+
+  "output_structure": {
+    "SAGE": {
+      "models_dir": "exported_models",
+      "results_dir": "results"
+    },
+    "GAT": {
+      "models_dir": "gat_exported_models",
+      "results_dir": "gat_results"
+    },
+    "GCN": {
+      "models_dir": "gcn_exported_models",
+      "results_dir": "gcn_results"
+    }
+  }
+}

@@ -484,17 +484,34 @@ def measure_latency_openvino(ir_path, pu, dummy_input, num_warmup=10, num_iterat
             'error': error_msg
         }
 
-def measure_all_latencies(test_cases, config, pu_list=None):
+def save_checkpoint_incremental(results, checkpoint_name):
+    """增量保存checkpoint（每测完一个点就保存）"""
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    checkpoint_file = RESULTS_DIR / f'checkpoint_{checkpoint_name}.json'
+
+    # Convert tuple keys to strings for JSON
+    raw_serializable = {f"{k[0]},{k[1]},{k[2]},{k[3]}": v for k, v in results.items()}
+
+    with open(checkpoint_file, 'w', encoding='utf-8') as f:
+        json.dump(raw_serializable, f, indent=2)
+
+    return checkpoint_file
+
+def measure_all_latencies(test_cases, config, pu_list=None, checkpoint_name=None):
     """
-    测量指定PU的延迟
+    测量指定PU的延迟（支持断点续测和增量保存）
 
     Args:
         test_cases: 测试用例列表
         config: 配置信息
         pu_list: 要测量的PU列表，如['CPU', 'GPU']或['NPU']，None表示全部
+        checkpoint_name: checkpoint名称，用于增量保存和断点续测
     """
     if pu_list is None:
         pu_list = ['CPU', 'GPU', 'NPU']
+
+    if checkpoint_name is None:
+        checkpoint_name = '+'.join(pu_list).lower()
 
     pu_name = '+'.join(pu_list)
     print("\n" + "=" * 70)
@@ -505,7 +522,13 @@ def measure_all_latencies(test_cases, config, pu_list=None):
     num_iterations = config['config']['num_iterations']
     feature_dim = config['config']['feature_dim']
 
-    results = {}
+    # 尝试加载已有checkpoint（断点续测）
+    results = load_checkpoint(checkpoint_name)
+    if results is None:
+        results = {}
+        print(f"Starting fresh measurement...")
+    else:
+        print(f"Resuming from checkpoint: {len(results)} existing entries")
 
     # 计算总测量次数 (CPU/GPU跳过Stage 2, NPU跳过Stage 2/3/4)
     total = 0
@@ -532,14 +555,23 @@ def measure_all_latencies(test_cases, config, pu_list=None):
                 for case in test_cases:
                     count += 1
                     nodes, edges = case['nodes'], case['edges']
+                    key = (nodes, edges, pu, stage_id)
+
+                    # 跳过已测量的（断点续测）
+                    if key in results:
+                        print(f"[{count}/{total}] Stage {stage_id} on {pu} - {nodes}n {edges}e... SKIP (cached)")
+                        continue
+
                     print(f"[{count}/{total}] Stage {stage_id} on {pu} - {nodes}n {edges}e... ", end='', flush=True)
 
                     dummy_input = generate_dummy_input(stage_id, nodes, edges, feature_dim)
                     result = measure_latency_openvino(ir_path, pu, dummy_input, num_warmup, num_iterations)
 
-                    key = (nodes, edges, pu, stage_id)
                     results[key] = result
                     print(f"{result['mean']:.2f}ms ±{result['std']:.2f}")
+
+                    # 增量保存checkpoint
+                    save_checkpoint_incremental(results, checkpoint_name)
 
     # 测量NPU（静态模型，每个size一个模型，跳过Stage 2/3/4）
     if 'NPU' in pu_list:
@@ -552,20 +584,29 @@ def measure_all_latencies(test_cases, config, pu_list=None):
             for case in test_cases:
                 count += 1
                 nodes, edges = case['nodes'], case['edges']
+                key = (nodes, edges, 'NPU', stage_id)
+
+                # 跳过已测量的（断点续测）
+                if key in results:
+                    print(f"[{count}/{total}] Stage {stage_id} on NPU - {nodes}n {edges}e... SKIP (cached)")
+                    continue
+
                 print(f"[{count}/{total}] Stage {stage_id} on NPU - {nodes}n {edges}e... ", end='', flush=True)
 
                 ir_path = MODELS_DIR / f"stage{stage_id}_npu_n{nodes}_e{edges}.xml"
 
                 if not ir_path.exists():
-                    print("⚠ IR not found")
+                    print("IR not found")
                     continue
 
                 dummy_input = generate_dummy_input(stage_id, nodes, edges, feature_dim)
                 result = measure_latency_openvino(ir_path, 'NPU', dummy_input, num_warmup, num_iterations)
 
-                key = (nodes, edges, 'NPU', stage_id)
                 results[key] = result
                 print(f"{result['mean']:.2f}ms ±{result['std']:.2f}")
+
+                # 增量保存checkpoint
+                save_checkpoint_incremental(results, checkpoint_name)
 
     print(f"\n✓ Measured {len(results)} configurations for {pu_name}")
     return results

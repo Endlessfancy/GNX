@@ -439,17 +439,33 @@ def measure_latency_openvino(ir_path, pu, dummy_input, num_warmup=10, num_iterat
             'error': error_msg
         }
 
-def measure_all_latencies(test_cases, config, pu_list=None):
+def save_checkpoint_incremental(results, checkpoint_name):
+    """增量保存checkpoint（每测完一个点就保存）"""
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    checkpoint_file = RESULTS_DIR / f'checkpoint_{checkpoint_name}.json'
+
+    raw_serializable = {f"{k[0]},{k[1]},{k[2]},{k[3]}": v for k, v in results.items()}
+
+    with open(checkpoint_file, 'w', encoding='utf-8') as f:
+        json.dump(raw_serializable, f, indent=2)
+
+    return checkpoint_file
+
+def measure_all_latencies(test_cases, config, pu_list=None, checkpoint_name=None):
     """
-    Measure latencies for specified PUs
+    Measure latencies for specified PUs (支持断点续测和增量保存)
 
     Args:
         test_cases: Test case list
         config: Configuration info
         pu_list: PU list to measure, e.g., ['CPU', 'GPU'] or ['NPU'], None means all
+        checkpoint_name: checkpoint名称，用于增量保存和断点续测
     """
     if pu_list is None:
         pu_list = ['CPU', 'GPU', 'NPU']
+
+    if checkpoint_name is None:
+        checkpoint_name = '+'.join(pu_list).lower()
 
     pu_name = '+'.join(pu_list)
     print("\n" + "=" * 70)
@@ -460,7 +476,13 @@ def measure_all_latencies(test_cases, config, pu_list=None):
     num_iterations = config['config']['num_iterations']
     feature_dim = config['config']['feature_dim']
 
-    results = {}
+    # 尝试加载已有checkpoint（断点续测）
+    results = load_checkpoint(checkpoint_name)
+    if results is None:
+        results = {}
+        print(f"Starting fresh measurement...")
+    else:
+        print(f"Resuming from checkpoint: {len(results)} existing entries")
 
     # Calculate total measurements (NPU skips stages 1/4)
     total = 0
@@ -485,14 +507,23 @@ def measure_all_latencies(test_cases, config, pu_list=None):
                 for case in test_cases:
                     count += 1
                     nodes, edges = case['nodes'], case['edges']
+                    key = (nodes, edges, pu, stage_id)
+
+                    # 跳过已测量的（断点续测）
+                    if key in results:
+                        print(f"[{count}/{total}] Stage {stage_id} on {pu} - {nodes}n {edges}e... SKIP (cached)")
+                        continue
+
                     print(f"[{count}/{total}] Stage {stage_id} on {pu} - {nodes}n {edges}e... ", end='', flush=True)
 
                     dummy_input = generate_dummy_input(stage_id, nodes, edges, feature_dim)
                     result = measure_latency_openvino(ir_path, pu, dummy_input, num_warmup, num_iterations)
 
-                    key = (nodes, edges, pu, stage_id)
                     results[key] = result
                     print(f"{result['mean']:.2f}ms +/-{result['std']:.2f}")
+
+                    # 增量保存checkpoint
+                    save_checkpoint_incremental(results, checkpoint_name)
 
     # Measure NPU (static models, one per size)
     if 'NPU' in pu_list:
@@ -503,6 +534,13 @@ def measure_all_latencies(test_cases, config, pu_list=None):
             for case in test_cases:
                 count += 1
                 nodes, edges = case['nodes'], case['edges']
+                key = (nodes, edges, 'NPU', stage_id)
+
+                # 跳过已测量的（断点续测）
+                if key in results:
+                    print(f"[{count}/{total}] Stage {stage_id} on NPU - {nodes}n {edges}e... SKIP (cached)")
+                    continue
+
                 print(f"[{count}/{total}] Stage {stage_id} on NPU - {nodes}n {edges}e... ", end='', flush=True)
 
                 ir_path = MODELS_DIR / f"stage{stage_id}_npu_n{nodes}_e{edges}.xml"
@@ -514,9 +552,11 @@ def measure_all_latencies(test_cases, config, pu_list=None):
                 dummy_input = generate_dummy_input(stage_id, nodes, edges, feature_dim)
                 result = measure_latency_openvino(ir_path, 'NPU', dummy_input, num_warmup, num_iterations)
 
-                key = (nodes, edges, 'NPU', stage_id)
                 results[key] = result
                 print(f"{result['mean']:.2f}ms +/-{result['std']:.2f}")
+
+                # 增量保存checkpoint
+                save_checkpoint_incremental(results, checkpoint_name)
 
     print(f"\nDone: Measured {len(results)} configurations for {pu_name}")
     return results
@@ -803,6 +843,8 @@ def main():
     parser.add_argument('--export-npu', action='store_true', help='Export NPU static models only')
     parser.add_argument('--measure', action='store_true', help='Measure CPU/GPU latencies only')
     parser.add_argument('--measure-cpugpu', action='store_true', help='Measure CPU/GPU latencies only (alias)')
+    parser.add_argument('--measure-cpu', action='store_true', help='Measure CPU latencies only')
+    parser.add_argument('--measure-gpu', action='store_true', help='Measure GPU latencies only')
     parser.add_argument('--merge-npu', action='store_true', help='Merge NPU results from profile_npu.py outputs')
     parser.add_argument('--analyze', action='store_true', help='Analyze and generate results only')
 
@@ -905,6 +947,38 @@ def main():
             return
 
     # ========================================================================
+    # Handle --measure-cpu (Measure CPU only)
+    # ========================================================================
+    if args.measure_cpu:
+        print("\n" + "=" * 70)
+        print("Measuring GCN CPU Latencies Only")
+        print("=" * 70)
+
+        cpu_results = measure_all_latencies(test_cases, config, pu_list=['CPU'])
+        save_checkpoint(cpu_results, 'cpu')
+
+        print("\nDone: CPU measurements completed and saved!")
+        print(f"  Total: {len(cpu_results)} entries")
+        print("  Checkpoint: gcn_results/checkpoint_cpu.json")
+        return
+
+    # ========================================================================
+    # Handle --measure-gpu (Measure GPU only)
+    # ========================================================================
+    if args.measure_gpu:
+        print("\n" + "=" * 70)
+        print("Measuring GCN GPU Latencies Only")
+        print("=" * 70)
+
+        gpu_results = measure_all_latencies(test_cases, config, pu_list=['GPU'])
+        save_checkpoint(gpu_results, 'gpu')
+
+        print("\nDone: GPU measurements completed and saved!")
+        print(f"  Total: {len(gpu_results)} entries")
+        print("  Checkpoint: gcn_results/checkpoint_gpu.json")
+        return
+
+    # ========================================================================
     # Handle --analyze (Generate final results)
     # ========================================================================
     if args.analyze or args.all:
@@ -912,13 +986,27 @@ def main():
         print("PHASE 3: Analyzing GCN Results")
         print("=" * 70)
 
-        # Load all checkpoints
+        # Load all checkpoints (try cpugpu first, then cpu+gpu separately)
         cpugpu_data = load_checkpoint('cpugpu')
+        if cpugpu_data is None:
+            # Try loading separate cpu and gpu checkpoints
+            cpu_data = load_checkpoint('cpu')
+            gpu_data = load_checkpoint('gpu')
+            if cpu_data or gpu_data:
+                cpugpu_data = {}
+                if cpu_data:
+                    cpugpu_data.update(cpu_data)
+                if gpu_data:
+                    cpugpu_data.update(gpu_data)
+                print(f"Done: Loaded separate CPU ({len(cpu_data) if cpu_data else 0}) + GPU ({len(gpu_data) if gpu_data else 0}) checkpoints")
+
         npu_data = load_checkpoint('npu')
 
         if cpugpu_data is None:
             print("ERROR: CPU/GPU checkpoint not found.")
             print("  Run: python gcn_profile_stages.py --measure")
+            print("  Or:  python gcn_profile_stages.py --measure-cpu")
+            print("       python gcn_profile_stages.py --measure-gpu")
             return
 
         # Merge results
@@ -941,7 +1029,7 @@ def main():
         generate_report(lookup_table, bandwidth_table, test_cases)
 
     # Final summary (only if something was done)
-    if args.all or args.export or args.measure or args.analyze or args.merge_npu:
+    if args.all or args.export or args.measure or args.analyze or args.merge_npu or args.measure_cpu or args.measure_gpu:
         print("\n" + "=" * 70)
         print("GCN Profiling Session Complete")
         print("=" * 70)

@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torch_geometric.nn import GATConv
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, Size
-from torch_scatter import scatter_add, scatter_max
+# torch_scatter no longer needed - using native PyTorch scatter operations
 
 # Optional imports for ONNX export and OpenVINO
 try:
@@ -166,15 +166,17 @@ class GATStage4_AttentionSoftmax(torch.nn.Module):
         target_nodes = edge_index[1]
 
         # Numerically stable softmax per target node
-        # Step 1: Subtract max for numerical stability
-        e_max = scatter_max(e, target_nodes, dim=0, dim_size=actual_num_nodes)[0]
+        # Step 1: Subtract max for numerical stability (using scatter_reduce instead of scatter_max)
+        e_max = torch.full((actual_num_nodes,), -1e9, dtype=e.dtype, device=e.device)
+        e_max = e_max.scatter_reduce(0, target_nodes, e, reduce='amax', include_self=True)
         e_stable = e - e_max[target_nodes]
 
         # Step 2: Compute exp
         exp_e = torch.exp(e_stable)
 
-        # Step 3: Sum exp per target node
-        sum_exp = scatter_add(exp_e, target_nodes, dim=0, dim_size=actual_num_nodes)
+        # Step 3: Sum exp per target node (using scatter_add)
+        sum_exp = torch.zeros(actual_num_nodes, dtype=exp_e.dtype, device=exp_e.device)
+        sum_exp = sum_exp.scatter_add(0, target_nodes, exp_e)
 
         # Step 4: Normalize
         alpha = exp_e / (sum_exp[target_nodes] + 1e-16)
@@ -223,9 +225,11 @@ class GATStage6_ReduceSum(torch.nn.Module):
         # Initialize output tensor
         out = torch.zeros(actual_num_nodes, msg.size(1), dtype=msg.dtype, device=msg.device)
 
-        # Aggregate messages to target nodes
+        # Aggregate messages to target nodes using scatter_add
         target_nodes = edge_index[1]
-        out.index_add_(0, target_nodes, msg)
+        # Expand index to match message dimensions for scatter_add
+        index_expanded = target_nodes.unsqueeze(1).expand(-1, msg.size(1))
+        out = out.scatter_add(0, index_expanded, msg)
 
         return out  # [N, F']
 

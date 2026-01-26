@@ -132,8 +132,8 @@ def measure_latency_npu(ir_path, dummy_input, num_warmup=10, num_iterations=50):
 def main():
     parser = argparse.ArgumentParser(description='NPU Single Test')
     parser.add_argument('--nodes', type=int, required=True, help='Number of nodes')
-    parser.add_argument('--stage', type=int, required=True, choices=[1, 5, 6, 7],
-                       help='Stage ID (2/3/4 skipped for NPU)')
+    parser.add_argument('--stage', type=int, required=True, choices=[1, 2, 5, 6, 7],
+                       help='Stage ID (3/4 skipped for NPU - scatter operations)')
     parser.add_argument('--edges', type=str, default=None,
                        help='Comma-separated edge counts (default: all from config)')
     parser.add_argument('--warmup', type=int, default=10, help='Warmup iterations')

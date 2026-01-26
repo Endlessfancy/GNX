@@ -1,0 +1,245 @@
+{
+  "CPU": {
+    "results": [
+      {
+        "input_compute_ms": 0.6464333312275509,
+        "input_compute_std": 0.14360480864410274,
+        "output_ms": 1.0829366510733962,
+        "output_std": 0.338018112630113,
+        "total_ms": 1.7293699823009472,
+        "total_std": 0.43639859739990444,
+        "num_elements": 1048576,
+        "data_MB": 4.0
+      },
+      {
+        "input_compute_ms": 2.295199995084355,
+        "input_compute_std": 0.2933738949641015,
+        "output_ms": 4.664856661111116,
+        "output_std": 1.0782356414926613,
+        "total_ms": 6.960056656195472,
+        "total_std": 1.2295254475332322,
+        "num_elements": 4194304,
+        "data_MB": 16.0
+      },
+      {
+        "input_compute_ms": 8.029796679814657,
+        "input_compute_std": 0.9491608519969074,
+        "output_ms": 17.90172333518664,
+        "output_std": 1.5384625197734618,
+        "total_ms": 25.931520015001297,
+        "total_std": 1.8175825167422224,
+        "num_elements": 16777216,
+        "data_MB": 64.0
+      },
+      {
+        "input_compute_ms": 14.515886673082909,
+        "input_compute_std": 1.953996388174181,
+        "output_ms": 35.392890009097755,
+        "output_std": 2.297832422437803,
+        "total_ms": 49.908776682180665,
+        "total_std": 3.431277749867012,
+        "num_elements": 33554432,
+        "data_MB": 128.0
+      },
+      {
+        "input_compute_ms": 30.179443346181262,
+        "input_compute_std": 2.4043327256066016,
+        "output_ms": 71.67503998692457,
+        "output_std": 4.275018678423162,
+        "total_ms": 101.85448333310585,
+        "total_std": 5.841228419962223,
+        "num_elements": 67108864,
+        "data_MB": 256.0
+      },
+      {
+        "input_compute_ms": 58.71623665637647,
+        "input_compute_std": 4.101695471331819,
+        "output_ms": 149.41800334102786,
+        "output_std": 10.269766023603623,
+        "total_ms": 208.1342399974043,
+        "total_std": 11.872751562607283,
+        "num_elements": 134217728,
+        "data_MB": 512.0
+      }
+    ],
+    "input_bandwidth": {
+      "bandwidth_GBps": 8.754116387602396,
+      "overhead_ms": 0.4059436111893042,
+      "coef_ms_per_MB": 0.11423197450472589,
+      "r_squared": 0.9997060795159589
+    },
+    "output_bandwidth": {
+      "bandwidth_GBps": 3.43416887917235,
+      "overhead_ms": -0.8719992300285426,
+      "coef_ms_per_MB": 0.2911912707801966,
+      "r_squared": 0.9995080713644925
+    },
+    "combined_bandwidth": {
+      "coef_ms_per_MB": 0.4054232452849226,
+      "overhead_ms": -0.4660556188392633,
+      "r_squared": 0.999776380364595
+    }
+  },
+  "GPU": {
+    "results": [
+      {
+        "input_compute_ms": 1.385886672263344,
+        "input_compute_std": 0.1993874917879981,
+        "output_ms": 1.2030833594811459,
+        "output_std": 0.3537136359665239,
+        "total_ms": 2.58897003174449,
+        "total_std": 0.4327371315309769,
+        "num_elements": 1048576,
+        "data_MB": 4.0
+      },
+      {
+        "input_compute_ms": 4.390970004412035,
+        "input_compute_std": 1.549951463838361,
+        "output_ms": 4.70820333963881,
+        "output_std": 0.7694126989032882,
+        "total_ms": 9.099173344050845,
+        "total_std": 1.995984803903054,
+        "num_elements": 4194304,
+        "data_MB": 16.0
+      },
+      {
+        "input_compute_ms": 13.459316668255875,
+        "input_compute_std": 0.7659521117906944,
+        "output_ms": 18.57411664677784,
+        "output_std": 1.7886003978478326,
+        "total_ms": 32.03343331503371,
+        "total_std": 2.1446261459752263,
+        "num_elements": 16777216,
+        "data_MB": 64.0
+      },
+      {
+        "input_compute_ms": 25.77344332433616,
+        "input_compute_std": 1.5137053381907326,
+        "output_ms": 38.3408066816628,
+        "output_std": 3.7158737876021073,
+        "total_ms": 64.11425000599895,
+        "total_std": 3.843562187567171,
+        "num_elements": 33554432,
+        "data_MB": 128.0
+      },
+      {
+        "input_compute_ms": 50.321569999990366,
+        "input_compute_std": 2.3810594487883026,
+        "output_ms": 74.03661001784106,
+        "output_std": 5.239095542692098,
+        "total_ms": 124.35818001783143,
+        "total_std": 5.829053056715538,
+        "num_elements": 67108864,
+        "data_MB": 256.0
+      },
+      {
+        "input_compute_ms": 98.60122334212065,
+        "input_compute_std": 2.585709277906099,
+        "output_ms": 155.48781331939003,
+        "output_std": 8.181505857941941,
+        "total_ms": 254.08903666151068,
+        "total_std": 8.32146933640845,
+        "num_elements": 134217728,
+        "data_MB": 512.0
+      }
+    ],
+    "input_bandwidth": {
+      "bandwidth_GBps": 5.243043257533445,
+      "overhead_ms": 1.1696773839156265,
+      "coef_ms_per_MB": 0.19072892419171902,
+      "r_squared": 0.9999232761404062
+    },
+    "output_bandwidth": {
+      "bandwidth_GBps": 3.3052905467013045,
+      "overhead_ms": -0.6906208407247902,
+      "coef_ms_per_MB": 0.3025452636827963,
+      "r_squared": 0.9994243967169099
+    },
+    "combined_bandwidth": {
+      "coef_ms_per_MB": 0.4932741878745154,
+      "overhead_ms": 0.47905654319083624,
+      "r_squared": 0.9998328938512921
+    }
+  },
+  "NPU": {
+    "results": [
+      {
+        "input_compute_ms": 1.3789933291263878,
+        "input_compute_std": 0.04945907244940081,
+        "output_ms": 0.7913600032528242,
+        "output_std": 0.249552247175313,
+        "total_ms": 2.170353332379212,
+        "total_std": 0.259892692785364,
+        "num_elements": 524288,
+        "data_MB": 2.0
+      },
+      {
+        "input_compute_ms": 2.542843339809527,
+        "input_compute_std": 0.4447858513890065,
+        "output_ms": 1.8428666633553803,
+        "output_std": 0.7728117016908108,
+        "total_ms": 4.385710003164907,
+        "total_std": 0.925475891553274,
+        "num_elements": 1048576,
+        "data_MB": 4.0
+      },
+      {
+        "input_compute_ms": 2.56234334083274,
+        "input_compute_std": 0.2524888091553031,
+        "output_ms": 2.8128333389759064,
+        "output_std": 0.7232433006051984,
+        "total_ms": 5.375176679808646,
+        "total_std": 0.7388261404194526,
+        "num_elements": 2097152,
+        "data_MB": 8.0
+      },
+      {
+        "input_compute_ms": 15.698606664470086,
+        "input_compute_std": 0.6626825441870203,
+        "output_ms": 6.103983346838504,
+        "output_std": 1.7565898417500767,
+        "total_ms": 21.80259001130859,
+        "total_std": 1.9421848811338627,
+        "num_elements": 4194304,
+        "data_MB": 16.0
+      },
+      {
+        "input_compute_ms": 25.171570002567023,
+        "input_compute_std": 0.520488545145902,
+        "output_ms": 12.804609987263879,
+        "output_std": 2.354204317092618,
+        "total_ms": 37.976179989830904,
+        "total_std": 2.4549634012649935,
+        "num_elements": 8388608,
+        "data_MB": 32.0
+      },
+      {
+        "input_compute_ms": 49.23190331319347,
+        "input_compute_std": 2.207321171381035,
+        "output_ms": 28.40539667910586,
+        "output_std": 4.022850424606494,
+        "total_ms": 77.63729999229933,
+        "total_std": 5.491965393974419,
+        "num_elements": 16777216,
+        "data_MB": 64.0
+      }
+    ],
+    "input_bandwidth": {
+      "bandwidth_GBps": 1.2717917461055557,
+      "overhead_ms": -0.41442735772811545,
+      "coef_ms_per_MB": 0.7862922550505391,
+      "r_squared": 0.9862926057251922
+    },
+    "output_bandwidth": {
+      "bandwidth_GBps": 2.253306492611417,
+      "overhead_ms": -0.5261293022042342,
+      "coef_ms_per_MB": 0.4437922685080774,
+      "r_squared": 0.996688904903938
+    },
+    "combined_bandwidth": {
+      "coef_ms_per_MB": 1.2300845235586164,
+      "overhead_ms": -0.9405566599323478,
+      "r_squared": 0.9947182018581321
+    }
+  }
+}
