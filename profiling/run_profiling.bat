@@ -17,6 +17,12 @@ REM   Phase 5: Merge results and analyze
 
 setlocal EnableDelayedExpansion
 
+REM ========================================================================
+REM PLATFORM CONFIGURATION - Modify this for different AI PCs
+REM ========================================================================
+set PLATFORM=185H
+REM Options: 185H, 265V, or leave empty for default location
+
 echo ========================================================================
 echo GNN Stage Profiling - Full Test (CPU + GPU + NPU)
 echo ========================================================================
@@ -40,11 +46,19 @@ cd /d "%~dp0"
 
 echo.
 echo Test Configuration:
+echo   Platform: %PLATFORM%
 echo   Stages: 1-7 (GATHER, MESSAGE, REDUCE_SUM, REDUCE_COUNT, NORMALIZE, TRANSFORM, ACTIVATE)
 echo   CPU: All 7 stages
 echo   GPU: All 7 stages
 echo   NPU: Stages 1, 2, 5, 6, 7 (55 isolated processes)
 echo.
+
+REM Build platform argument
+if "%PLATFORM%"=="" (
+    set PLATFORM_ARG=
+) else (
+    set PLATFORM_ARG=--platform %PLATFORM%
+)
 
 REM ========================================================================
 REM PHASE 1: Export all models
@@ -94,7 +108,7 @@ echo PHASE 2: Measuring CPU Latencies (All 7 Stages)
 echo ========================================================================
 echo.
 
-python profile_stages.py --measure-cpu
+python profile_stages.py --measure-cpu %PLATFORM_ARG%
 if errorlevel 1 (
     echo.
     echo WARNING: Some CPU measurements may have failed
@@ -115,7 +129,7 @@ echo PHASE 3: Measuring GPU Latencies (All 7 Stages)
 echo ========================================================================
 echo.
 
-python profile_stages.py --measure-gpu
+python profile_stages.py --measure-gpu %PLATFORM_ARG%
 if errorlevel 1 (
     echo.
     echo WARNING: Some GPU measurements may have failed
@@ -205,14 +219,14 @@ echo ========================================================================
 echo.
 
 echo Merging NPU checkpoint files...
-python profile_stages.py --merge-npu
+python profile_stages.py --merge-npu %PLATFORM_ARG%
 if errorlevel 1 (
     echo WARNING: NPU merge had issues, but continuing...
 )
 
 echo.
 echo Generating final analysis...
-python profile_stages.py --analyze
+python profile_stages.py --analyze %PLATFORM_ARG%
 if errorlevel 1 (
     echo ERROR: Analysis failed!
     pause

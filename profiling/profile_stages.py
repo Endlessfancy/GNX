@@ -47,8 +47,11 @@ from models.Model_sage import (
 
 PROFILING_DIR = Path(__file__).parent
 MODELS_DIR = PROFILING_DIR / 'exported_models'
-RESULTS_DIR = PROFILING_DIR / 'results'
+RESULTS_DIR = PROFILING_DIR / 'results'  # 会被 --platform 参数修改
 TEST_CASES_FILE = PROFILING_DIR / 'test_cases.json'
+
+# 平台标识（用于区分不同AI PC的结果）
+PLATFORM = ""  # 会被 --platform 参数设置，如 "185H" 或 "265V"
 
 # ============================================================================
 # Helper Functions
@@ -881,6 +884,8 @@ def merge_npu_checkpoints():
     return merged
 
 def main():
+    global PLATFORM, RESULTS_DIR
+
     parser = argparse.ArgumentParser(description='GNX Stage Profiling Script')
     parser.add_argument('--all', action='store_true', help='Export all + measure CPU/GPU (NPU via profile_npu.py)')
     parser.add_argument('--export', action='store_true', help='Export all models (CPU/GPU dynamic + NPU static)')
@@ -892,8 +897,16 @@ def main():
     parser.add_argument('--measure-cpu', action='store_true', help='Measure CPU latencies only')
     parser.add_argument('--merge-npu', action='store_true', help='Merge NPU results from profile_npu.py outputs')
     parser.add_argument('--analyze', action='store_true', help='Analyze and generate results only')
+    parser.add_argument('--platform', type=str, default='', help='Platform name (e.g., 185H or 265V) for organizing results')
 
     args = parser.parse_args()
+
+    # 设置平台目录
+    if args.platform:
+        PLATFORM = args.platform
+        RESULTS_DIR = PROFILING_DIR / PLATFORM / 'sage_results'
+        print(f"Platform: {PLATFORM}")
+        print(f"Results will be saved to: {RESULTS_DIR}")
 
     # Handle aliases
     if args.measure_cpugpu:

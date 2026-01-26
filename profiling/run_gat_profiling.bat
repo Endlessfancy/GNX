@@ -21,6 +21,12 @@ REM   Phase 5: Merge results and analyze
 
 setlocal EnableDelayedExpansion
 
+REM ========================================================================
+REM PLATFORM CONFIGURATION - Modify this for different AI PCs
+REM ========================================================================
+set PLATFORM=185H
+REM Options: 185H, 265V, or leave empty for default location
+
 echo ========================================================================
 echo GAT Stage Profiling - Full Test (CPU + GPU + NPU)
 echo ========================================================================
@@ -44,12 +50,20 @@ cd /d "%~dp0"
 
 echo.
 echo Test Configuration:
+echo   Platform: %PLATFORM%
 echo   Model: GAT (Graph Attention Network)
 echo   Stages: 1-7 (LINEAR, GATHER_BOTH, ATTENTION_SCORE, ATTENTION_SOFTMAX, MESSAGE_WEIGHTED, REDUCE_SUM, ACTIVATE)
 echo   CPU: All 7 stages
 echo   GPU: All 7 stages
 echo   NPU: Stages 1, 2, 3, 5, 7 (skip Stage 4/6 - scatter operations)
 echo.
+
+REM Build platform argument
+if "%PLATFORM%"=="" (
+    set PLATFORM_ARG=
+) else (
+    set PLATFORM_ARG=--platform %PLATFORM%
+)
 
 REM ========================================================================
 REM PHASE 1: Export all models
@@ -99,7 +113,7 @@ echo PHASE 2: Measuring GAT CPU Latencies (All 7 Stages)
 echo ========================================================================
 echo.
 
-python gat_profile_stages.py --measure-cpu
+python gat_profile_stages.py --measure-cpu %PLATFORM_ARG%
 if errorlevel 1 (
     echo.
     echo WARNING: Some CPU measurements may have failed
@@ -120,7 +134,7 @@ echo PHASE 3: Measuring GAT GPU Latencies (All 7 Stages)
 echo ========================================================================
 echo.
 
-python gat_profile_stages.py --measure-gpu
+python gat_profile_stages.py --measure-gpu %PLATFORM_ARG%
 if errorlevel 1 (
     echo.
     echo WARNING: Some GPU measurements may have failed
@@ -211,14 +225,14 @@ echo ========================================================================
 echo.
 
 echo Merging NPU checkpoint files...
-python gat_profile_stages.py --merge-npu
+python gat_profile_stages.py --merge-npu %PLATFORM_ARG%
 if errorlevel 1 (
     echo WARNING: NPU merge had issues, but continuing...
 )
 
 echo.
 echo Generating final analysis...
-python gat_profile_stages.py --analyze
+python gat_profile_stages.py --analyze %PLATFORM_ARG%
 if errorlevel 1 (
     echo ERROR: Analysis failed!
     pause
