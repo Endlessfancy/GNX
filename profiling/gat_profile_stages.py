@@ -56,7 +56,7 @@ from models.Model_gat import (
 
 PROFILING_DIR = Path(__file__).parent
 MODELS_DIR = PROFILING_DIR / 'gat_exported_models'
-RESULTS_DIR = PROFILING_DIR / 'gat_results'  # 会被 --platform 参数修改
+RESULTS_DIR = PROFILING_DIR / 'results' / 'gat'  # 会被 --platform 参数修改
 TEST_CASES_FILE = PROFILING_DIR / 'test_cases.json'
 
 # GAT has 7 stages, NPU skips stages 4 and 6 (scatter operations)
@@ -889,7 +889,7 @@ def main():
     # 设置平台目录
     if args.platform:
         PLATFORM = args.platform
-        RESULTS_DIR = PROFILING_DIR / PLATFORM / 'gat_results'
+        RESULTS_DIR = PROFILING_DIR / 'results' / PLATFORM / 'gat'
         print(f"Platform: {PLATFORM}")
         print(f"Results will be saved to: {RESULTS_DIR}")
 

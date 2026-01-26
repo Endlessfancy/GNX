@@ -67,7 +67,7 @@ if %ERRORLEVEL% EQU 0 (
 )
 
 echo.
-echo Results saved to: profiling\results\stage3_cpugpu.json
+echo Results saved to: profiling\results\sage\stage3_cpugpu.json
 echo.
 
 pause

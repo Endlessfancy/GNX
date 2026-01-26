@@ -69,7 +69,7 @@ echo ========================================================================
 echo CPU Profiling Complete!
 echo ========================================================================
 echo.
-echo Results saved to: profiling\results\checkpoint_cpu.json
+echo Results saved to: profiling\results\sage\checkpoint_cpu.json
 echo.
 
 pause

@@ -161,7 +161,7 @@ echo ========================================================================
 echo GAT NPU Profiling Complete!
 echo ========================================================================
 echo.
-echo Results saved in: profiling\gat_results\
+echo Results saved in: profiling\results\gat\
 echo   - checkpoint_npu.json    (merged NPU data)
 echo   - npu_stage*_n*.json     (individual NPU test results)
 echo.

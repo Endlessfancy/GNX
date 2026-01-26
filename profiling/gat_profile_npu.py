@@ -33,7 +33,7 @@ import torch
 # Paths
 SCRIPT_DIR = Path(__file__).parent
 MODELS_DIR = SCRIPT_DIR / "gat_exported_models"
-RESULTS_DIR = SCRIPT_DIR / "gat_results"
+RESULTS_DIR = SCRIPT_DIR / "results" / "gat"
 CHECKPOINT_DIR = RESULTS_DIR
 
 # GAT NPU supported stages (skip 4, 6 - scatter operations)

@@ -54,7 +54,7 @@ from models.Model_gcn import (
 
 PROFILING_DIR = Path(__file__).parent
 MODELS_DIR = PROFILING_DIR / 'gcn_exported_models'
-RESULTS_DIR = PROFILING_DIR / 'gcn_results'  # 会被 --platform 参数修改
+RESULTS_DIR = PROFILING_DIR / 'results' / 'gcn'  # 会被 --platform 参数修改
 TEST_CASES_FILE = PROFILING_DIR / 'test_cases.json'
 
 # GCN has 6 stages, NPU skips stages 1 and 4 (scatter operations)
@@ -864,7 +864,7 @@ def main():
     # 设置平台目录
     if args.platform:
         PLATFORM = args.platform
-        RESULTS_DIR = PROFILING_DIR / PLATFORM / 'gcn_results'
+        RESULTS_DIR = PROFILING_DIR / 'results' / PLATFORM / 'gcn'
         print(f"Platform: {PLATFORM}")
         print(f"Results will be saved to: {RESULTS_DIR}")
 

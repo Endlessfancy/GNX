@@ -32,7 +32,7 @@ import torch
 # Paths
 SCRIPT_DIR = Path(__file__).parent
 MODELS_DIR = SCRIPT_DIR / "gcn_exported_models"
-RESULTS_DIR = SCRIPT_DIR / "gcn_results"
+RESULTS_DIR = SCRIPT_DIR / "results" / "gcn"
 CHECKPOINT_DIR = RESULTS_DIR
 
 # GCN NPU supported stages (skip 1, 4 - scatter operations)

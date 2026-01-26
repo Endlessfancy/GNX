@@ -144,7 +144,7 @@ echo ========================================================================
 echo NPU Profiling Complete!
 echo ========================================================================
 echo.
-echo Results saved in: profiling\results\
+echo Results saved in: profiling\results\sage\
 echo   - checkpoint_npu.json    (merged NPU data)
 echo   - npu_stage*_n*.json     (individual NPU test results)
 echo.

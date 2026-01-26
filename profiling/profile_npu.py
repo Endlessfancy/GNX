@@ -24,7 +24,7 @@ import torch
 # Paths
 SCRIPT_DIR = Path(__file__).parent
 MODELS_DIR = SCRIPT_DIR / "exported_models"
-RESULTS_DIR = SCRIPT_DIR / "results"
+RESULTS_DIR = SCRIPT_DIR / "results" / "sage"
 CHECKPOINT_DIR = RESULTS_DIR
 
 # Test cases from config

@@ -238,7 +238,7 @@ echo ========================================================================
 echo Full Profiling Complete!
 echo ========================================================================
 echo.
-echo Results saved in: profiling\results\
+echo Results saved in: profiling\results\sage\
 echo   - checkpoint_cpu.json     (CPU data)
 echo   - checkpoint_gpu.json     (GPU data)
 echo   - checkpoint_npu.json     (merged NPU data)

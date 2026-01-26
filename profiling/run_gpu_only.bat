@@ -69,7 +69,7 @@ echo ========================================================================
 echo GPU Profiling Complete!
 echo ========================================================================
 echo.
-echo Results saved to: profiling\results\checkpoint_gpu.json
+echo Results saved to: profiling\results\sage\checkpoint_gpu.json
 echo.
 
 pause

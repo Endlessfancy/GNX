@@ -243,7 +243,7 @@ echo ========================================================================
 echo GCN Full Profiling Complete!
 echo ========================================================================
 echo.
-echo Results saved in: profiling\gcn_results\
+echo Results saved in: profiling\results\gcn\
 echo   - checkpoint_cpu.json     (CPU data)
 echo   - checkpoint_gpu.json     (GPU data)
 echo   - checkpoint_npu.json     (merged NPU data)

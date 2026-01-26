@@ -161,7 +161,7 @@ echo ========================================================================
 echo GCN NPU Profiling Complete!
 echo ========================================================================
 echo.
-echo Results saved in: profiling\gcn_results\
+echo Results saved in: profiling\results\gcn\
 echo   - checkpoint_npu.json    (merged NPU data)
 echo   - npu_stage*_n*.json     (individual NPU test results)
 echo.

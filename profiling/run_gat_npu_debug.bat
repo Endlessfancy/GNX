@@ -111,9 +111,9 @@ REM ========================================================================
 echo.
 echo [Step 6] Checking results directory...
 echo ========================================================================
-if exist "gat_results" (
+if exist "results\gat" (
     echo GAT results directory exists:
-    dir gat_results\*.json /b 2>nul
+    dir results\gat\*.json /b 2>nul
 ) else (
     echo GAT results directory does not exist yet
 )

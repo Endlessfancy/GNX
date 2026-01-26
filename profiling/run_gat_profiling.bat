@@ -244,7 +244,7 @@ echo ========================================================================
 echo GAT Full Profiling Complete!
 echo ========================================================================
 echo.
-echo Results saved in: profiling\gat_results\
+echo Results saved in: profiling\results\gat\
 echo   - checkpoint_cpu.json     (CPU data)
 echo   - checkpoint_gpu.json     (GPU data)
 echo   - checkpoint_npu.json     (merged NPU data)

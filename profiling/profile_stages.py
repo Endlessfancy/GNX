@@ -47,7 +47,7 @@ from models.Model_sage import (
 
 PROFILING_DIR = Path(__file__).parent
 MODELS_DIR = PROFILING_DIR / 'exported_models'
-RESULTS_DIR = PROFILING_DIR / 'results'  # 会被 --platform 参数修改
+RESULTS_DIR = PROFILING_DIR / 'results' / 'sage'  # 会被 --platform 参数修改
 TEST_CASES_FILE = PROFILING_DIR / 'test_cases.json'
 
 # 平台标识（用于区分不同AI PC的结果）
@@ -909,7 +909,7 @@ def main():
     # 设置平台目录
     if args.platform:
         PLATFORM = args.platform
-        RESULTS_DIR = PROFILING_DIR / PLATFORM / 'sage_results'
+        RESULTS_DIR = PROFILING_DIR / 'results' / PLATFORM / 'sage'
         print(f"Platform: {PLATFORM}")
         print(f"Results will be saved to: {RESULTS_DIR}")
 

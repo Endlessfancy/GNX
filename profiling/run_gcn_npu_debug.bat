@@ -112,9 +112,9 @@ REM ========================================================================
 echo.
 echo [Step 6] Checking results directory...
 echo ========================================================================
-if exist "gcn_results" (
+if exist "results\gcn" (
     echo GCN results directory exists:
-    dir gcn_results\*.json /b 2>nul
+    dir results\gcn\*.json /b 2>nul
 ) else (
     echo GCN results directory does not exist yet
 )
