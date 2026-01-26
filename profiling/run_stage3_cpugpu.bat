@@ -5,44 +5,46 @@ REM ========================================================================
 REM
 REM This script ONLY tests Stage 3 on CPU and GPU.
 REM Stage 3 uses scatter_add which is NOT supported on NPU.
-REM
-REM Prerequisites:
-REM   - CPU/GPU models must be exported: python profile_stages.py --export-cpugpu
+
+setlocal EnableDelayedExpansion
 
 echo ========================================================================
 echo Stage 3 (REDUCE_SUM) CPU/GPU Only Test
 echo ========================================================================
 echo.
 
-REM Activate conda environment
+REM Try multiple conda paths
 echo Activating MIX environment...
-CALL "C:\Env\Anaconda\Scripts\activate.bat" MIX
+if exist "C:\Env\Anaconda\Scripts\activate.bat" (
+    CALL "C:\Env\Anaconda\Scripts\activate.bat" MIX
+) else if exist "%USERPROFILE%\anaconda3\Scripts\activate.bat" (
+    CALL "%USERPROFILE%\anaconda3\Scripts\activate.bat" MIX
+) else if exist "%USERPROFILE%\miniconda3\Scripts\activate.bat" (
+    CALL "%USERPROFILE%\miniconda3\Scripts\activate.bat" MIX
+) else if exist "C:\ProgramData\anaconda3\Scripts\activate.bat" (
+    CALL "C:\ProgramData\anaconda3\Scripts\activate.bat" MIX
+) else (
+    echo WARNING: Could not find conda. Please activate MIX environment manually.
+)
 
-echo.
-echo Environment activated.
+cd /d "%~dp0"
+
 echo.
 echo Stage 3 = REDUCE_SUM (scatter_add operation)
 echo NPU does NOT support scatter_add, so only CPU/GPU are tested.
 echo.
 
-REM Check if CPU/GPU models exist
+REM Check and export CPU/GPU models if needed
 if not exist "exported_models\stage3_cpu.xml" (
-    echo WARNING: CPU/GPU models not found!
-    echo Run first: python profile_stages.py --export-cpugpu
-    echo.
-    set /p EXPORT_NOW="Export CPU/GPU models now? (Y/N): "
-    if /i "!EXPORT_NOW!"=="Y" (
-        python profile_stages.py --export-cpugpu
-        if !ERRORLEVEL! NEQ 0 (
-            echo ERROR: CPU/GPU model export failed!
-            pause
-            exit /b 1
-        )
-    ) else (
-        echo Aborted.
+    echo CPU/GPU models not found. Exporting...
+    python profile_stages.py --export-cpugpu
+    if !ERRORLEVEL! NEQ 0 (
+        echo ERROR: CPU/GPU model export failed!
         pause
         exit /b 1
     )
+) else (
+    echo CPU/GPU models found. Skipping export.
 )
 
 echo ========================================================================
