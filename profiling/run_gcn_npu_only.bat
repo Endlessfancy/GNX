@@ -63,18 +63,26 @@ if not exist "gcn_exported_models\stage2_npu_n1000_e2000.xml" (
     echo Run first: python gcn_profile_stages.py --export-npu
     echo.
     set /p EXPORT_NOW="Export GCN NPU models now? (Y/N): "
-    if /i "!EXPORT_NOW!"=="Y" (
-        python gcn_profile_stages.py --export-npu
-        if !ERRORLEVEL! NEQ 0 (
-            echo ERROR: GCN NPU model export failed!
-            pause
-            exit /b 1
-        )
-    ) else (
+    if /i "!EXPORT_NOW!"=="N" (
         echo Aborted.
         pause
         exit /b 1
     )
+)
+
+REM Export if needed (outside the if block to avoid nesting issues)
+if not exist "gcn_exported_models\stage2_npu_n1000_e2000.xml" (
+    echo.
+    echo Exporting GCN NPU models...
+    python gcn_profile_stages.py --export-npu
+    if !ERRORLEVEL! NEQ 0 (
+        echo ERROR: GCN NPU model export failed!
+        pause
+        exit /b 1
+    )
+    echo.
+    echo Export complete. Continuing to NPU tests...
+    echo.
 )
 
 REM ========================================================================
