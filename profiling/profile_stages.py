@@ -337,6 +337,12 @@ def export_npu_static_models(test_cases):
             # 生成精确size的dummy input
             dummy_input = generate_dummy_input(stage_id, nodes, edges)
 
+            # 检查是否已存在
+            npu_ir = MODELS_DIR / f"stage{stage_id}_npu_n{nodes}_e{edges}.xml"
+            if npu_ir.exists():
+                print("Skip (exists)")
+                continue
+
             # 导出静态ONNX
             onnx_path = MODELS_DIR / f"stage{stage_id}_npu_n{nodes}_e{edges}.onnx"
 
@@ -359,7 +365,6 @@ def export_npu_static_models(test_cases):
                 continue
 
             # 转换为NPU IR（静态shape）
-            npu_ir = MODELS_DIR / f"stage{stage_id}_npu_n{nodes}_e{edges}.xml"
             success = convert_to_ir(onnx_path, npu_ir, 'NPU', static_shape=(nodes, edges))
 
             if success:

@@ -343,6 +343,12 @@ def export_npu_static_models(test_cases):
                 model = get_stage_model(stage_id)
             model.eval()
 
+            # Check if already exists
+            npu_ir = MODELS_DIR / f"stage{stage_id}_npu_n{nodes}_e{edges}.xml"
+            if npu_ir.exists():
+                print("Skip (exists)")
+                continue
+
             # Generate exact size dummy input
             dummy_input = generate_dummy_input(stage_id, nodes, edges)
 
@@ -361,7 +367,6 @@ def export_npu_static_models(test_cases):
                 continue
 
             # Convert to NPU IR (static shape)
-            npu_ir = MODELS_DIR / f"stage{stage_id}_npu_n{nodes}_e{edges}.xml"
             success = convert_to_ir(onnx_path, npu_ir, 'NPU', static_shape=(nodes, edges))
 
             if success:
