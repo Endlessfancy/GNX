@@ -40,7 +40,7 @@ REM ========================================================================
 echo ========================================================================
 echo [Phase 2] CPU Measurement
 echo ========================================================================
-python gat_profile_stages.py --measure-cpu --platform 185H
+python gat_profile_stages.py --measure-cpu --platform 265V
 echo.
 
 REM ========================================================================
@@ -49,7 +49,7 @@ REM ========================================================================
 echo ========================================================================
 echo [Phase 3] GPU Measurement
 echo ========================================================================
-python gat_profile_stages.py --measure-gpu --platform 185H
+python gat_profile_stages.py --measure-gpu --platform 265V
 echo.
 
 REM ========================================================================
@@ -163,14 +163,14 @@ echo.
 echo ========================================================================
 echo [Phase 5] Merging NPU results and analyzing...
 echo ========================================================================
-python gat_profile_stages.py --merge-npu --platform 185H
-python gat_profile_stages.py --analyze --platform 185H
+python gat_profile_stages.py --merge-npu --platform 265V
+python gat_profile_stages.py --analyze --platform 265V
 
 echo.
 echo ========================================================================
 echo GAT Profiling Complete!
 echo ========================================================================
-echo Results: results\185H\gat\
+echo Results: results\265V\gat\
 echo.
 
 pause

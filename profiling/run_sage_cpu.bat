@@ -17,8 +17,8 @@ if not exist "exported_models\stage1_cpu.xml" (
 
 echo.
 echo Running CPU measurements...
-python profile_stages.py --measure-cpu --platform 185H
+python profile_stages.py --measure-cpu --platform 265V
 
 echo.
-echo Done! Results: results\185H\sage\checkpoint_cpu.json
+echo Done! Results: results\265V\sage\checkpoint_cpu.json
 pause

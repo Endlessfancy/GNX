@@ -17,8 +17,8 @@ if not exist "gat_exported_models\stage1_cpu.xml" (
 
 echo.
 echo Running CPU measurements...
-python gat_profile_stages.py --measure-cpu --platform 185H
+python gat_profile_stages.py --measure-cpu --platform 265V
 
 echo.
-echo Done! Results: results\185H\gat\checkpoint_cpu.json
+echo Done! Results: results\265V\gat\checkpoint_cpu.json
 pause

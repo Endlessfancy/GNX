@@ -138,7 +138,7 @@ echo.
 echo ========================================================================
 echo Merging results...
 echo ========================================================================
-python gcn_profile_stages.py --merge-npu --platform 185H
+python gcn_profile_stages.py --merge-npu --platform 265V
 
 echo.
 echo Done!

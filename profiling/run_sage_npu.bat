@@ -162,7 +162,7 @@ echo.
 echo ========================================================================
 echo Merging results...
 echo ========================================================================
-python profile_stages.py --merge-npu --platform 185H
+python profile_stages.py --merge-npu --platform 265V
 
 echo.
 echo Done!

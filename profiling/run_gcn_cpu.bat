@@ -17,8 +17,8 @@ if not exist "gcn_exported_models\stage1_cpu.xml" (
 
 echo.
 echo Running CPU measurements...
-python gcn_profile_stages.py --measure-cpu --platform 185H
+python gcn_profile_stages.py --measure-cpu --platform 265V
 
 echo.
-echo Done! Results: results\185H\gcn\checkpoint_cpu.json
+echo Done! Results: results\265V\gcn\checkpoint_cpu.json
 pause

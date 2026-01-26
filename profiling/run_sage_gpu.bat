@@ -17,8 +17,8 @@ if not exist "exported_models\stage1_gpu.xml" (
 
 echo.
 echo Running GPU measurements...
-python profile_stages.py --measure-gpu --platform 185H
+python profile_stages.py --measure-gpu --platform 265V
 
 echo.
-echo Done! Results: results\185H\sage\checkpoint_gpu.json
+echo Done! Results: results\265V\sage\checkpoint_gpu.json
 pause
