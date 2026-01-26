@@ -10,7 +10,11 @@ echo GraphSAGE Full Profiling - CPU + GPU + NPU
 echo ========================================================================
 echo.
 
-CALL "C:\Env\Anaconda\Scripts\activate.bat" MIX
+if exist "C:\Env\Anaconda\Scripts\activate.bat" (
+    CALL "C:\Env\Anaconda\Scripts\activate.bat" MIX
+) else (
+    CALL "C:\Users\29067\anaconda3\Scripts\activate.bat" MIX
+)
 cd /d "%~dp0"
 
 echo Stages: 1-7 (GATHER, MESSAGE, REDUCE_SUM, REDUCE_COUNT, NORMALIZE, TRANSFORM, ACTIVATE)
