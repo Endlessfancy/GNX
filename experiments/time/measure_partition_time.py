@@ -100,9 +100,13 @@ def load_reddit2(cache_dir: Path):
 def load_ogbn_products(cache_dir: Path):
     """Load ogbn-products dataset"""
     from ogb.nodeproppred import PygNodePropPredDataset
+    import os
 
-    # Ensure directory exists
-    cache_dir.mkdir(parents=True, exist_ok=True)
+    # Ensure all directories exist (Windows compatibility)
+    ogbn_dir = cache_dir / 'ogbn_products'
+    raw_dir = ogbn_dir / 'raw'
+    os.makedirs(str(raw_dir), exist_ok=True)
+
     dataset = PygNodePropPredDataset(name='ogbn-products', root=str(cache_dir))
     return dataset[0]
 
