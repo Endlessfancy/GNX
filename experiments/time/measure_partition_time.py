@@ -75,6 +75,8 @@ def load_flickr(cache_dir: Path):
     except AttributeError:
         pass
 
+    # Ensure directory exists
+    cache_dir.mkdir(parents=True, exist_ok=True)
     dataset = Flickr(root=str(cache_dir / 'Flickr'))
     return dataset[0]
 
@@ -89,6 +91,8 @@ def load_reddit2(cache_dir: Path):
     except AttributeError:
         pass
 
+    # Ensure directory exists
+    cache_dir.mkdir(parents=True, exist_ok=True)
     dataset = Reddit2(root=str(cache_dir / 'Reddit2'))
     return dataset[0]
 
@@ -97,6 +101,8 @@ def load_ogbn_products(cache_dir: Path):
     """Load ogbn-products dataset"""
     from ogb.nodeproppred import PygNodePropPredDataset
 
+    # Ensure directory exists
+    cache_dir.mkdir(parents=True, exist_ok=True)
     dataset = PygNodePropPredDataset(name='ogbn-products', root=str(cache_dir))
     return dataset[0]
 
