@@ -18,6 +18,9 @@ Usage:
     python measure_partition_time.py --flickr
     python measure_partition_time.py --reddit2
     python measure_partition_time.py --ogbn
+
+    # Fast estimation (no METIS, instant results):
+    python measure_partition_time.py --estimate-only
 """
 
 import argparse
@@ -59,6 +62,114 @@ K_VALUES_OGBN = [20, 40, 60, 80, 100, 150, 200]
 
 # Number of repetitions for timing
 NUM_REPEATS = 3
+
+# Known dataset properties (for estimation without loading)
+DATASET_PROPERTIES = {
+    'Flickr': {'num_nodes': 89250, 'num_edges': 899756},
+    'Reddit2': {'num_nodes': 232965, 'num_edges': 23213838},
+    'ogbn-products': {'num_nodes': 2449029, 'num_edges': 61859140}
+}
+
+
+# ============================================================================
+# Estimation Functions (No METIS required)
+# ============================================================================
+
+def estimate_partition_quality(num_nodes: int, num_edges: int, k: int) -> Dict:
+    """
+    Estimate partition quality based on graph properties.
+
+    Theory:
+    - Cheeger inequality: min_cut >= (avg_degree * n) / (2 * k)
+    - Actual METIS results are typically 1.1-1.5x the lower bound
+
+    Args:
+        num_nodes: Number of nodes in the graph
+        num_edges: Number of edges in the graph
+        k: Number of partitions
+
+    Returns:
+        Dictionary with estimated partition quality metrics
+    """
+    avg_degree = 2 * num_edges / num_nodes
+    nodes_per_partition = num_nodes / k
+
+    # Edge cut estimation
+    # Lower bound based on random partitioning expectation
+    lower_bound = num_edges * (k - 1) / k
+    # METIS typically achieves much better than random
+    # Empirical factor: ~0.1-0.3 of random cut for good partitioners
+    estimated_edge_cut = lower_bound * 0.15
+
+    # Halo nodes estimation
+    # Each cut edge contributes to halo on both sides
+    estimated_halo_total = estimated_edge_cut * 2
+    estimated_halo_per_partition = estimated_halo_total / k
+
+    # Halo ratio
+    halo_ratio = estimated_halo_per_partition / nodes_per_partition
+
+    return {
+        'k': k,
+        'num_nodes': num_nodes,
+        'num_edges': num_edges,
+        'avg_degree': round(avg_degree, 2),
+        'nodes_per_partition': int(nodes_per_partition),
+        'estimated_edge_cut': int(estimated_edge_cut),
+        'estimated_halo_per_partition': int(estimated_halo_per_partition),
+        'estimated_halo_ratio': round(halo_ratio, 4)
+    }
+
+
+def estimate_all_datasets():
+    """Estimate partition quality for all datasets without running METIS."""
+    print("=" * 80)
+    print("Partition Quality Estimation (No METIS required)")
+    print("=" * 80)
+
+    all_estimates = {}
+
+    datasets_k_values = {
+        'Flickr': K_VALUES_FLICKR,
+        'Reddit2': K_VALUES_REDDIT2,
+        'ogbn-products': K_VALUES_OGBN
+    }
+
+    for dataset_name, props in DATASET_PROPERTIES.items():
+        num_nodes = props['num_nodes']
+        num_edges = props['num_edges']
+        k_values = datasets_k_values[dataset_name]
+
+        print(f"\n{'='*70}")
+        print(f"Dataset: {dataset_name}")
+        print(f"  Nodes: {num_nodes:,}, Edges: {num_edges:,}")
+        print(f"  Avg Degree: {2 * num_edges / num_nodes:.2f}")
+        print(f"{'='*70}")
+
+        print(f"\n{'K':<8} {'Nodes/Part':<12} {'Est.EdgeCut':<15} {'Est.Halo/Part':<15} {'Halo Ratio':<12}")
+        print("-" * 65)
+
+        estimates = []
+        for k in k_values:
+            est = estimate_partition_quality(num_nodes, num_edges, k)
+            estimates.append(est)
+            print(f"{k:<8} {est['nodes_per_partition']:<12,} {est['estimated_edge_cut']:<15,} "
+                  f"{est['estimated_halo_per_partition']:<15,} {est['estimated_halo_ratio']:.2%}")
+
+        all_estimates[dataset_name] = {
+            'properties': props,
+            'k_values': k_values,
+            'estimates': estimates
+        }
+
+    # Save estimates
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    filepath = RESULTS_DIR / 'partition_estimates.json'
+    with open(filepath, 'w', encoding='utf-8') as f:
+        json.dump(all_estimates, f, indent=2)
+    print(f"\n\nEstimates saved to: {filepath}")
+
+    return all_estimates
 
 
 # ============================================================================
@@ -312,7 +423,14 @@ def main():
     parser.add_argument("--reddit2", action="store_true", help="Measure Reddit2")
     parser.add_argument("--ogbn", action="store_true", help="Measure ogbn-products")
     parser.add_argument("--all", action="store_true", help="Measure all datasets")
+    parser.add_argument("--estimate-only", action="store_true",
+                        help="Only estimate partition quality (no METIS, instant)")
     args = parser.parse_args()
+
+    # Estimate-only mode: instant results without running METIS
+    if args.estimate_only:
+        estimate_all_datasets()
+        return
 
     if args.all:
         args.flickr = True
