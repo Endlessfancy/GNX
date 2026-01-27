@@ -32,7 +32,6 @@ import numpy as np
 # Add project root to path
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
-GRAPH_PARTITION_DIR = PROJECT_ROOT / 'experiments' / 'graphPartition'
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import torch
@@ -50,7 +49,7 @@ except ImportError:
 # ============================================================================
 
 RESULTS_DIR = SCRIPT_DIR / 'results'
-DATA_DIR = GRAPH_PARTITION_DIR / 'data'
+DATA_DIR = SCRIPT_DIR / 'data'  # Use local data directory
 
 # Partition K values per dataset
 K_VALUES_FLICKR = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
