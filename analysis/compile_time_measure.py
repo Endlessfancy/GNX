@@ -66,6 +66,22 @@ def measure_single_k(scheduler: PipelineScheduler, subgraphs: List[SubgraphInfo]
         sg.stage1_time = 0.0
         sg.stage2_time = 0.0
 
+    # Measure DP split (binary search) time separately
+    dp_split_times = []
+    for sg in subgraphs:
+        t0 = time.perf_counter()
+        scheduler.find_optimal_dp_split(sg.total_nodes, sg.internal_edges)
+        t1 = time.perf_counter()
+        dp_split_times.append((t1 - t0) * 1000)
+
+    dp_split_total_ms = sum(dp_split_times)
+    dp_split_avg_ms = dp_split_total_ms / len(subgraphs) if subgraphs else 0
+
+    # Reset and measure full optimization
+    for sg in subgraphs:
+        sg.stage1_time = 0.0
+        sg.stage2_time = 0.0
+
     t_start = time.perf_counter()
 
     if k == 1:
@@ -85,6 +101,9 @@ def measure_single_k(scheduler: PipelineScheduler, subgraphs: List[SubgraphInfo]
         'k': k,
         'num_subgraphs': len(subgraphs),
         'optimization_time_ms': elapsed_ms,
+        'dp_split_total_ms': dp_split_total_ms,
+        'dp_split_avg_ms': dp_split_avg_ms,
+        'dp_split_per_subgraph_ms': dp_split_times,
         'makespan_ms': makespan,
         'order': order,
     }
@@ -192,9 +211,9 @@ def main():
 
     # Run measurements
     print()
-    print("=" * 70)
-    print(f"{'K':<4} {'Subgraphs':<12} {'Opt Time (ms)':<18} {'Makespan (ms)':<15}")
-    print("=" * 70)
+    print("=" * 95)
+    print(f"{'K':<4} {'Subgraphs':<10} {'Total (ms)':<12} {'DP Split (ms)':<14} {'DP/Subgraph':<12} {'Makespan (ms)':<15}")
+    print("=" * 95)
 
     all_results = []
 
@@ -204,23 +223,36 @@ def main():
             print(f"K={k}: No partition data found")
             continue
 
-        times = []
+        opt_times = []
+        dp_times = []
+        dp_avg_times = []
+
         for _ in range(args.repeat):
             subgraphs = [SubgraphInfo(id=id_, total_nodes=n, internal_edges=m)
                          for id_, n, m in partitions]
             result = measure_single_k(scheduler, subgraphs, k)
-            times.append(result['optimization_time_ms'])
+            opt_times.append(result['optimization_time_ms'])
+            dp_times.append(result['dp_split_total_ms'])
+            dp_avg_times.append(result['dp_split_avg_ms'])
 
-        avg_time = sum(times) / len(times)
-        result['optimization_time_ms'] = avg_time
+        avg_opt_time = sum(opt_times) / len(opt_times)
+        avg_dp_time = sum(dp_times) / len(dp_times)
+        avg_dp_per_sg = sum(dp_avg_times) / len(dp_avg_times)
+
+        result['optimization_time_ms'] = avg_opt_time
+        result['dp_split_total_ms'] = avg_dp_time
+        result['dp_split_avg_ms'] = avg_dp_per_sg
+
         if args.repeat > 1:
-            result['optimization_time_std'] = (sum((t - avg_time)**2 for t in times) / len(times))**0.5
+            result['optimization_time_std'] = (sum((t - avg_opt_time)**2 for t in opt_times) / len(opt_times))**0.5
 
         all_results.append(result)
 
-        print(f"{k:<4} {len(partitions):<12} {avg_time:<18.3f} {result['makespan_ms']:<15.2f}")
+        dp_ratio = (avg_dp_time / avg_opt_time * 100) if avg_opt_time > 0 else 0
+        print(f"{k:<4} {len(partitions):<10} {avg_opt_time:<12.3f} {avg_dp_time:<14.3f} {avg_dp_per_sg:<12.3f} {result['makespan_ms']:<15.2f}")
 
-    print("=" * 70)
+    print("=" * 95)
+    print(f"Note: DP Split = Binary Search for CPU/GPU split ratio (9 iterations per subgraph)")
 
     # Detailed breakdown
     if args.breakdown:
