@@ -12,7 +12,7 @@ from pipeline_scheduler import PipelineScheduler, SubgraphInfo
 
 def load_fused_block_data(filepath: str) -> Dict[Tuple[int, int], float]:
     """Load fused block profiling data."""
-    with open(filepath, 'r') as f:
+    with open(filepath, 'r', encoding='utf-8') as f:
         data = json.load(f)
     result = {}
     for key, value in data.items():
@@ -25,7 +25,7 @@ def load_fused_block_data(filepath: str) -> Dict[Tuple[int, int], float]:
 
 def load_npu_stage_data(filepath: str, stages: List[int] = [5, 6, 7]) -> Dict[Tuple[int, int], float]:
     """Load NPU stage data (using original_mean)."""
-    with open(filepath, 'r') as f:
+    with open(filepath, 'r', encoding='utf-8') as f:
         data = json.load(f)
     nm_times = {}
     for key, value in data.items():
@@ -42,7 +42,7 @@ def load_npu_stage_data(filepath: str, stages: List[int] = [5, 6, 7]) -> Dict[Tu
 
 def parse_flickr_partition(filepath: str, k: int) -> List[Tuple[int, int, int]]:
     """Parse Flickr partition data for a specific K value."""
-    with open(filepath, 'r') as f:
+    with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
     pattern = rf'### K={k}[^\n]*\n\n\|[^\n]+\n\|[-\s|]+\n((?:\|[^\n]+\n)+)'
     match = re.search(pattern, content)
@@ -170,7 +170,7 @@ def main():
     cpu_data = load_fused_block_data(cpu_file)
     gpu_data = load_fused_block_data(gpu_file)
     npu_data = load_npu_stage_data(npu_file)
-    with open(bw_file, 'r') as f:
+    with open(bw_file, 'r', encoding='utf-8') as f:
         bw_config = json.load(f)
     t1 = time.perf_counter()
     print(f"Data loading: {(t1-t0)*1000:.2f} ms")
@@ -250,7 +250,7 @@ def main():
             },
             'results': all_results,
         }
-        with open(args.output, 'w') as f:
+        with open(args.output, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, indent=2)
         print(f"\nResults saved to: {args.output}")
 
