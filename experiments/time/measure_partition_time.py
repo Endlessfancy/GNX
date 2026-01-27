@@ -32,6 +32,7 @@ import numpy as np
 # Add project root to path
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
+GRAPH_PARTITION_DIR = PROJECT_ROOT / 'experiments' / 'graphPartition'
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import torch
@@ -49,7 +50,7 @@ except ImportError:
 # ============================================================================
 
 RESULTS_DIR = SCRIPT_DIR / 'results'
-DATA_DIR = SCRIPT_DIR / 'data'  # Use local data directory
+DATA_DIR = GRAPH_PARTITION_DIR / 'data'
 
 # Partition K values per dataset
 K_VALUES_FLICKR = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
@@ -321,6 +322,10 @@ def main():
     if not any([args.flickr, args.reddit2, args.ogbn]):
         parser.print_help()
         return
+
+    # Ensure data directory exists
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    print(f"Data directory: {DATA_DIR}")
 
     all_results = {
         'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
