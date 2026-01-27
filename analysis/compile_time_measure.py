@@ -154,13 +154,15 @@ def main():
                         help='Output JSON file path')
     args = parser.parse_args()
 
-    # Paths
-    analysis_dir = "/home/haoyang/private/GNX_final/analysis"
-    cpu_file = f"{analysis_dir}/fused1-4_cpu_compute_only.json"
-    gpu_file = f"{analysis_dir}/fused1-4_gpu_compute_only.json"
-    npu_file = f"{analysis_dir}/profiling_stage1-7_compute_only.json"
-    bw_file = f"{analysis_dir}/bandwidth_config.json"
-    partition_file = "/home/haoyang/private/GNX_final/experiments/graphPartition/flickr_partition.md"
+    # Paths (relative to script location)
+    import os
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    analysis_dir = script_dir
+    cpu_file = os.path.join(analysis_dir, "fused1-4_cpu_compute_only.json")
+    gpu_file = os.path.join(analysis_dir, "fused1-4_gpu_compute_only.json")
+    npu_file = os.path.join(analysis_dir, "profiling_stage1-7_compute_only.json")
+    bw_file = os.path.join(analysis_dir, "bandwidth_config.json")
+    partition_file = os.path.join(script_dir, "..", "experiments", "graphPartition", "flickr_partition.md")
 
     # Load data
     print("Loading profiling data...")
