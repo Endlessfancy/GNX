@@ -52,8 +52,10 @@ except ImportError:
 RESULTS_DIR = SCRIPT_DIR / 'results'
 DATA_DIR = GRAPH_PARTITION_DIR / 'data'
 
-# Partition K values to test
-K_VALUES = [2, 4, 8, 16]
+# Partition K values per dataset
+K_VALUES_FLICKR = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+K_VALUES_REDDIT2 = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+K_VALUES_OGBN = [20, 40, 60, 80, 100, 150, 200]
 
 # Number of repetitions for timing
 NUM_REPEATS = 3
@@ -152,16 +154,17 @@ def compute_partition_stats(data, node_assignments: np.ndarray, adj_list: List[n
 # Timing Functions
 # ============================================================================
 
-def measure_dataset_time(dataset_name: str, load_func, cache_dir: Path) -> Dict:
+def measure_dataset_time(dataset_name: str, load_func, cache_dir: Path, k_values: List[int]) -> Dict:
     """Measure time for a single dataset"""
     print(f"\n{'='*70}")
     print(f"Measuring Partition Time for: {dataset_name}")
+    print(f"K values: {k_values}")
     print(f"{'='*70}")
 
     results = {
         'dataset': dataset_name,
         'num_repeats': NUM_REPEATS,
-        'k_values': K_VALUES
+        'k_values': k_values
     }
 
     # ===== 1. Dataset Loading Time =====
@@ -220,7 +223,7 @@ def measure_dataset_time(dataset_name: str, load_func, cache_dir: Path) -> Dict:
     print(f"\n[3] Running METIS partitioning...")
     results['partition_times'] = {}
 
-    for k in K_VALUES:
+    for k in k_values:
         print(f"\n    K={k}:")
         partition_times = []
         stats_times = []
@@ -264,8 +267,8 @@ def measure_dataset_time(dataset_name: str, load_func, cache_dir: Path) -> Dict:
 
     # ===== Summary =====
     total_time = results['load_time_s']['mean'] + results['adjacency_build_time_s']['mean']
-    if K_VALUES:
-        k_example = str(K_VALUES[-1])
+    if k_values:
+        k_example = str(k_values[-1])
         total_time += results['partition_times'][k_example]['total']['mean']
 
     results['total_pipeline_time_s'] = total_time
@@ -273,8 +276,8 @@ def measure_dataset_time(dataset_name: str, load_func, cache_dir: Path) -> Dict:
     print(f"\n[Summary] {dataset_name}")
     print(f"    Load:      {results['load_time_s']['mean']:.3f}s")
     print(f"    Adj Build: {results['adjacency_build_time_s']['mean']:.3f}s")
-    if K_VALUES and PYMETIS_AVAILABLE:
-        print(f"    Partition (K={K_VALUES[-1]}): {results['partition_times'][str(K_VALUES[-1])]['total']['mean']:.3f}s")
+    if k_values and PYMETIS_AVAILABLE:
+        print(f"    Partition (K={k_values[-1]}): {results['partition_times'][str(k_values[-1])]['total']['mean']:.3f}s")
     print(f"    Total:     {total_time:.3f}s")
 
     return results
@@ -312,24 +315,26 @@ def main():
 
     all_results = {
         'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
-        'k_values': K_VALUES,
+        'k_values_flickr': K_VALUES_FLICKR,
+        'k_values_reddit2': K_VALUES_REDDIT2,
+        'k_values_ogbn': K_VALUES_OGBN,
         'num_repeats': NUM_REPEATS,
         'datasets': {}
     }
 
     # Measure each dataset
     if args.flickr:
-        results = measure_dataset_time('Flickr', load_flickr, DATA_DIR)
+        results = measure_dataset_time('Flickr', load_flickr, DATA_DIR, K_VALUES_FLICKR)
         all_results['datasets']['flickr'] = results
         save_results(results, 'partition_time_flickr.json')
 
     if args.reddit2:
-        results = measure_dataset_time('Reddit2', load_reddit2, DATA_DIR)
+        results = measure_dataset_time('Reddit2', load_reddit2, DATA_DIR, K_VALUES_REDDIT2)
         all_results['datasets']['reddit2'] = results
         save_results(results, 'partition_time_reddit2.json')
 
     if args.ogbn:
-        results = measure_dataset_time('ogbn-products', load_ogbn_products, DATA_DIR)
+        results = measure_dataset_time('ogbn-products', load_ogbn_products, DATA_DIR, K_VALUES_OGBN)
         all_results['datasets']['ogbn_products'] = results
         save_results(results, 'partition_time_ogbn.json')
 
