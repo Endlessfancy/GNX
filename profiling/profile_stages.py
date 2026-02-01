@@ -601,11 +601,20 @@ def measure_all_latencies(test_cases, config, pu_list=None, checkpoint_name=None
 
                     print(f"[{count}/{total}] Stage {stage_id} on {pu} - {nodes}n {edges}e... ", end='', flush=True)
 
-                    dummy_input = generate_dummy_input(stage_id, nodes, edges, feature_dim)
-                    result = measure_latency_openvino(ir_path, pu, dummy_input, num_warmup, num_iterations)
+                    try:
+                        dummy_input = generate_dummy_input(stage_id, nodes, edges, feature_dim)
+                        result = measure_latency_openvino(ir_path, pu, dummy_input, num_warmup, num_iterations)
+                    except Exception as e:
+                        error_msg = str(e)
+                        print(f"FAILED (outer catch: {error_msg[:80]})")
+                        result = {
+                            'mean': -1, 'std': -1, 'min': -1, 'max': -1,
+                            'failed': True, 'error': f'outer catch: {error_msg}'
+                        }
 
                     results[key] = result
-                    print(f"{result['mean']:.2f}ms ±{result['std']:.2f}")
+                    if not result.get('failed', False):
+                        print(f"{result['mean']:.2f}ms ±{result['std']:.2f}")
 
                     # OOM检测：如果测量失败，跳过同node的后续更大edge
                     if result.get('failed', False):
