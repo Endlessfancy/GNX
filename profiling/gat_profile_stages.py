@@ -429,27 +429,41 @@ def measure_latency_pytorch(model, dummy_input, num_warmup=10, num_iterations=50
     }
 
 def measure_latency_openvino(ir_path, pu, dummy_input, num_warmup=10, num_iterations=50):
-    """Measure latency using OpenVINO"""
+    """使用OpenVINO异步API测量延迟（包含完整的CPU↔GPU数据传输时间）"""
     try:
-        import openvino.runtime as ov
+        import openvino as ov
 
         core = ov.Core()
         model = core.read_model(str(ir_path))
         compiled_model = core.compile_model(model, pu)
 
-        # Prepare inputs (convert to numpy)
-        inputs = [t.numpy() if isinstance(t, torch.Tensor) else np.array(t)
-                  for t in dummy_input]
+        # 准备输入（转换为numpy）
+        if isinstance(dummy_input, tuple):
+            inputs = [t.numpy() if isinstance(t, torch.Tensor) else np.array(t)
+                     for t in dummy_input]
+        else:
+            inputs = [dummy_input.numpy() if isinstance(dummy_input, torch.Tensor)
+                     else np.array(dummy_input)]
 
-        # Warmup
+        # 创建推理请求
+        infer_request = compiled_model.create_infer_request()
+
+        # 预热（每次都重新设置tensor，模拟真实场景）
         for _ in range(num_warmup):
-            _ = compiled_model(inputs)
+            for i in range(len(inputs)):
+                infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
+            infer_request.start_async()
+            infer_request.wait()
 
-        # Measure
+        # 测量（每次都重新设置tensor，确保包含CPU→GPU传输时间）
         latencies = []
         for _ in range(num_iterations):
+            for i in range(len(inputs)):
+                infer_request.set_input_tensor(i, ov.Tensor(inputs[i]))
+
             start = time.perf_counter()
-            _ = compiled_model(inputs)
+            infer_request.start_async()
+            infer_request.wait()
             latencies.append((time.perf_counter() - start) * 1000)  # ms
 
         return {
@@ -483,7 +497,7 @@ def save_checkpoint_incremental(results, checkpoint_name):
 
     return checkpoint_file
 
-def measure_all_latencies(test_cases, config, pu_list=None, checkpoint_name=None):
+def measure_all_latencies(test_cases, config, pu_list=None, checkpoint_name=None, gpu_mem_limit_gb=0, stage_ids=None):
     """
     Measure latencies for specified PUs (支持断点续测和增量保存)
 
@@ -492,7 +506,12 @@ def measure_all_latencies(test_cases, config, pu_list=None, checkpoint_name=None
         config: Configuration info
         pu_list: PU list to measure, e.g., ['CPU', 'GPU'] or ['NPU'], None means all
         checkpoint_name: checkpoint名称，用于增量保存和断点续测
+        gpu_mem_limit_gb: GPU显存限制(GB)，超过此值的测试点会被跳过防止OOM，0表示不限制
+        stage_ids: 要测量的stage列表，如[3,4,5]，None表示全部
     """
+    gpu_mem_limit_bytes = int(gpu_mem_limit_gb * 1e9)
+    if stage_ids is None:
+        stage_ids = list(range(1, NUM_STAGES + 1))
     if pu_list is None:
         pu_list = ['CPU', 'GPU', 'NPU']
 
@@ -516,25 +535,28 @@ def measure_all_latencies(test_cases, config, pu_list=None, checkpoint_name=None
     else:
         print(f"Resuming from checkpoint: {len(results)} existing entries")
 
-    # Calculate total measurements (NPU skips stages 4/6)
+    # Calculate total measurements
     total = 0
     for pu in pu_list:
         if pu == 'NPU':
-            total += (NUM_STAGES - len(NPU_SKIP_STAGES)) * len(test_cases)
+            npu_stages = [s for s in stage_ids if s not in NPU_SKIP_STAGES]
+            total += len(npu_stages) * len(test_cases)
         else:
-            total += NUM_STAGES * len(test_cases)
+            total += len(stage_ids) * len(test_cases)
     count = 0
 
     # Measure CPU/GPU (dynamic models)
     if 'CPU' in pu_list or 'GPU' in pu_list:
         dynamic_pus = [pu for pu in ['CPU', 'GPU'] if pu in pu_list]
-        for stage_id in range(1, NUM_STAGES + 1):
+        for stage_id in stage_ids:
             for pu in dynamic_pus:
                 ir_path = MODELS_DIR / f"stage{stage_id}_{pu.lower()}.xml"
 
                 if not ir_path.exists():
                     print(f"Warning: Skipping {pu} Stage {stage_id}: IR not found")
                     continue
+
+                oom_skip_nodes = set()  # 同node下OOM后跳过剩余更大edge的测试
 
                 for case in test_cases:
                     count += 1
@@ -546,6 +568,31 @@ def measure_all_latencies(test_cases, config, pu_list=None, checkpoint_name=None
                         print(f"[{count}/{total}] Stage {stage_id} on {pu} - {nodes}n {edges}e... SKIP (cached)")
                         continue
 
+                    # OOM跳过：同node的之前edge已OOM，更大edge必然也OOM
+                    if nodes in oom_skip_nodes:
+                        print(f"[{count}/{total}] Stage {stage_id} on {pu} - {nodes}n {edges}e... SKIP (OOM at smaller edge)")
+                        results[key] = {
+                            'mean': -1, 'std': -1, 'min': -1, 'max': -1,
+                            'failed': True, 'error': f'skipped: OOM detected at smaller edge count for {nodes}n'
+                        }
+                        save_checkpoint_incremental(results, checkpoint_name)
+                        continue
+
+                    # GPU显存保护：估算数据大小，超过阈值直接跳过防止OOM强制终止进程
+                    if pu == 'GPU' and gpu_mem_limit_bytes > 0:
+                        data_size = estimate_data_size(stage_id, nodes, edges, feature_dim)
+                        estimated_gpu_mem = data_size * 2
+                        if estimated_gpu_mem > gpu_mem_limit_bytes:
+                            print(f"[{count}/{total}] Stage {stage_id} on {pu} - {nodes}n {edges}e... "
+                                  f"SKIP (estimated {estimated_gpu_mem/1e9:.1f}GB > limit {gpu_mem_limit_bytes/1e9:.1f}GB)")
+                            results[key] = {
+                                'mean': -1, 'std': -1, 'min': -1, 'max': -1,
+                                'failed': True, 'error': f'skipped: estimated GPU mem {estimated_gpu_mem/1e9:.1f}GB exceeds limit'
+                            }
+                            save_checkpoint_incremental(results, checkpoint_name)
+                            oom_skip_nodes.add(nodes)
+                            continue
+
                     print(f"[{count}/{total}] Stage {stage_id} on {pu} - {nodes}n {edges}e... ", end='', flush=True)
 
                     dummy_input = generate_dummy_input(stage_id, nodes, edges, feature_dim)
@@ -554,12 +601,16 @@ def measure_all_latencies(test_cases, config, pu_list=None, checkpoint_name=None
                     results[key] = result
                     print(f"{result['mean']:.2f}ms +/-{result['std']:.2f}")
 
+                    # OOM检测：如果测量失败，跳过同node的后续更大edge
+                    if result.get('failed', False):
+                        oom_skip_nodes.add(nodes)
+
                     # 增量保存checkpoint
                     save_checkpoint_incremental(results, checkpoint_name)
 
     # Measure NPU (static models, one per size)
     if 'NPU' in pu_list:
-        for stage_id in range(1, NUM_STAGES + 1):
+        for stage_id in stage_ids:
             # Skip scatter stages for NPU
             if stage_id in NPU_SKIP_STAGES:
                 continue
@@ -883,8 +934,16 @@ def main():
     parser.add_argument('--merge-npu', action='store_true', help='Merge NPU results from profile_npu.py outputs')
     parser.add_argument('--analyze', action='store_true', help='Analyze and generate results only')
     parser.add_argument('--platform', type=str, default='', help='Platform name (e.g., 185H or 265V) for organizing results')
+    parser.add_argument('--gpu-mem-limit', type=float, default=0, help='GPU memory limit in GB. Tests exceeding this will be skipped to prevent OOM crash (e.g., 7.5 for 8GB GPU). 0=no limit')
+    parser.add_argument('--stages', type=str, default='', help='Comma-separated stage IDs to measure (e.g., 3,4,5). Empty means all stages')
 
     args = parser.parse_args()
+
+    # 解析stage过滤
+    stage_filter = None
+    if args.stages:
+        stage_filter = [int(s.strip()) for s in args.stages.split(',')]
+        print(f"Stage filter: only measuring stages {stage_filter}")
 
     # 设置平台目录
     if args.platform:
@@ -976,7 +1035,7 @@ def main():
         print("=" * 70)
         print("Note: NPU measurements should be done via profile_npu.py for isolation")
 
-        cpugpu_results = measure_all_latencies(test_cases, config, pu_list=['CPU', 'GPU'])
+        cpugpu_results = measure_all_latencies(test_cases, config, pu_list=['CPU', 'GPU'], gpu_mem_limit_gb=args.gpu_mem_limit, stage_ids=stage_filter)
         save_checkpoint(cpugpu_results, 'cpugpu')
 
         print("\nDone: CPU/GPU measurements completed and saved!")
@@ -997,7 +1056,7 @@ def main():
         print("Measuring GAT CPU Latencies Only")
         print("=" * 70)
 
-        cpu_results = measure_all_latencies(test_cases, config, pu_list=['CPU'])
+        cpu_results = measure_all_latencies(test_cases, config, pu_list=['CPU'], stage_ids=stage_filter)
         save_checkpoint(cpu_results, 'cpu')
 
         print("\nDone: CPU measurements completed and saved!")
@@ -1013,7 +1072,7 @@ def main():
         print("Measuring GAT GPU Latencies Only")
         print("=" * 70)
 
-        gpu_results = measure_all_latencies(test_cases, config, pu_list=['GPU'])
+        gpu_results = measure_all_latencies(test_cases, config, pu_list=['GPU'], gpu_mem_limit_gb=args.gpu_mem_limit, stage_ids=stage_filter)
         save_checkpoint(gpu_results, 'gpu')
 
         print("\nDone: GPU measurements completed and saved!")
