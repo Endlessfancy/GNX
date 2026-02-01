@@ -29,90 +29,83 @@ if exist "C:\Env\Anaconda\Scripts\activate.bat" (
 cd /d "%~dp0"
 
 REM ========================================================================
-REM Step 1: Export all models
+REM Step 1: Export all models (auto-skip existing files)
 REM ========================================================================
 
 echo.
 echo ================================================================
-echo [Step 1/7] Exporting models
+echo [Step 1/9] Exporting SAGE CPU/GPU models (auto-skip existing)
 echo ================================================================
+python profile_stages.py --export-cpugpu
 
-if not exist "exported_models\stage1_cpu.xml" (
-    echo Exporting SAGE CPU/GPU models...
-    python profile_stages.py --export-cpugpu
-) else (
-    echo SAGE CPU/GPU models already exported, skipping.
-)
+echo.
+echo ================================================================
+echo [Step 2/9] Exporting SAGE NPU static models (auto-skip existing)
+echo ================================================================
+python profile_stages.py --export-npu
 
-if not exist "exported_models\stage1_npu_n1000_e5000.xml" (
-    echo Exporting SAGE NPU static models...
-    python profile_stages.py --export-npu
-) else (
-    echo SAGE NPU models already exported, skipping.
-)
+echo.
+echo ================================================================
+echo [Step 3/9] Exporting GAT CPU/GPU models (auto-skip existing)
+echo ================================================================
+python gat_profile_stages.py --export-cpugpu
 
-if not exist "gat_exported_models\stage1_cpu.xml" (
-    echo Exporting GAT CPU/GPU models...
-    python gat_profile_stages.py --export-cpugpu
-) else (
-    echo GAT CPU/GPU models already exported, skipping.
-)
-
-if not exist "gat_exported_models\stage3_npu_n1000_e5000.xml" (
-    echo Exporting GAT NPU static models...
-    python gat_profile_stages.py --export-npu
-) else (
-    echo GAT NPU models already exported, skipping.
-)
+echo.
+echo ================================================================
+echo [Step 4/9] Exporting GAT NPU static models (auto-skip existing)
+echo ================================================================
+python gat_profile_stages.py --export-npu
 
 REM ========================================================================
-REM Step 2: SAGE CPU
+REM Step 5: SAGE CPU
 REM ========================================================================
 
 echo.
 echo ================================================================
-echo [Step 2/7] SAGE CPU Profiling (7 stages)
+echo [Step 5/9] SAGE CPU Profiling (7 stages)
 echo ================================================================
 python profile_stages.py --measure-cpu --platform 265V
 
 REM ========================================================================
-REM Step 3: SAGE GPU
+REM Step 6: SAGE GPU
 REM ========================================================================
 
 echo.
 echo ================================================================
-echo [Step 3/7] SAGE GPU Profiling (7 stages)
+echo [Step 6/9] SAGE GPU Profiling (7 stages)
 echo ================================================================
 python profile_stages.py --measure-gpu --platform 265V
 
 REM ========================================================================
-REM Step 4: GAT CPU
+REM Step 7: GAT CPU
 REM ========================================================================
 
 echo.
 echo ================================================================
-echo [Step 4/7] GAT CPU Profiling (7 stages)
+echo [Step 7/9] GAT CPU Profiling (7 stages)
 echo ================================================================
 python gat_profile_stages.py --measure-cpu --platform 265V
 
 REM ========================================================================
-REM Step 5: GAT GPU
+REM Step 8: GAT GPU
 REM ========================================================================
 
 echo.
 echo ================================================================
-echo [Step 5/7] GAT GPU Profiling (7 stages)
+echo [Step 8/9] GAT GPU Profiling (7 stages)
 echo ================================================================
 python gat_profile_stages.py --measure-gpu --platform 265V
 
 REM ========================================================================
-REM Step 6: SAGE NPU (Stage 1, 5, 6, 7)
+REM Step 9: NPU (SAGE Stage 1,5,6,7 + GAT Stage 3,5)
 REM ========================================================================
 
 echo.
 echo ================================================================
-echo [Step 6/7] SAGE NPU Profiling (Stage 1, 5, 6, 7)
+echo [Step 9/9] NPU Profiling - SAGE (4 stages) + GAT (2 stages)
 echo ================================================================
+
+REM --- SAGE NPU: Stage 1, 5, 6, 7 ---
 
 REM 1000 nodes
 echo [1/48] SAGE Stage 1, 1000 nodes...
@@ -194,14 +187,7 @@ python profile_npu.py --nodes 100000 --stage 6
 echo [32/48] SAGE Stage 7, 100000 nodes...
 python profile_npu.py --nodes 100000 --stage 7
 
-REM ========================================================================
-REM Step 7: GAT NPU (Stage 3, 5)
-REM ========================================================================
-
-echo.
-echo ================================================================
-echo [Step 7/7] GAT NPU Profiling (Stage 3, 5)
-echo ================================================================
+REM --- GAT NPU: Stage 3, 5 ---
 
 REM 1000 nodes
 echo [33/48] GAT Stage 3, 1000 nodes...
