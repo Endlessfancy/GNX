@@ -82,9 +82,9 @@ REM ========================================================================
 
 echo.
 echo ================================================================
-echo [Step 7/9] GAT CPU Profiling (7 stages)
+echo [Step 7/9] GAT CPU Profiling (stages 3,4,5 only)
 echo ================================================================
-python gat_profile_stages.py --measure-cpu --platform 265V
+python gat_profile_stages.py --measure-cpu --platform 265V --stages 3,4,5
 
 REM ========================================================================
 REM Step 8: GAT GPU
@@ -92,9 +92,9 @@ REM ========================================================================
 
 echo.
 echo ================================================================
-echo [Step 8/9] GAT GPU Profiling (7 stages)
+echo [Step 8/9] GAT GPU Profiling (stages 3,4,5 only)
 echo ================================================================
-python gat_profile_stages.py --measure-gpu --platform 265V
+python gat_profile_stages.py --measure-gpu --platform 265V --stages 3,4,5
 
 REM ========================================================================
 REM Step 9: NPU (SAGE Stage 1,5,6,7 + GAT Stage 3,5)

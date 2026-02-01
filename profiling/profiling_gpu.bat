@@ -61,9 +61,9 @@ REM Step 3: GAT GPU Profiling (7 stages)
 REM ========================================================================
 
 echo.
-echo [Step 3/3] GAT GPU Profiling (7 stages)
+echo [Step 3/3] GAT GPU Profiling (stages 3,4,5 only)
 echo ----------------------------------------------------------------
-python gat_profile_stages.py --measure-gpu --platform 265V
+python gat_profile_stages.py --measure-gpu --platform 265V --stages 3,4,5
 
 REM ========================================================================
 REM Done
