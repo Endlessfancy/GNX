@@ -30,6 +30,7 @@ import os
 import json
 import time
 import argparse
+import multiprocessing
 from pathlib import Path
 import numpy as np
 
@@ -485,6 +486,50 @@ def measure_latency_openvino(ir_path, pu, dummy_input, num_warmup=10, num_iterat
             'error': error_msg
         }
 
+def _subprocess_measure_worker(ir_path, pu, stage_id, nodes, edges, feature_dim, num_warmup, num_iterations, result_queue):
+    """子进程中运行测量，结果通过queue返回。子进程崩溃不影响主进程。"""
+    try:
+        dummy_input = generate_dummy_input(stage_id, nodes, edges, feature_dim)
+        result = measure_latency_openvino(ir_path, pu, dummy_input, num_warmup, num_iterations)
+        result_queue.put(result)
+    except Exception as e:
+        result_queue.put({
+            'mean': -1, 'std': -1, 'min': -1, 'max': -1,
+            'failed': True, 'error': f'subprocess exception: {str(e)}'
+        })
+
+def measure_in_subprocess(ir_path, pu, stage_id, nodes, edges, feature_dim, num_warmup, num_iterations, timeout=300):
+    """在子进程中运行测量，防止GPU OOM导致主进程崩溃"""
+    result_queue = multiprocessing.Queue()
+    p = multiprocessing.Process(
+        target=_subprocess_measure_worker,
+        args=(ir_path, pu, stage_id, nodes, edges, feature_dim, num_warmup, num_iterations, result_queue)
+    )
+    p.start()
+    p.join(timeout=timeout)
+
+    if p.is_alive():
+        p.terminate()
+        p.join(5)
+        return {
+            'mean': -1, 'std': -1, 'min': -1, 'max': -1,
+            'failed': True, 'error': f'subprocess timeout ({timeout}s)'
+        }
+
+    if p.exitcode != 0:
+        return {
+            'mean': -1, 'std': -1, 'min': -1, 'max': -1,
+            'failed': True, 'error': f'subprocess crashed (exit code {p.exitcode})'
+        }
+
+    if not result_queue.empty():
+        return result_queue.get()
+
+    return {
+        'mean': -1, 'std': -1, 'min': -1, 'max': -1,
+        'failed': True, 'error': 'subprocess returned no result'
+    }
+
 def save_checkpoint_incremental(results, checkpoint_name):
     """增量保存checkpoint（每测完一个点就保存）"""
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -595,16 +640,23 @@ def measure_all_latencies(test_cases, config, pu_list=None, checkpoint_name=None
 
                     print(f"[{count}/{total}] Stage {stage_id} on {pu} - {nodes}n {edges}e... ", end='', flush=True)
 
-                    try:
-                        dummy_input = generate_dummy_input(stage_id, nodes, edges, feature_dim)
-                        result = measure_latency_openvino(ir_path, pu, dummy_input, num_warmup, num_iterations)
-                    except Exception as e:
-                        error_msg = str(e)
-                        print(f"FAILED (outer catch: {error_msg[:80]})")
-                        result = {
-                            'mean': -1, 'std': -1, 'min': -1, 'max': -1,
-                            'failed': True, 'error': f'outer catch: {error_msg}'
-                        }
+                    if pu == 'GPU':
+                        # GPU用子进程隔离，防止OOM导致主进程崩溃
+                        result = measure_in_subprocess(
+                            ir_path, pu, stage_id, nodes, edges, feature_dim,
+                            num_warmup, num_iterations
+                        )
+                    else:
+                        try:
+                            dummy_input = generate_dummy_input(stage_id, nodes, edges, feature_dim)
+                            result = measure_latency_openvino(ir_path, pu, dummy_input, num_warmup, num_iterations)
+                        except Exception as e:
+                            error_msg = str(e)
+                            print(f"FAILED (outer catch: {error_msg[:80]})")
+                            result = {
+                                'mean': -1, 'std': -1, 'min': -1, 'max': -1,
+                                'failed': True, 'error': f'outer catch: {error_msg}'
+                            }
 
                     results[key] = result
                     if not result.get('failed', False):
