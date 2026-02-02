@@ -20,6 +20,7 @@ import argparse
 import json
 import sys
 import time
+import multiprocessing
 from pathlib import Path
 import numpy as np
 
@@ -38,6 +39,9 @@ SCRIPT_DIR = Path(__file__).parent
 MODELS_DIR = SCRIPT_DIR / 'exported_models'
 RESULTS_DIR = SCRIPT_DIR / 'results'
 TEST_CASES_FILE = SCRIPT_DIR / 'test_cases.json'
+
+# Platform identifier (set via --platform argument)
+PLATFORM = ""
 
 # Feature dimensions (same as baseline_profiling)
 FEATURE_DIM = 500
@@ -212,15 +216,91 @@ def measure_latency_openvino(ir_path, device, dummy_input, num_warmup=10, num_it
         }
 
 
+def _subprocess_measure_worker(ir_path, device, nodes, edges, feature_dim, num_warmup, num_iterations, result_queue):
+    """子进程中运行测量，结果通过queue返回。子进程崩溃不影响主进程。"""
+    try:
+        dummy_input = generate_input(nodes, edges, feature_dim)
+        result = measure_latency_openvino(ir_path, device, dummy_input, num_warmup, num_iterations)
+        result_queue.put(result)
+    except Exception as e:
+        result_queue.put({
+            'mean': -1, 'median': -1, 'std': -1, 'min': -1, 'max': -1,
+            'failed': True, 'error': f'subprocess exception: {str(e)}'
+        })
+
+
+def measure_in_subprocess(ir_path, device, nodes, edges, feature_dim, num_warmup, num_iterations, timeout=300):
+    """在子进程中运行测量，防止GPU OOM导致主进程崩溃"""
+    result_queue = multiprocessing.Queue()
+    p = multiprocessing.Process(
+        target=_subprocess_measure_worker,
+        args=(ir_path, device, nodes, edges, feature_dim, num_warmup, num_iterations, result_queue)
+    )
+    p.start()
+    p.join(timeout=timeout)
+
+    if p.is_alive():
+        p.terminate()
+        p.join(5)
+        return {
+            'mean': -1, 'median': -1, 'std': -1, 'min': -1, 'max': -1,
+            'failed': True, 'error': f'subprocess timeout ({timeout}s)'
+        }
+
+    if p.exitcode != 0:
+        return {
+            'mean': -1, 'median': -1, 'std': -1, 'min': -1, 'max': -1,
+            'failed': True, 'error': f'subprocess crashed (exit code {p.exitcode})'
+        }
+
+    if not result_queue.empty():
+        return result_queue.get()
+
+    return {
+        'mean': -1, 'median': -1, 'std': -1, 'min': -1, 'max': -1,
+        'failed': True, 'error': 'subprocess returned no result'
+    }
+
+
+def save_checkpoint_incremental(results, checkpoint_name):
+    """增量保存checkpoint（每测完一个点就保存）"""
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    checkpoint_file = RESULTS_DIR / f'{checkpoint_name}.json'
+    with open(checkpoint_file, 'w', encoding='utf-8') as f:
+        json.dump(results, f, indent=2)
+
+
+def load_checkpoint(checkpoint_name):
+    """加载checkpoint（断点续跑）"""
+    checkpoint_file = RESULTS_DIR / f'{checkpoint_name}.json'
+    if checkpoint_file.exists():
+        with open(checkpoint_file, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return None
+
+
 def measure_cpugpu(test_cases, config, devices=['CPU', 'GPU']):
-    """Measure CPU and/or GPU latencies"""
+    """Measure CPU and/or GPU latencies (with incremental checkpoint, OOM skip, subprocess isolation)"""
     print("\n" + "=" * 70)
     print(f"Measuring {'/'.join(devices)} Latencies (FusedBlock0_7)")
     print("=" * 70)
 
     num_warmup = config['config']['num_warmup']
     num_iterations = config['config']['num_iterations']
-    results = {}
+    feature_dim = config['config'].get('feature_dim', FEATURE_DIM)
+
+    checkpoint_name = f"fused_block0_7_{'+'.join(devices).lower()}"
+
+    # 断点续测
+    results = load_checkpoint(checkpoint_name)
+    if results is None:
+        results = {}
+        print(f"Starting fresh measurement...")
+    else:
+        print(f"Resuming from checkpoint: {len(results)} existing entries")
+
+    total = len(devices) * len(test_cases)
+    count = 0
 
     for device in devices:
         print(f"\n[{device}]")
@@ -228,23 +308,59 @@ def measure_cpugpu(test_cases, config, devices=['CPU', 'GPU']):
 
         if not ir_path.exists():
             print(f"  IR not found: {ir_path}")
+            count += len(test_cases)
             continue
 
+        oom_skip_nodes = set()
+
         for case in test_cases:
+            count += 1
             nodes, edges = case['nodes'], case['edges']
-            print(f"  [{nodes}n, {edges}e]... ", end='', flush=True)
-
-            dummy_input = generate_input(nodes, edges)
-            result = measure_latency_openvino(ir_path, device, dummy_input,
-                                              num_warmup, num_iterations)
-
             key = f"fused0_7,{nodes},{edges},{device}"
+
+            # 跳过已测量的（断点续测）
+            if key in results:
+                print(f"  [{count}/{total}] {nodes}n {edges}e... SKIP (cached)")
+                continue
+
+            # OOM跳过：同node的之前edge已OOM
+            if nodes in oom_skip_nodes:
+                print(f"  [{count}/{total}] {nodes}n {edges}e... SKIP (OOM at smaller edge)")
+                results[key] = {
+                    'mean': -1, 'median': -1, 'std': -1, 'min': -1, 'max': -1,
+                    'failed': True, 'error': f'skipped: OOM detected at smaller edge count for {nodes}n'
+                }
+                save_checkpoint_incremental(results, checkpoint_name)
+                continue
+
+            print(f"  [{count}/{total}] {nodes}n {edges}e... ", end='', flush=True)
+
+            if device == 'GPU':
+                result = measure_in_subprocess(
+                    ir_path, device, nodes, edges, feature_dim,
+                    num_warmup, num_iterations
+                )
+            else:
+                try:
+                    dummy_input = generate_input(nodes, edges, feature_dim)
+                    result = measure_latency_openvino(ir_path, device, dummy_input,
+                                                      num_warmup, num_iterations)
+                except Exception as e:
+                    result = {
+                        'mean': -1, 'median': -1, 'std': -1, 'min': -1, 'max': -1,
+                        'failed': True, 'error': f'outer catch: {str(e)}'
+                    }
+
             results[key] = result
 
-            if result['failed']:
-                print(f"FAILED: {result.get('error', '')[:50]}")
+            if result.get('failed', False):
+                print(f"FAILED: {result.get('error', '')[:60]}")
+                oom_skip_nodes.add(nodes)
             else:
                 print(f"{result['mean']:.2f}ms")
+
+            # 增量保存
+            save_checkpoint_incremental(results, checkpoint_name)
 
     return results
 
@@ -322,6 +438,8 @@ def generate_summary(results):
 # ============================================================================
 
 def main():
+    global PLATFORM, RESULTS_DIR
+
     parser = argparse.ArgumentParser(description="Fused 1-7 Baseline Profiling")
     parser.add_argument("--export", action="store_true", help="Export models")
     parser.add_argument("--measure-cpu", action="store_true", help="Measure CPU only")
@@ -329,7 +447,15 @@ def main():
     parser.add_argument("--measure-cpugpu", action="store_true", help="Measure CPU and GPU")
     parser.add_argument("--analyze", action="store_true", help="Generate summary")
     parser.add_argument("--all", action="store_true", help="Full workflow")
+    parser.add_argument("--platform", type=str, default="", help="Platform identifier (e.g., 185H, 265V)")
     args = parser.parse_args()
+
+    # Set platform
+    if args.platform:
+        PLATFORM = args.platform
+        RESULTS_DIR = SCRIPT_DIR / 'results' / PLATFORM / 'sage'
+        print(f"Platform: {PLATFORM}")
+        print(f"Results will be saved to: {RESULTS_DIR}")
 
     # Load config
     config = load_config()
@@ -350,26 +476,23 @@ def main():
     if args.measure_cpu:
         results = measure_cpu(test_cases, config)
         all_results.update(results)
-        save_results(results, "fused_block0_7_cpu.json")
 
     if args.measure_gpu:
         results = measure_gpu(test_cases, config)
         all_results.update(results)
-        save_results(results, "fused_block0_7_gpu.json")
 
     if args.measure_cpugpu:
         results = measure_cpugpu(test_cases, config)
         all_results.update(results)
-        save_results(results, "fused_block0_7_cpugpu.json")
 
     # Generate summary
     if args.analyze:
-        # Load existing results if not measured in this run
         if not all_results:
-            cpugpu_file = RESULTS_DIR / "fused_block0_7_cpugpu.json"
-            if cpugpu_file.exists():
-                with open(cpugpu_file, 'r') as f:
-                    all_results = json.load(f)
+            # Try loading from checkpoints
+            for name in ['fused_block0_7_cpu+gpu', 'fused_block0_7_cpu', 'fused_block0_7_gpu']:
+                data = load_checkpoint(name)
+                if data:
+                    all_results.update(data)
         if all_results:
             generate_summary(all_results)
 
