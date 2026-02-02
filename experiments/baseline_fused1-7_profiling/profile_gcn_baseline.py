@@ -370,15 +370,6 @@ def measure_gpu(test_cases, config):
 # Results Saving Functions
 # ============================================================================
 
-def save_results(results, filename):
-    """Save results to JSON"""
-    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    filepath = RESULTS_DIR / filename
-    with open(filepath, 'w', encoding='utf-8') as f:
-        json.dump(results, f, indent=2)
-    print(f"\nResults saved to: {filepath}")
-
-
 def generate_summary(results):
     """Generate summary markdown"""
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -457,32 +448,34 @@ def main():
         args.measure_cpugpu = True
         args.analyze = True
 
+    all_results = {}
+
     # Export models
     if args.export:
         export_models()
 
     # Measure latencies (results saved incrementally via checkpoint)
     if args.measure_cpu:
-        measure_cpu(test_cases, config)
+        results = measure_cpu(test_cases, config)
+        all_results.update(results)
 
     if args.measure_gpu:
-        measure_gpu(test_cases, config)
+        results = measure_gpu(test_cases, config)
+        all_results.update(results)
 
     if args.measure_cpugpu:
-        measure_cpugpu(test_cases, config)
+        results = measure_cpugpu(test_cases, config)
+        all_results.update(results)
 
     # Generate summary
     if args.analyze:
-        all_results = {}
-        # Load from checkpoints
-        for name in ['fused_gcn_cpu', 'fused_gcn_gpu', 'fused_gcn_cpu+gpu']:
-            checkpoint = load_checkpoint(name)
-            if checkpoint:
-                all_results.update(checkpoint)
+        if not all_results:
+            for name in ['fused_gcn_cpu+gpu', 'fused_gcn_cpu', 'fused_gcn_gpu']:
+                data = load_checkpoint(name)
+                if data:
+                    all_results.update(data)
         if all_results:
             generate_summary(all_results)
-        else:
-            print("No results found for analysis.")
 
     if not any([args.export, args.measure_cpu, args.measure_gpu, args.measure_cpugpu, args.analyze]):
         parser.print_help()

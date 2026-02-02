@@ -379,15 +379,6 @@ def measure_gpu(test_cases, config):
 # Results Saving Functions
 # ============================================================================
 
-def save_results(results, filename):
-    """Save results to JSON"""
-    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    filepath = RESULTS_DIR / filename
-    with open(filepath, 'w', encoding='utf-8') as f:
-        json.dump(results, f, indent=2)
-    print(f"\nResults saved to: {filepath}")
-
-
 def generate_summary(results):
     """Generate summary markdown"""
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
