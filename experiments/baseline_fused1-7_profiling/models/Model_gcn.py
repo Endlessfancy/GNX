@@ -18,7 +18,6 @@ Note: This implementation does NOT use PyG, uses manual operations.
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_scatter import scatter_add
 
 
 class FusedGCN(nn.Module):
@@ -53,7 +52,7 @@ class FusedGCN(nn.Module):
         # Compute node degrees
         ones = torch.ones(num_edges, dtype=torch.float32, device=edge_index.device)
         deg = torch.zeros(num_nodes, dtype=torch.float32, device=edge_index.device)
-        deg = scatter_add(ones, target_nodes, dim=0, out=deg)
+        deg.scatter_add_(0, target_nodes, ones)
 
         # Compute D^(-0.5)
         deg_inv_sqrt = torch.pow(deg.clamp(min=1), -0.5)

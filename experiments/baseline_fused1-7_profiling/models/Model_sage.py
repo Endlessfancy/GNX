@@ -13,7 +13,6 @@ the multi-device pipeline (FusedBlock0 on CPU/GPU + FusedBlock1 on NPU).
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_scatter import scatter_add
 
 
 class FusedBlock0(nn.Module):
@@ -47,7 +46,7 @@ class FusedBlock0(nn.Module):
         # REDUCE_COUNT: Count number of neighbors for each node
         ones = torch.ones(num_edges, dtype=torch.float32, device=edge_index.device)
         count = torch.zeros(num_nodes, dtype=torch.float32, device=edge_index.device)
-        count = scatter_add(ones, target_nodes, dim=0, out=count)
+        count.scatter_add_(0, target_nodes, ones)
 
         return sum_agg, count, x
 
@@ -125,7 +124,7 @@ class FusedBlock0_7(nn.Module):
         # Stage 4 - REDUCE_COUNT: Count neighbors
         ones = torch.ones(num_edges, dtype=torch.float32, device=edge_index.device)
         count = torch.zeros(num_nodes, dtype=torch.float32, device=edge_index.device)
-        count = scatter_add(ones, target_nodes, dim=0, out=count)
+        count.scatter_add_(0, target_nodes, ones)
 
         # ===== Block 1: Stages 5-7 (Update) =====
 

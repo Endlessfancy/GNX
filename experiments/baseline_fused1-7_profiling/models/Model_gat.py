@@ -19,7 +19,6 @@ Note: This implementation does NOT use PyG, uses manual operations.
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_scatter import scatter_add, scatter_max
 
 
 class FusedGAT(nn.Module):
@@ -85,16 +84,16 @@ class FusedGAT(nn.Module):
         # ===== Stage 3: ATTN_SOFTMAX =====
         # Softmax per target node (edge-wise softmax)
         # First, compute max per target for numerical stability
-        alpha_max = torch.zeros(num_nodes, dtype=alpha.dtype, device=alpha.device)
-        alpha_max = scatter_max(alpha, target_nodes, dim=0, out=alpha_max)[0]
+        alpha_max = torch.full((num_nodes,), -1e9, dtype=alpha.dtype, device=alpha.device)
+        alpha_max = alpha_max.scatter_reduce(0, target_nodes, alpha, reduce='amax', include_self=True)
         alpha = alpha - alpha_max[target_nodes]
 
         # Compute exp
         alpha_exp = torch.exp(alpha)
 
         # Sum per target node
-        alpha_sum = torch.zeros(num_nodes, dtype=alpha.dtype, device=alpha.device)
-        alpha_sum = scatter_add(alpha_exp, target_nodes, dim=0, out=alpha_sum)
+        alpha_sum = torch.zeros(num_nodes, dtype=alpha_exp.dtype, device=alpha_exp.device)
+        alpha_sum.scatter_add_(0, target_nodes, alpha_exp)
 
         # Normalize
         alpha_softmax = alpha_exp / (alpha_sum[target_nodes] + 1e-16)
