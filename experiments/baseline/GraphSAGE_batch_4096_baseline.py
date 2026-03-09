@@ -100,7 +100,7 @@ def compile_openvino_model(onnx_path: str, device: str = "CPU"):
 
     if device == "NPU":
         # NPU: use HETERO plugin for automatic CPU fallback
-        target_device = "HETERO:NPU,CPU"
+        target_device = "NPU"
         print(f"  Using HETERO mode: {target_device}")
     else:
         target_device = device

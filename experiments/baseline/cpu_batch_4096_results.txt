@@ -20,23 +20,23 @@ Model:
 Performance:
   Device: CPU
   Number of runs: 10
-  Mean total time: 11636.13 ms
-  Std time: 4460.24 ms
-  Min time: 8282.55 ms
-  Max time: 23024.53 ms
-  Mean per-batch time: 528.69 ms
+  Mean total time: 13665.63 ms
+  Std time: 5747.31 ms
+  Min time: 10201.00 ms
+  Max time: 27931.27 ms
+  Mean per-batch time: 621.01 ms
 
 Individual Run Times (ms):
-  Run 1: 10125.11
-  Run 2: 8750.02
-  Run 3: 11378.29
-  Run 4: 12790.18
-  Run 5: 10367.29
-  Run 6: 8624.85
-  Run 7: 8282.55
-  Run 8: 8736.12
-  Run 9: 23024.53
-  Run 10: 14282.41
+  Run 1: 10482.97
+  Run 2: 10201.00
+  Run 3: 12155.64
+  Run 4: 19574.90
+  Run 5: 13130.84
+  Run 6: 10577.99
+  Run 7: 10373.84
+  Run 8: 27931.27
+  Run 9: 11732.32
+  Run 10: 10495.51
 
 Batch Details:
   Batch 1: target=4096, halo=60663, total=64759, edges=618876

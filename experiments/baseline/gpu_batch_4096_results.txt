@@ -1,5 +1,5 @@
 ================================================================================
-CPU Batch-4096 Baseline Results (1 Layer, 1-hop) - OpenVINO
+GPU Batch-4096 Baseline Results (1 Layer, 1-hop) - OpenVINO
 ================================================================================
 
 Dataset:
@@ -20,23 +20,23 @@ Model:
 Performance:
   Device: GPU
   Number of runs: 10
-  Mean total time: 2727.81 ms
-  Std time: 53.32 ms
-  Min time: 2639.47 ms
-  Max time: 2823.35 ms
-  Mean per-batch time: 123.92 ms
+  Mean total time: 2964.53 ms
+  Std time: 155.05 ms
+  Min time: 2763.90 ms
+  Max time: 3304.96 ms
+  Mean per-batch time: 134.49 ms
 
 Individual Run Times (ms):
-  Run 1: 2659.42
-  Run 2: 2639.47
-  Run 3: 2756.96
-  Run 4: 2747.54
-  Run 5: 2706.76
-  Run 6: 2703.86
-  Run 7: 2742.76
-  Run 8: 2731.64
-  Run 9: 2823.35
-  Run 10: 2766.32
+  Run 1: 3037.69
+  Run 2: 2954.31
+  Run 3: 3021.41
+  Run 4: 3015.19
+  Run 5: 3304.96
+  Run 6: 2763.90
+  Run 7: 2788.48
+  Run 8: 2835.66
+  Run 9: 2987.90
+  Run 10: 2935.80
 
 Batch Details:
   Batch 1: target=4096, halo=60663, total=64759, edges=618876
